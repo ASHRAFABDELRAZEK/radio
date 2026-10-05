@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>راديو العالم — ASHRAF FATHY</title>
+<meta name="author" content="ASHRAF FATHY">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!-- راديو العالم | إعداد وتصميم: ASHRAF FATHY | جميع الحقوق محفوظة © 2026 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js"></script>
+<style>
+:root{--bg:#0f1729;--card:#1a2540;--acc:#3b82f6;--txt:#e5e9f2;--mut:#8a96b0}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+header{padding:14px 16px;background:#0b1220;display:flex;gap:8px;flex-wrap:wrap;align-items:center;position:sticky;top:0;z-index:5}
+h1{font-size:20px;margin:0 0 0 12px}
+input,select,button{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid #2c3a5c;background:var(--card);color:var(--txt)}
+button{cursor:pointer;background:var(--acc);border:none}
+.tabs button{background:var(--card)} .tabs button.on{background:var(--acc)}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;padding:16px 16px 190px}
+.st{background:var(--card);border-radius:10px;padding:10px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.st:hover{outline:1px solid var(--acc)} .st.playing{outline:2px solid #22c55e}
+.st img{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#26324f;flex:none}
+.st .n{font-weight:bold;white-space:normal;word-break:break-word;line-height:1.4}
+.st .m{font-size:12px;color:var(--mut);white-space:normal}
+.st .i{flex:1;min-width:0} .fav{background:none;font-size:20px;padding:0 4px;color:#facc15}
+#player{position:fixed;bottom:0;left:0;right:0;background:#0b1220;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid #2c3a5c}
+#now{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#status{color:var(--mut);font-size:13px}
+
+#byMe,.byAnim{background:linear-gradient(90deg,#fbbf24,#fff7d6,#f59e0b,#fde68a,#fbbf24);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:shine 4s linear infinite,pulse 2.5s ease-in-out infinite}
+@keyframes shine{to{background-position:300% 0}}
+@keyframes pulse{0%,100%{filter:drop-shadow(0 0 0 #fbbf24)}50%{filter:drop-shadow(0 0 6px #fbbf24)}}
+.radioIcon{display:inline-block;animation:wave 1.6s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) scale(1.1)}}
+@media (max-width:600px){header{padding:10px}header input,header select{flex:1 1 45%}#player{gap:6px}#now{flex-basis:100%;order:-1}#vol{display:none}h1{font-size:17px}}
+@media (prefers-reduced-motion:reduce){#byMe,.byAnim,.radioIcon{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="radioIcon">📻</span> راديو العالم <small id="byMe" style="font-size:12px;font-weight:normal;color:#fbbf24;cursor:pointer;display:block">إعداد: ASHRAF FATHY</small></h1>
+  <input id="q" placeholder="اسم المحطة...">
+  <select id="country"><option value="">كل الدول</option></select>
+  <select id="lang"><option value="">كل اللغات</option><option value="arabic">عربي</option><option value="english">English</option><option value="french">Français</option><option value="spanish">Español</option><option value="german">Deutsch</option><option value="turkish">Türkçe</option><option value="urdu">اردو</option></select>
+  <select id="tag"><option value="">كل الأنواع</option><option value="news">أخبار</option><option value="quran">قرآن</option><option value="music">موسيقى</option><option value="pop">Pop</option><option value="classical">كلاسيك</option><option value="jazz">Jazz</option><option value="sports">رياضة</option><option value="talk">حوارات</option></select>
+  <button id="go">بحث</button>
+  <button id="eg" style="background:#b91c1c">🇪🇬 محطات مصر</button>
+  <span class="tabs"><button id="tAll" class="on">المحطات</button><button id="tFav">⭐ المفضلة</button><button id="tArc">🎭 أرشيف المسرحيات والسهرات</button></span>
+</header>
+<div id="masp" style="padding:10px 16px;background:#1e293b;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+  <b style="margin-left:6px">📡 إذاعات ماسبيرو الرسمية:</b>
+<button data-m="10" style="background:#334155">البرنامج العام</button><button data-m="9" style="background:#334155">صوت العرب</button><button data-m="16" style="background:#334155">الشرق الأوسط</button><button data-m="7" style="background:#334155">القرآن الكريم</button><button data-m="8" style="background:#334155">راديو مصر</button><button data-m="11" style="background:#334155">الشباب والرياضة</button><button data-m="12" style="background:#334155">البرنامج الثقافي</button><button data-m="13" style="background:#334155">الأغاني</button><button data-m="14" style="background:#334155">القاهرة الكبرى</button><button data-m="18" style="background:#334155">البرنامج الأوروبي</button><button data-m="15" style="background:#334155">الإذاعات الموجهة</button>
+</div>
+<div id="arcBar" style="display:none;padding:10px 16px;background:#3b2a1a;gap:6px;flex-wrap:wrap;align-items:center">
+  <input id="aq" placeholder="ابحث: اسم مسرحية، ممثل، مسلسل...">
+  <button id="ago">بحث في الأرشيف</button>
+  <select id="amt" title="النوع"><option value="audio">🎧 صوت</option><option value="movies">🎬 فيديو</option><option value="both">الكل</option></select>
+  <select id="afmt" title="صيغة الصوت"></select>
+  <select id="vfmt" title="صيغة الفيديو"></select>
+  <span id="chips"></span>
+</div>
+<div id="selBar" style="display:none;padding:8px 16px;background:#14532d;gap:8px;flex-wrap:wrap;align-items:center">
+  <label><input type="checkbox" id="selAll"> تحديد الكل</label>
+  <span id="selInfo"></span>
+  <button id="dirB" style="background:#0e7490">📁 مكان التنزيل: <span id="dirName">لم يُحدد</span></button>
+  <button id="dlSel" style="background:#16a34a">⬇ تنزيل المحدد</button>
+  <button id="dlStop" style="background:#b91c1c;display:none">⏹ إيقاف التنزيل</button>
+  <span id="dlProg" style="font-size:13px"></span>
+</div>
+<div id="list"></div>
+<div id="player">
+  <button id="pp">⏸</button>
+  <span id="seekBox" style="display:none;align-items:center;gap:6px;flex:2;min-width:220px">
+    <button id="back30" title="رجوع 30 ثانية" style="background:#334155">−30 ث</button>
+    <span id="tCur" style="font-size:13px">0:00</span>
+    <input type="range" id="seek" min="0" max="100" step="1" value="0" style="flex:1;direction:ltr">
+    <span id="tDur" style="font-size:13px">0:00</span>
+    <button id="fwd30" title="تقديم 30 ثانية" style="background:#334155">+30 ث</button>
+  </span>
+  <button id="prevB" title="السابق" style="background:#334155">⏮</button>
+  <button id="nextB" title="التالي" style="background:#334155">⏭</button>
+  <button id="locB" title="روح لمكانه في القائمة" style="background:#334155">📍 مكانه</button>
+  <button id="upB" title="القائمة الرئيسية اللي فيها المجموعة" style="background:#334155">📂 قائمته الرئيسية</button>
+  <select id="endMode" title="بعد ما الحلقة تخلص"><option value="next">▶ التالي تلقائي</option><option value="stop">⏹ إيقاف بعد النهاية</option><option value="n">🔁 تكرار عدد مرات</option><option value="inf">♾ تكرار بلا حدود</option><option value="all">🔂 تكرار القائمة كلها</option></select>
+  <input type="number" id="repN" min="1" value="2" title="عدد مرات التكرار" style="width:60px;display:none">
+  <div id="now" title="اضغط للذهاب لمكانه في القائمة" style="cursor:pointer;text-decoration:underline dotted">اختر محطة للاستماع</div>
+  <span id="status"></span>
+  <button id="rec" title="تسجيل">⏺ تسجيل</button>
+  <select id="sleep" title="مؤقت النوم"><option value="0">⏲ مؤقت النوم</option><option value="15">15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="120">ساعتين</option></select>
+  <button id="alarmBtn" title="منبّه">⏰ منبّه</button>
+  <input type="range" id="vol" min="0" max="1" step="0.05" value="0.8" style="width:110px">
+</div>
+<audio id="au"></audio>
+<div id="aboutBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:30;align-items:center;justify-content:center">
+  <div style="background:var(--card);padding:24px 28px;border-radius:14px;text-align:center;max-width:90vw;border:1px solid #fbbf24">
+    <div style="font-size:40px" class="radioIcon">📻</div>
+    <h2 style="margin:6px 0">راديو العالم</h2>
+    <div style="color:#fbbf24;font-size:18px;font-weight:bold;margin:8px 0" class="byAnim">إعداد وتصميم: ASHRAF FATHY</div>
+    <div style="color:var(--mut);font-size:13px;line-height:1.8">إذاعات العالم · إذاعات ماسبيرو · أرشيف المسرحيات والسهرات<br>جميع الحقوق محفوظة © 2026</div>
+    <button id="aboutClose" style="margin-top:14px">إغلاق</button>
+  </div>
+</div>
+<div id="vidBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:20;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+  <div style="width:min(960px,94vw);display:flex;justify-content:space-between;align-items:center"><b id="vidTitle"></b><button id="vidClose" style="background:#b91c1c">✕ إغلاق</button></div>
+  <video id="vid" controls style="width:min(960px,94vw);max-height:80vh;background:#000"></video>
+</div>
+<div id="alarmBox" style="display:none;position:fixed;bottom:70px;left:16px;background:var(--card);padding:14px;border-radius:10px;border:1px solid #2c3a5c;z-index:9">
+  <div style="margin-bottom:8px">شغّل المحطة الحالية الساعة:</div>
+  <input type="time" id="alarmTime"> <button id="alarmSet">تفعيل</button> <button id="alarmOff" style="background:#64748b">إلغاء</button>
+  <div id="alarmInfo" style="font-size:13px;color:var(--mut);margin-top:8px"></div>
+  <div style="font-size:12px;color:var(--mut)">البرنامج لازم يفضل مفتوح والجهاز صاحي.</div>
+</div>
+<script>
+const $=id=>document.getElementById(id), au=$('au');
+let API='https://all.api.radio-browser.info', hls=null, current=null, view='all', results=[];
+const ls={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+let favs=ls.get('radioFavs',[]);
+
+async function pickServer(){
+  for(const s of ['https://de1.api.radio-browser.info','https://fi1.api.radio-browser.info','https://nl1.api.radio-browser.info','https://at1.api.radio-browser.info']){
+    try{const r=await fetch(s+'/json/stats',{signal:AbortSignal.timeout(4000)});if(r.ok){API=s;return}}catch{}
+  }
+}
+async function loadCountries(){
+  const r=await fetch(API+'/json/countries?order=stationcount&reverse=true&hidebroken=true');
+  const c=await r.json();
+  $('country').innerHTML+=c.filter(x=>x.stationcount>20).map(x=>`<option value="${x.iso_3166_1}">${x.name} (${x.stationcount})</option>`).join('');
+}
+async function search(){
+  setTab('all');
+  $('list').innerHTML='<p>جاري التحميل...</p>';
+  const p=new URLSearchParams({limit:($('country').value?1000:300),hidebroken:true,order:'clickcount',reverse:true});
+  if($('q').value){p.set('name',$('q').value);p.set('limit',1000)}
+  if($('country').value)p.set('countrycode',$('country').value);
+  if($('lang').value)p.set('language',$('lang').value);
+  if($('tag').value)p.set('tag',$('tag').value);
+  try{results=await (await fetch(API+'/json/stations/search?'+p)).json();render(results)}
+  catch(e){$('list').innerHTML='<p>تعذر الاتصال بالخادم، تأكد من الإنترنت.</p>'}
+}
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(arr){
+  if(!arr.length){$('list').innerHTML='<p>لا توجد محطات.</p>';return}
+  $('list').innerHTML=arr.map((s,i)=>`<div class="st ${current&&current.stationuuid===s.stationuuid?'playing':''}" data-i="${i}" data-u="${esc(s.stationuuid)}">
+    <img src="${esc(s.favicon)}" onerror="this.style.visibility='hidden'">
+    <div class="i"><div class="n">${esc(s.name)}</div><div class="m">${esc(s.country)} · ${esc(s.tags).slice(0,40)} ${s.bitrate?'· '+s.bitrate+'kbps':''}</div></div>
+    <button class="fav" data-f="${i}">${favs.some(f=>f.stationuuid===s.stationuuid)?'★':'☆'}</button></div>`).join('');
+  $('list').onclick=e=>{
+    const f=e.target.closest('[data-f]');if(f){toggleFav(arr[f.dataset.f]);e.stopPropagation();return}
+    const d=e.target.closest('.st');if(d){playlist=arr;playMedia(arr[d.dataset.i])}
+  };
+}
+function toggleFav(s){
+  const k=favs.findIndex(f=>f.stationuuid===s.stationuuid);
+  k>=0?favs.splice(k,1):favs.push({stationuuid:s.stationuuid,name:s.name,country:s.country,tags:s.tags,favicon:s.favicon,url_resolved:s.url_resolved,url:s.url,bitrate:s.bitrate,hls:s.hls,video:s.video});
+  ls.set('radioFavs',favs);if(view!=='arc')render(view==='fav'?favs:results);
+}
+function play(s){
+  current=s;const url=s.url_resolved||s.url;
+  if(hls){hls.destroy();hls=null}
+  $('now').textContent='▶ '+s.name+' — '+(s.country||'');$('status').textContent='جاري الاتصال...';
+  if((s.hls||/\.m3u8/i.test(url))&&window.Hls&&Hls.isSupported()){hls=new Hls();hls.loadSource(url);hls.attachMedia(au)}
+  else au.src=url;
+  au.play().catch(()=>$('status').textContent='المحطة لا تعمل، جرّب غيرها');
+  if(!String(s.stationuuid).startsWith('ia:'))fetch(API+'/json/url/'+s.stationuuid).catch(()=>{});
+  markPlaying();
+}
+au.onplaying=()=>{$('status').textContent='يعمل';$('pp').textContent='⏸'};
+au.onpause=()=>$('pp').textContent='▶';
+au.onerror=()=>$('status').textContent='المحطة لا تعمل، جرّب غيرها';
+$('pp').onclick=()=>au.paused?au.play():au.pause();
+$('vol').oninput=e=>{au.volume=e.target.value;ls.set('radioVol',e.target.value)};
+au.volume=$('vol').value=ls.get('radioVol',0.8);
+$('go').onclick=search;$('q').onkeydown=e=>e.key==='Enter'&&search();
+['country','lang','tag'].forEach(id=>$(id).onchange=search);
+$('tAll').onclick=()=>{view='all';$('tAll').classList.add('on');$('tFav').classList.remove('on');render(results)};
+$('tAll').addEventListener('click',()=>setTab('all'));$('tFav').addEventListener('click',()=>setTab('fav'));
+$('tFav').onclick=()=>{view='fav';$('tFav').classList.add('on');$('tAll').classList.remove('on');render(favs)};
+/* ===== تسجيل ===== */
+let recCtl=null;
+$('rec').onclick=async()=>{
+  if(recCtl){recCtl.abort();return}
+  if(!current){alert('شغّل محطة الأول');return}
+  const url=current.url_resolved||current.url;
+  if(current.hls||/\.m3u8/i.test(url)){$('status').textContent='المحطة دي (HLS) مش بتتسجل، جرّب غيرها';return}
+  recCtl=new AbortController();const chunks=[];let type='audio/mpeg',size=0;const t0=Date.now(),name=current.name;
+  $('rec').textContent='⏹ إيقاف';$('rec').style.background='#dc2626';
+  const tick=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);$('status').textContent=`🔴 تسجيل ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')} · ${(size/1048576).toFixed(1)}MB`},1000);
+  try{
+    const r=await fetch(url,{signal:recCtl.signal});type=(r.headers.get('content-type')||type).split(';')[0];
+    const rd=r.body.getReader();for(;;){const {done,value}=await rd.read();if(done)break;chunks.push(value);size+=value.length}
+  }catch(e){if(e.name!=='AbortError'&&!chunks.length)$('status').textContent='التسجيل غير متاح لهذه المحطة في المتصفح — استخدم نسخة البرنامج (exe)'}
+  clearInterval(tick);recCtl=null;$('rec').textContent='⏺ تسجيل';$('rec').style.background='';
+  if(chunks.length){
+    const ext=/aac|aacp/.test(type)?'aac':/ogg/.test(type)?'ogg':'mp3';
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(chunks,{type}));
+    a.download=`ASHRAF FATHY Radio - ${name.replace(/[\\/:*?"<>|]/g,'_')}_${new Date().toISOString().slice(0,16).replace(/[T:]/g,'-')}.${ext}`;a.click();
+    $('status').textContent='تم حفظ التسجيل ✔';
+  }
+};
+/* ===== مؤقت النوم ===== */
+let sleepT=null;
+$('sleep').onchange=e=>{clearTimeout(sleepT);const m=+e.target.value;if(!m)return;
+  sleepT=setTimeout(()=>{au.pause();if(recCtl)recCtl.abort();$('sleep').value='0';$('status').textContent='تم الإيقاف بمؤقت النوم'},m*60000);
+  $('status').textContent=`هيقفل بعد ${m} دقيقة`};
+/* ===== منبّه ===== */
+let alarm=ls.get('radioAlarm',null);
+const showAlarm=()=>$('alarmInfo').textContent=alarm?`مفعّل ${alarm.time} على: ${alarm.st.name}`:'غير مفعّل';
+$('alarmBtn').onclick=()=>{const b=$('alarmBox');b.style.display=b.style.display==='none'?'block':'none';showAlarm()};
+$('alarmSet').onclick=()=>{if(!current){alert('شغّل المحطة اللي عايزها للمنبّه الأول');return}
+  if(!$('alarmTime').value)return;alarm={time:$('alarmTime').value,st:current};ls.set('radioAlarm',alarm);showAlarm();$('alarmBtn').textContent='⏰ '+alarm.time};
+$('alarmOff').onclick=()=>{alarm=null;ls.set('radioAlarm',null);showAlarm();$('alarmBtn').textContent='⏰ منبّه'};
+if(alarm)$('alarmBtn').textContent='⏰ '+alarm.time;
+let lastFire='';
+setInterval(()=>{if(!alarm)return;const d=new Date(),hm=d.toTimeString().slice(0,5);
+  if(hm===alarm.time&&lastFire!==d.toDateString()+hm){lastFire=d.toDateString()+hm;au.volume=0.1;play(alarm.st);
+    let v=0.1;const up=setInterval(()=>{v=Math.min(+$('vol').value,v+0.05);au.volume=v;if(v>=+$('vol').value)clearInterval(up)},2000)}},10000);
+
+$('eg').onclick=()=>{$('q').value='';$('lang').value='';$('tag').value='';$('country').value='EG';search()};
+$('masp').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;au.pause();
+  window.open('https://www.maspero.eg/stream/'+b.dataset.m,'maspero','width=520,height=560');$('now').textContent='📡 '+b.textContent+' (من موقع ماسبيرو)'};
+
+/* ===== أرشيف المسرحيات والسهرات (Internet Archive) ===== */
+const IA='https://archive.org';
+const gb=b=>b>=1073741824?(b/1073741824).toFixed(2)+' جيجا':(b/1048576).toFixed(0)+' ميجا';
+const cleanName=t=>String(t||'').replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').trim().slice(0,150);
+// سُلّم الصيغ من الأعلى جودة للأقل
+const AUD=[['24bit Flac','FLAC 24bit'],['Flac','FLAC'],['320Kbps MP3','MP3 320'],['256Kbps MP3','MP3 256'],['224Kbps MP3','MP3 224'],['192Kbps MP3','MP3 192'],['VBR MP3','MP3 VBR (العادي)'],['160Kbps MP3','MP3 160'],['128Kbps MP3','MP3 128'],['Ogg Vorbis','OGG'],['96Kbps MP3','MP3 96'],['64Kbps MP3','MP3 64'],['32Kbps MP3','MP3 32']];
+const VID=[['h.264 HD','MP4 HD'],['MPEG4','MP4 (الأصلي)'],['h.264','MP4 h.264'],['MPEG2','MPEG2'],['512Kb MPEG4','MP4 512k (صغير)'],['Ogg Video','OGV'],['h.264 IA','MP4 IA']];
+$('afmt').innerHTML=AUD.map((f,i)=>`<option value="${i}" ${f[0]==='VBR MP3'?'selected':''}>🎧 ${f[1]}</option>`).join('');
+$('vfmt').innerHTML=VID.map((f,i)=>`<option value="${i}" ${f[0]==='MPEG4'?'selected':''}>🎬 ${f[1]}</option>`).join('');
+try{const p=JSON.parse(localStorage.getItem('arcPrefs')||'{}');if(p.a!=null)$('afmt').value=p.a;if(p.v!=null)$('vfmt').value=p.v;if(p.t)$('amt').value=p.t}catch{}
+const savePrefs=()=>{try{localStorage.setItem('arcPrefs',JSON.stringify({a:$('afmt').value,v:$('vfmt').value,t:$('amt').value}))}catch{}};
+['afmt','vfmt'].forEach(id=>$(id).addEventListener('change',()=>{savePrefs();if(arcState.id)arcOpen(arcState.id,arcState.title)}));
+$('amt').addEventListener('change',()=>{savePrefs();arcSearch()});
+
+// يختار لكل حلقة الصيغة المطلوبة، ولو مش موجودة ياخد الأقرب ليها من تحت، ولو مفيش من تحت ياخد الأقرب من فوق
+function pickFiles(files){
+  const groups={};
+  for(const f of files){
+    let ladder=AUD,kind='a',k=AUD.findIndex(x=>x[0]===f.format);
+    if(k<0){k=VID.findIndex(x=>x[0]===f.format);ladder=VID;kind='v'}
+    if(k<0)continue;
+    const base=f.name.replace(/\.[^.\/]+$/,'').replace(/(_64kb|_128kb|_vbr|_512kb|\.ia|_hd)$/i,'')+'|'+kind;
+    (groups[base]=groups[base]||[]).push({...f,k,kind});
+  }
+  const out=[];
+  for(const [base,arr] of Object.entries(groups)){
+    const pref=+(arr[0].kind==='a'?$('afmt').value:$('vfmt').value);
+    const below=arr.filter(x=>x.k>=pref).sort((a,b)=>a.k-b.k)[0];
+    const above=arr.filter(x=>x.k<pref).sort((a,b)=>b.k-a.k)[0];
+    const f=below||above;
+    out.push({...f,exact:f.k===pref,fmtLabel:(f.kind==='a'?AUD:VID)[f.k][1]});
+  }
+  return out.sort((a,b)=>a.name.localeCompare(b.name,'ar',{numeric:true}));
+}
+const chips=['مسرحية إذاعية','سهرة إذاعية','مسلسل إذاعي','تمثيلية إذاعية','ساعة لقلبك','ألف ليلة وليلة','البرنامج العام','راديو زمان','مسرحية','فيلم عربي قديم'];
+$('chips').innerHTML=chips.map(c=>`<button data-c="${c}" style="background:#6b4423;margin:2px">${c}</button>`).join('');
+$('chips').onclick=e=>{const b=e.target.closest('[data-c]');if(b){$('aq').value=b.dataset.c;arcSearch()}};
+$('ago').onclick=()=>arcSearch();$('aq').onkeydown=e=>e.key==='Enter'&&arcSearch();
+function setTab(t){view=t;['tAll','tFav','tArc'].forEach(x=>$(x).classList.toggle('on',x==={all:'tAll',fav:'tFav',arc:'tArc'}[t]));$('arcBar').style.display=t==='arc'?'flex':'none';if(t!=='arc')$('selBar').style.display='none'}
+$('tArc').onclick=()=>{setTab('arc');if(!$('aq').value)$('aq').value='مسرحية إذاعية';arcSearch()};
+
+let arcState={mode:'search',docs:[],items:[],id:null,title:''};
+function updSel(){
+  const boxes=[...$('list').querySelectorAll('.sel')],on=boxes.filter(b=>b.checked);
+  let size=0;on.forEach(b=>size+=+b.dataset.size||0);
+  $('selInfo').textContent=`محدد ${on.length} من ${boxes.length}`+(on.length?` · حوالي ${gb(size)}`:'');
+  $('selAll').checked=boxes.length&&on.length===boxes.length;
+}
+$('selAll').onchange=e=>{$('list').querySelectorAll('.sel').forEach(b=>b.checked=e.target.checked);updSel()};
+
+async function arcSearch(){
+  const q=$('aq').value.trim();if(!q)return;
+  arcState={mode:'search',docs:[],items:[],id:null,title:''};
+  $('selBar').style.display='flex';$('list').innerHTML='<p>جاري البحث في الأرشيف...</p>';
+  const mt=$('amt').value==='both'?'(audio OR movies)':$('amt').value;
+  const u=`${IA}/advancedsearch.php?q=${encodeURIComponent('('+q+') AND mediatype:'+mt)}&fl[]=identifier&fl[]=title&fl[]=downloads&fl[]=item_size&fl[]=mediatype&sort[]=downloads+desc&rows=200&output=json`;
+  try{const d=await (await fetch(u)).json();const docs=d.response.docs;arcState.docs=docs;
+    if(!docs.length){$('list').innerHTML='<p>مفيش نتائج، جرّب كلمة تانية.</p>';updSel();return}
+    const tot=docs.reduce((a,x)=>a+(+x.item_size||0),0);
+    $('list').innerHTML=`<div style="grid-column:1/-1;color:#fbbf24">${docs.length} مجموعة (من أصل ${d.response.numFound}) · الحجم الكلي بكل الصيغ حوالي <b>${gb(tot)}</b> — الحجم الفعلي بالصيغة اللي اخترتها بيتحسب قبل التنزيل</div>`+
+      docs.map((x,i)=>`<div class="st" data-id="${esc(x.identifier)}" data-i="${i}">
+        <input type="checkbox" class="sel" data-i="${i}" data-size="${+x.item_size||0}" style="width:20px;height:20px;flex:none">
+        <div style="font-size:30px">${x.mediatype==='movies'?'🎬':'🎭'}</div>
+        <div class="i"><div class="n">${esc(Array.isArray(x.title)?x.title[0]:x.title)}</div><div class="m">${gb(+x.item_size||0)} · ${x.downloads||0} مشاهدة/استماع · اضغط لعرض الحلقات</div></div></div>`).join('');
+    $('list').onclick=e=>{if(e.target.classList.contains('sel')){updSel();return}
+      const d=e.target.closest('[data-id]');if(d)arcOpen(d.dataset.id,d.querySelector('.n').textContent)};
+    updSel();
+  }catch(e){$('list').innerHTML='<p>تعذر الاتصال بالأرشيف.</p>'}
+}
+async function getItems(id,title){
+  const m=await (await fetch(`${IA}/metadata/${id}`)).json();
+  return pickFiles(m.files||[]).map(f=>({stationuuid:'ia:'+id+'/'+f.name,id,file:f.name,name:(f.title||f.name.replace(/\.[^.]+$/,'')),country:title,tags:'أرشيف',favicon:'',
+    size:+f.size||0,video:f.kind==='v',fmtLabel:f.fmtLabel,exact:f.exact,ext:(f.name.match(/\.[^.]+$/)||['.mp3'])[0],
+    url_resolved:`${IA}/download/${id}/${f.name.split('/').map(encodeURIComponent).join('/')}`}));
+}
+async function arcOpen(id,title){
+  $('list').innerHTML='<p>جاري تحميل الحلقات...</p>';
+  try{const items=await getItems(id,title);arcState={mode:'item',items,id,title,docs:arcState.docs};
+    if(!items.length){$('list').innerHTML='<p>المجموعة دي مفيهاش ملفات صوت أو فيديو.</p>';return}
+    results=items.filter(x=>!x.video);
+    const tot=items.reduce((a,x)=>a+x.size,0);
+    $('list').innerHTML=`<div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button id="aback" style="background:#6b4423">↩ رجوع للنتائج</button> <b>${esc(title)}</b> — ${items.length} ملف · ${gb(tot)}</div>`+
+      items.map((it,i)=>`<div class="st ${current&&current.stationuuid===it.stationuuid?'playing':''}" data-i="${i}" data-u="${esc(it.stationuuid)}">
+        <input type="checkbox" class="sel" data-i="${i}" data-size="${it.size}" style="width:20px;height:20px;flex:none">
+        <div style="font-size:26px">${it.video?'🎬':'🎧'}</div>
+        <div class="i"><div class="n">${esc(it.name)}</div><div class="m">${gb(it.size)} · ${it.fmtLabel}${it.exact?'':' (الأقرب للصيغة المطلوبة)'}</div></div>
+        <button class="fav" data-dl="${i}" title="تنزيل">⬇</button>
+        <button class="fav" data-f="${i}">${favs.some(f=>f.stationuuid===it.stationuuid)?'★':'☆'}</button></div>`).join('');
+    $('aback').onclick=e=>{e.stopPropagation();arcSearch()};
+    $('list').onclick=e=>{
+      if(e.target.classList.contains('sel')){updSel();return}
+      const d=e.target.closest('[data-dl]');if(d){e.stopPropagation();downloadJobs([items[d.dataset.dl]]);return}
+      const f=e.target.closest('[data-f]');if(f){toggleFav(items[f.dataset.f]);f.textContent=favs.some(x=>x.stationuuid===items[f.dataset.f].stationuuid)?'★':'☆';return}
+      const s=e.target.closest('.st');if(s){playlist=items;playCtx={id,title};playMedia(items[s.dataset.i])}
+    };
+    updSel();
+  }catch(e){$('list').innerHTML='<p>تعذر تحميل المجموعة.</p>'}
+}
+function playMedia(it){
+  if(it.video){au.pause();$('vidTitle').textContent=it.country+' — '+it.name;$('vid').src=it.url_resolved;$('vidBox').style.display='flex';$('vid').play().catch(()=>{});return}
+  play(it);
+}
+$('vidClose').onclick=()=>{$('vid').pause();$('vid').removeAttribute('src');$('vid').load();$('vidBox').style.display='none'};
+
+
+/* ===== مدير التنزيل ===== */
+let dlAbort=null,dirHandle=null;
+$('dlSel').onclick=async()=>{
+  const on=[...$('list').querySelectorAll('.sel:checked')].map(b=>+b.dataset.i);
+  if(!on.length){alert('حدد حاجة الأول (أو اضغط تحديد الكل)');return}
+  let jobs=[];
+  if(arcState.mode==='item')jobs=on.map(i=>arcState.items[i]);
+  else{
+    for(let n=0;n<on.length;n++){const d=arcState.docs[on[n]];$('dlProg').textContent=`جاري حساب الحجم ${n+1}/${on.length}...`;
+      try{jobs.push(...await getItems(d.identifier,Array.isArray(d.title)?d.title[0]:d.title))}catch{}}
+  }
+  $('dlProg').textContent='';
+  const tot=jobs.reduce((a,x)=>a+x.size,0);
+  if(!jobs.length){alert('مفيش ملفات بالصيغ المتاحة');return}
+  if(!confirm(`هيتنزل ${jobs.length} ملف بحجم حوالي ${gb(tot)}.\nاتأكد إن فيه مساحة كفاية. تكمّل؟`))return;
+  downloadJobs(jobs);
+};
+$('dlStop').onclick=()=>dlAbort&&dlAbort.abort();
+async function downloadJobs(jobs){
+  if(dlAbort){alert('فيه تنزيل شغال، استنى يخلص أو اوقفه');return}
+  const useFS='showDirectoryPicker' in window;
+  if(useFS){if(!await ensureDir())return}
+  dlAbort=new AbortController();$('dlStop').style.display='';
+  let done=0,skipped=0,failed=0,bytes=0;const total=jobs.reduce((a,x)=>a+x.size,0);
+  for(const it of jobs){
+    if(dlAbort.signal.aborted)break;
+    const fname=cleanName(it.file.split('/').pop());
+    const show=got=>$('dlProg').textContent=`${done+skipped+failed+1}/${jobs.length} · ${it.name.slice(0,40)} · ${gb(bytes+got)} من ${gb(total)}`;
+    try{
+      if(useFS){
+        const folder=await dirHandle.getDirectoryHandle(cleanName(it.country)||'archive',{create:true});
+        try{const ex=await (await folder.getFileHandle(fname)).getFile();if(it.size&&ex.size===it.size){skipped++;bytes+=it.size;continue}}catch{}
+        const r=await fetch(it.url_resolved,{signal:dlAbort.signal});if(!r.ok)throw 0;
+        const fh=await folder.getFileHandle(fname+'.part',{create:true}),w=await fh.createWritable();
+        const rd=r.body.getReader();let got=0;
+        for(;;){const {done:d,value}=await rd.read();if(d)break;await w.write(value);got+=value.length;if(got%(1<<20)<value.length)show(got)}
+        await w.close();
+        if(fh.move)await fh.move(fname);else{const f2=await folder.getFileHandle(fname,{create:true}),w2=await f2.createWritable();await w2.write(await fh.getFile());await w2.close();await folder.removeEntry(fname+'.part')}
+        bytes+=got;
+      }else{
+        show(0);const b=await (await fetch(it.url_resolved,{signal:dlAbort.signal})).blob();
+        const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=cleanName(it.country+' - '+fname);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),60000);bytes+=b.size;
+      }
+      done++;
+    }catch(e){if(dlAbort.signal.aborted)break;failed++}
+  }
+  const stopped=dlAbort.signal.aborted;dlAbort=null;$('dlStop').style.display='none';
+  $('dlProg').textContent=`${stopped?'⏹ اتوقف':'✔ خلص'} — اتنزل ${done}، موجود قبل كده ${skipped}${failed?`، فشل ${failed}`:''}`;
+}
+
+
+
+/* ===== حفظ مكان التنزيل ===== */
+const idb=(mode,fn)=>new Promise((res,rej)=>{const r=indexedDB.open('radioApp',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');
+  r.onsuccess=()=>{const tx=r.result.transaction('kv',mode);const q=fn(tx.objectStore('kv'));tx.oncomplete=()=>res(q&&q.result);tx.onerror=()=>rej(tx.error)};r.onerror=()=>rej(r.error)});
+async function chooseDir(){try{const h=await showDirectoryPicker({mode:'readwrite',id:'radioArchive'});dirHandle=h;await idb('readwrite',st=>st.put(h,'dir'));$('dirName').textContent=h.name;return true}catch{return false}}
+async function ensureDir(){
+  if(!dirHandle){$('status').textContent='اختار مكان التنزيل';return chooseDir()}
+  try{let p=await dirHandle.queryPermission({mode:'readwrite'});if(p!=='granted')p=await dirHandle.requestPermission({mode:'readwrite'});if(p!=='granted')return chooseDir();
+    for await(const _ of dirHandle.keys())break;return true}
+  catch{alert(`مش قادر أوصل للفولدر «${dirHandle.name}».\nلو هارد خارجي اتأكد إنه متوصل، أو اختار مكان تاني.`);return chooseDir()}
+}
+$('dirB').onclick=()=>chooseDir();
+if('showDirectoryPicker' in window)idb('readonly',st=>st.get('dir')).then(h=>{if(h){dirHandle=h;$('dirName').textContent=h.name}}).catch(()=>{});
+else $('dirB').style.display='none';
+
+/* ===== التنقل والتكرار ===== */
+let playlist=[],playCtx=null,repLeft=0;
+function markPlaying(){$('list').querySelectorAll('.st.playing').forEach(e=>e.classList.remove('playing'));
+  if(current)$('list').querySelectorAll('.st[data-u]').forEach(e=>{if(e.dataset.u===current.stationuuid)e.classList.add('playing')})}
+const curIdx=()=>current?playlist.findIndex(x=>x.stationuuid===current.stationuuid):-1;
+function playAt(i,keepRep){if(i<0||i>=playlist.length)return false;if(!keepRep)repLeft=0;playMedia(playlist[i]);markPlaying();return true}
+$('prevB').onclick=()=>{const i=curIdx();if(i>0)playAt(i-1);else $('status').textContent='ده أول عنصر'};
+$('nextB').onclick=()=>{const i=curIdx();if(i>=0&&i<playlist.length-1)playAt(i+1);else $('status').textContent='ده آخر عنصر'};
+$('locB').onclick=async()=>{
+  if(!current)return;
+  const go=()=>{const el=[...$('list').querySelectorAll('.st[data-u]')].find(e=>e.dataset.u===current.stationuuid);if(el){markPlaying();el.scrollIntoView({behavior:'smooth',block:'center'});el.animate([{outline:'4px solid #facc15'},{outline:'2px solid #22c55e'}],{duration:1500});return true}};
+  if(go())return;
+  if(String(current.stationuuid).startsWith('ia:')&&playCtx){setTab('arc');await arcOpen(playCtx.id,playCtx.title);go()}
+  else if(playlist.length){setTab(playlist===favs?'fav':'all');render(playlist);go()}
+};
+try{const m=localStorage.getItem('endMode');if(m)$('endMode').value=m;const n=localStorage.getItem('repN');if(n)$('repN').value=n}catch{}
+const showRep=()=>$('repN').style.display=$('endMode').value==='n'?'':'none';showRep();
+$('endMode').onchange=()=>{showRep();repLeft=0;try{localStorage.setItem('endMode',$('endMode').value)}catch{}};
+$('repN').onchange=()=>{repLeft=0;try{localStorage.setItem('repN',$('repN').value)}catch{}};
+function onEnd(el){
+  const m=$('endMode').value,i=curIdx();
+  if(m==='stop'){$('status').textContent='خلصت ⏹';return}
+  if(m==='inf'){el.currentTime=0;el.play();return}
+  if(m==='n'){if(repLeft===0)repLeft=Math.max(1,+$('repN').value);repLeft--;
+    if(repLeft>0){el.currentTime=0;el.play();$('status').textContent=`تكرار — باقي ${repLeft}`;return}
+    $('status').textContent='خلص التكرار ⏹';return}
+  if(i>=0&&i<playlist.length-1){playAt(i+1);return}
+  if(m==='all'&&playlist.length){playAt(0);return}
+  $('status').textContent='خلصت القائمة';
+}
+au.addEventListener('ended',()=>onEnd(au));
+$('vid').addEventListener('ended',()=>onEnd($('vid')));
+
+
+$('now').onclick=()=>$('locB').click();
+$('upB').onclick=async()=>{
+  if(!current)return;
+  if(String(current.stationuuid).startsWith('ia:')&&playCtx){
+    setTab('arc');
+    if(!arcState.docs.length||arcState.mode!=='search')await arcSearch();
+    const el=[...$('list').querySelectorAll('.st[data-id]')].find(e=>e.dataset.id===playCtx.id);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('playing')}
+    else $('status').textContent='المجموعة مش ضمن نتايج البحث الحالية';
+  }else{setTab(playlist===favs?'fav':'all');render(playlist.length?playlist:results);$('locB').click()}
+};
+
+/* ===== شريط التقديم للأرشيف ===== */
+const fmt=t=>{t=Math.floor(t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),x=String(t%60).padStart(2,'0');return h?`${h}:${String(m).padStart(2,'0')}:${x}`:`${m}:${x}`};
+let seeking=false;
+const upd=()=>{const ok=isFinite(au.duration)&&au.duration>0;$('seekBox').style.display=ok?'flex':'none';if(!ok)return;
+  $('seek').max=Math.floor(au.duration);$('tDur').textContent=fmt(au.duration);
+  if(!seeking){$('seek').value=Math.floor(au.currentTime);$('tCur').textContent=fmt(au.currentTime)}};
+au.addEventListener('loadedmetadata',upd);au.addEventListener('durationchange',upd);au.addEventListener('timeupdate',upd);au.addEventListener('emptied',upd);
+$('seek').oninput=e=>{seeking=true;$('tCur').textContent=fmt(e.target.value)};
+$('seek').onchange=e=>{au.currentTime=+e.target.value;seeking=false};
+$('back30').onclick=()=>au.currentTime=Math.max(0,au.currentTime-30);
+$('fwd30').onclick=()=>au.currentTime=Math.min(au.duration,au.currentTime+30);
+
+$('byMe').onclick=()=>$('aboutBox').style.display='flex';
+$('aboutClose').onclick=()=>$('aboutBox').style.display='none';
+$('aboutBox').onclick=e=>{if(e.target.id==='aboutBox')e.target.style.display='none'};
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(/Android|iPhone|iPad/i.test(navigator.userAgent))$('rec').style.display='none';
+(async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';search()})();
+</script>
+</body>
+</html>
