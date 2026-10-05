@@ -741,13 +741,19 @@ if('mediaSession'in navigator){const ms=navigator.mediaSession,h=(a,f)=>{try{ms.
   $('topBar').appendChild(b)})();
 
 // --- زرار الخروج ---
-(function(){const b=document.createElement('button');b.id='exitB';b.title='خروج';b.textContent='⏻';b.style.cssText='background:#b91c1c;flex:0 0 auto';
+(function(){const b=document.createElement('button');b.id='exitB';b.textContent='خروج';b.style.cssText='background:#b91c1c;flex:0 0 auto;font-weight:bold';
   $('topBar').appendChild(b);
-  b.onclick=()=>{if(!confirm('تقفل البرنامج؟'))return;
+  const dlg=document.createElement('div');dlg.id='exitDlg';
+  dlg.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;align-items:center;justify-content:center';
+  dlg.innerHTML='<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(300px,85vw);text-align:center;color:var(--txt)"><b style="font-size:18px">خروج؟</b><div style="display:flex;gap:10px;margin-top:18px"><button id="exitYes" style="flex:1;background:#b91c1c;padding:10px">خروج</button><button id="exitNo" style="flex:1;background:var(--btn2);padding:10px">إلغاء</button></div></div>';
+  document.body.appendChild(dlg);
+  b.onclick=()=>dlg.style.display='flex';
+  $('exitNo').onclick=()=>dlg.style.display='none';
+  dlg.onclick=e=>{if(e.target===dlg)dlg.style.display='none'};
+  $('exitYes').onclick=()=>{
     try{au.pause();au.removeAttribute('src');au.load();$('vid').pause()}catch{}sleepAt=0;
-    document.body.classList.remove('sideOpen');
     window.close();
-    setTimeout(()=>{document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:14px;text-align:center;padding:20px"><div style="font-size:48px">📻</div><b style="font-size:20px">اتقفل البرنامج</b><div style="color:#94a3b8">اضغط زرار الرجوع في الموبايل للخروج،<br>أو اسحب البرنامج من قائمة التطبيقات المفتوحة</div><button onclick="location.reload()" style="background:#0F766E;padding:10px 20px">▶ افتح تاني</button></div>';
+    setTimeout(()=>{document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px"><div style="font-size:44px">📻</div><b style="font-size:20px">تم الخروج</b><button onclick="location.reload()" style="background:#0F766E;padding:10px 24px">فتح</button></div>';
       try{history.replaceState(null,'')}catch{}},300)}})();
 
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
