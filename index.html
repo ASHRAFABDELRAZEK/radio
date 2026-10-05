@@ -38,18 +38,103 @@ button{cursor:pointer;background:var(--acc);border:none}
 @keyframes wave{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) scale(1.1)}}
 @media (max-width:600px){header{padding:10px}header input,header select{flex:1 1 45%}#player{gap:6px}#now{flex-basis:100%;order:-1}#vol{display:none}h1{font-size:17px}}
 @media (prefers-reduced-motion:reduce){#byMe,.byAnim,.radioIcon{animation:none}}
+
+#moreB{display:none}
+html,body{overflow-x:hidden;max-width:100%}
+#list{grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr))!important}
+@media (max-width:700px){
+  header{position:static;padding:10px 12px;gap:6px}
+  header h1{flex-basis:100%;margin:0}
+  header input,header select{flex:1 1 40%;min-width:0}
+  header button{flex:1 1 auto}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}.tabs button{flex:1 1 auto}
+  #masp{flex-wrap:nowrap!important;overflow-x:auto;padding:8px 12px!important}#masp b{white-space:nowrap}#masp button{white-space:nowrap;flex:none}
+  #arcBar,#selBar{padding:8px 12px!important}
+  #arcBar input,#arcBar select{flex:1 1 100%;min-width:0;max-width:100%}
+  #arcBar #ago{flex:1 1 100%}
+  #chips{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;flex-basis:100%}#chips button{white-space:nowrap;flex:none}
+  #selBar button{flex:1 1 45%}
+  #list{padding:10px 12px 230px!important;gap:8px}
+  .st{padding:8px}
+  #player{padding:8px 10px;gap:6px;justify-content:space-between}
+  #player button,#player select{padding:7px 9px}
+  #now{flex:1 1 100%!important;order:-3;font-size:14px;white-space:normal!important}
+  #status{order:-2;flex:1 1 100%;font-size:12px}
+  #seekBox{order:-1;flex:1 1 100%!important;min-width:0!important}
+  #seekBox input{min-width:0}
+  #vol{display:none}
+  .lbl{display:none}
+  #moreB{display:inline-block}
+  #player .xtra{display:none!important}
+  #player.open .xtra{display:inline-block!important;flex:1 1 45%}
+  #player.open #repN{flex:0 0 70px}
+  h1{font-size:17px}
+}
+
+#fltB,#fmtB,.sh2{display:none}
+#filters,#fmts{display:contents}
+@media (max-width:700px){
+  header h1{flex:1 1 auto!important}
+  #fltB{display:inline-block;flex:0 0 auto!important;align-self:center}
+  #filters{display:none;flex-wrap:wrap;gap:6px;flex-basis:100%}
+  header.fopen #filters{display:flex}
+  #filters input,#filters select{flex:1 1 45%;min-width:0}
+  #filters button{flex:1 1 45%}
+  .lbl2{display:none}.sh2{display:inline}
+  .tabs button{padding:8px 6px;font-size:14px}
+  #fmtB{display:inline-block;flex:1 1 100%}
+  #fmts{display:none}
+  #arcBar.fopen #fmts{display:flex;flex-direction:column;gap:6px;flex-basis:100%}
+  #player.open .xtra[style*="display: none"],#player.open .xtra[style*="display:none"]{display:none!important}
+}
+
+/* ===== القائمة الجانبية ===== */
+#side{position:fixed;top:0;right:0;bottom:0;width:300px;background:#0b1220;border-left:1px solid #2c3a5c;overflow-y:auto;z-index:15;padding:10px 10px 120px}
+#side .sTitle{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 12px;border-bottom:1px solid #2c3a5c;margin-bottom:8px}
+#side details{border:1px solid #2c3a5c;border-radius:10px;margin-bottom:8px;background:#111a2e;overflow:hidden}
+#side summary{cursor:pointer;padding:10px 12px;font-weight:bold;list-style:none;display:flex;justify-content:space-between}
+#side summary::after{content:'▾';color:var(--mut)}#side details:not([open]) summary::after{content:'◂'}
+#side .sBody{padding:4px 10px 10px;display:flex;flex-direction:column;gap:6px}
+#side .sBody>*{width:100%}
+#side .nav button{text-align:right;background:var(--card)}#side .nav button.on{background:var(--acc)}
+#side #masp,#side #arcBar{display:flex!important;flex-direction:column;align-items:stretch!important;background:none!important;padding:0!important;gap:6px}
+#side #masp b{display:none}
+#side #masp button,#side #arcBar button{text-align:right}
+#side #fmts{display:flex!important;flex-direction:column;gap:6px}
+#side #chips{display:flex;flex-wrap:wrap;gap:4px}#side #chips button{margin:0!important;flex:1 1 45%}
+#side .xtra{display:block!important;width:100%}
+#side #repN[style*="display: none"],#side #repN[style*="display:none"]{display:none!important}
+#side #fltB,#side #fmtB{display:none!important}
+#side #filters{display:flex!important;flex-direction:column;gap:6px}
+body.hasSide>header,body.hasSide>#list,body.hasSide>#selBar,body.hasSide>#player{margin-right:300px}
+body.hasSide>#player{right:300px;margin-right:0}
+#topBar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#0b1220;position:sticky;top:0;z-index:5}
+#menuB,#sideClose{display:none;background:#334155}
+#viewTitle{font-weight:bold}
+#moreB{display:none!important}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:14}
+@media (max-width:900px){
+  #side{transform:translateX(100%);transition:transform .25s;width:min(320px,86vw)}
+  body.sideOpen #side{transform:none}body.sideOpen #overlay{display:block}
+  body.hasSide>header,body.hasSide>#list,body.hasSide>#selBar{margin-right:0}
+  body.hasSide>#player{right:0}
+  #menuB,#sideClose{display:inline-block}
+}
 </style>
 </head>
 <body>
 <header>
   <h1><span class="radioIcon">📻</span> راديو العالم <small id="byMe" style="font-size:12px;font-weight:normal;color:#fbbf24;cursor:pointer;display:block">إعداد: ASHRAF FATHY</small></h1>
+  <button id="fltB" style="background:#334155">🔍 بحث وفلاتر</button>
+  <span id="filters">
   <input id="q" placeholder="اسم المحطة...">
   <select id="country"><option value="">كل الدول</option></select>
   <select id="lang"><option value="">كل اللغات</option><option value="arabic">عربي</option><option value="english">English</option><option value="french">Français</option><option value="spanish">Español</option><option value="german">Deutsch</option><option value="turkish">Türkçe</option><option value="urdu">اردو</option></select>
   <select id="tag"><option value="">كل الأنواع</option><option value="news">أخبار</option><option value="quran">قرآن</option><option value="music">موسيقى</option><option value="pop">Pop</option><option value="classical">كلاسيك</option><option value="jazz">Jazz</option><option value="sports">رياضة</option><option value="talk">حوارات</option></select>
   <button id="go">بحث</button>
   <button id="eg" style="background:#b91c1c">🇪🇬 محطات مصر</button>
-  <span class="tabs"><button id="tAll" class="on">المحطات</button><button id="tFav">⭐ المفضلة</button><button id="tArc">🎭 أرشيف المسرحيات والسهرات</button></span>
+  </span>
+  <span class="tabs"><button id="tAll" class="on">📻 المحطات</button><button id="tFav">⭐ المفضلة</button><button id="tArc">🎭 <span class="lbl2">أرشيف المسرحيات والسهرات</span><span class="sh2">الأرشيف</span></button></span>
 </header>
 <div id="masp" style="padding:10px 16px;background:#1e293b;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
   <b style="margin-left:6px">📡 إذاعات ماسبيرو الرسمية:</b>
@@ -58,9 +143,10 @@ button{cursor:pointer;background:var(--acc);border:none}
 <div id="arcBar" style="display:none;padding:10px 16px;background:#3b2a1a;gap:6px;flex-wrap:wrap;align-items:center">
   <input id="aq" placeholder="ابحث: اسم مسرحية، ممثل، مسلسل...">
   <button id="ago">بحث في الأرشيف</button>
-  <select id="amt" title="النوع"><option value="audio">🎧 صوت</option><option value="movies">🎬 فيديو</option><option value="both">الكل</option></select>
+  <button id="fmtB" style="background:#6b4423">⚙️ النوع والصيغة</button>
+  <span id="fmts"><select id="amt" title="النوع"><option value="audio">🎧 صوت</option><option value="movies">🎬 فيديو</option><option value="both">الكل</option></select>
   <select id="afmt" title="صيغة الصوت"></select>
-  <select id="vfmt" title="صيغة الفيديو"></select>
+  <select id="vfmt" title="صيغة الفيديو"></select></span>
   <span id="chips"></span>
 </div>
 <div id="selBar" style="display:none;padding:8px 16px;background:#14532d;gap:8px;flex-wrap:wrap;align-items:center">
@@ -83,15 +169,16 @@ button{cursor:pointer;background:var(--acc);border:none}
   </span>
   <button id="prevB" title="السابق" style="background:#334155">⏮</button>
   <button id="nextB" title="التالي" style="background:#334155">⏭</button>
-  <button id="locB" title="روح لمكانه في القائمة" style="background:#334155">📍 مكانه</button>
-  <button id="upB" title="القائمة الرئيسية اللي فيها المجموعة" style="background:#334155">📂 قائمته الرئيسية</button>
-  <select id="endMode" title="بعد ما الحلقة تخلص"><option value="next">▶ التالي تلقائي</option><option value="stop">⏹ إيقاف بعد النهاية</option><option value="n">🔁 تكرار عدد مرات</option><option value="inf">♾ تكرار بلا حدود</option><option value="all">🔂 تكرار القائمة كلها</option></select>
-  <input type="number" id="repN" min="1" value="2" title="عدد مرات التكرار" style="width:60px;display:none">
+  <button id="locB" title="روح لمكانه في القائمة" style="background:#334155">📍<span class="lbl"> مكانه</span></button>
+  <button id="upB" class="xtra" title="القائمة الرئيسية اللي فيها المجموعة" style="background:#334155">📂 قائمته الرئيسية</button>
+  <select id="endMode" class="xtra" title="بعد ما الحلقة تخلص"><option value="next">▶ التالي تلقائي</option><option value="stop">⏹ إيقاف بعد النهاية</option><option value="n">🔁 تكرار عدد مرات</option><option value="inf">♾ تكرار بلا حدود</option><option value="all">🔂 تكرار القائمة كلها</option></select>
+  <input type="number" id="repN" min="1" value="2" title="عدد مرات التكرار" class="xtra" style="width:60px;display:none">
   <div id="now" title="اضغط للذهاب لمكانه في القائمة" style="cursor:pointer;text-decoration:underline dotted">اختر محطة للاستماع</div>
   <span id="status"></span>
-  <button id="rec" title="تسجيل">⏺ تسجيل</button>
-  <select id="sleep" title="مؤقت النوم"><option value="0">⏲ مؤقت النوم</option><option value="15">15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="120">ساعتين</option></select>
-  <button id="alarmBtn" title="منبّه">⏰ منبّه</button>
+  <button id="moreB" title="خيارات أكتر" style="background:#334155">⚙️ خيارات</button>
+  <button id="rec" class="xtra" title="تسجيل">⏺ تسجيل</button>
+  <select id="sleep" class="xtra" title="مؤقت النوم"><option value="0">⏲ مؤقت النوم</option><option value="15">15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="120">ساعتين</option></select>
+  <button id="alarmBtn" class="xtra" title="منبّه">⏰ منبّه</button>
   <input type="range" id="vol" min="0" max="1" step="0.05" value="0.8" style="width:110px">
 </div>
 <audio id="au"></audio>
@@ -261,7 +348,7 @@ const chips=['مسرحية إذاعية','سهرة إذاعية','مسلسل إ�
 $('chips').innerHTML=chips.map(c=>`<button data-c="${c}" style="background:#6b4423;margin:2px">${c}</button>`).join('');
 $('chips').onclick=e=>{const b=e.target.closest('[data-c]');if(b){$('aq').value=b.dataset.c;arcSearch()}};
 $('ago').onclick=()=>arcSearch();$('aq').onkeydown=e=>e.key==='Enter'&&arcSearch();
-function setTab(t){view=t;['tAll','tFav','tArc'].forEach(x=>$(x).classList.toggle('on',x==={all:'tAll',fav:'tFav',arc:'tArc'}[t]));$('arcBar').style.display=t==='arc'?'flex':'none';if(t!=='arc')$('selBar').style.display='none'}
+function setTab(t){view=t;const T={all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف المسرحيات والسهرات'};if($('viewTitle'))$('viewTitle').textContent=T[t];['tAll','tFav','tArc'].forEach(x=>$(x).classList.toggle('on',x==={all:'tAll',fav:'tFav',arc:'tArc'}[t]));if(t!=='arc')$('selBar').style.display='none'}
 $('tArc').onclick=()=>{setTab('arc');if(!$('aq').value)$('aq').value='مسرحية إذاعية';arcSearch()};
 
 let arcState={mode:'search',docs:[],items:[],id:null,title:''};
@@ -274,6 +361,7 @@ function updSel(){
 $('selAll').onchange=e=>{$('list').querySelectorAll('.sel').forEach(b=>b.checked=e.target.checked);updSel()};
 
 async function arcSearch(){
+  setTab('arc');
   const q=$('aq').value.trim();if(!q)return;
   arcState={mode:'search',docs:[],items:[],id:null,title:''};
   $('selBar').style.display='flex';$('list').innerHTML='<p>جاري البحث في الأرشيف...</p>';
@@ -457,6 +545,39 @@ $('aboutClose').onclick=()=>$('aboutBox').style.display='none';
 $('aboutBox').onclick=e=>{if(e.target.id==='aboutBox')e.target.style.display='none'};
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 if(/Android|iPhone|iPad/i.test(navigator.userAgent))$('rec').style.display='none';
+$('fltB').onclick=()=>{const h=document.querySelector('header');h.classList.toggle('fopen');$('fltB').textContent=h.classList.contains('fopen')?'✕ إخفاء البحث':'🔍 بحث وفلاتر'};
+$('fmtB').onclick=()=>{$('arcBar').classList.toggle('fopen')};
+$('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textContent=$('player').classList.contains('open')?'✕ إغلاق':'⚙️ خيارات'};
+
+/* ===== بناء القائمة الجانبية ===== */
+(function(){
+  const side=document.createElement('aside');side.id='side';
+  const sec=(title,open,...els)=>{const d=document.createElement('details');if(open)d.open=true;d.innerHTML=`<summary>${title}</summary><div class="sBody"></div>`;const b=d.querySelector('.sBody');els.forEach(e=>e&&b.appendChild(e));side.appendChild(d);return d};
+  const hdr=document.querySelector('header');
+  side.innerHTML=`<div class="sTitle"><div>${hdr.querySelector('h1').outerHTML}</div><button id="sideClose">✕</button></div>`;
+  hdr.querySelector('h1').remove();
+  const nav=document.createElement('div');nav.className='nav';nav.style.cssText='display:flex;flex-direction:column;gap:6px';
+  ['tAll','tFav','tArc'].forEach(id=>nav.appendChild($(id)));
+  sec('📂 الأقسام',true,nav);
+  sec('🔍 بحث المحطات',false,$('filters'));
+  sec('📡 إذاعات ماسبيرو الرسمية',false,$('masp'));
+  sec('🎭 بحث الأرشيف والصيغ',false,$('arcBar'));
+  const play=document.createElement('div');play.style.cssText='display:flex;flex-direction:column;gap:6px';
+  ['upB','endMode','repN','sleep','alarmBtn','rec'].forEach(id=>$(id)&&play.appendChild($(id)));
+  sec('⚙️ التشغيل والتكرار والمنبّه',false,play);
+  document.body.appendChild(side);
+  const ov=document.createElement('div');ov.id='overlay';document.body.appendChild(ov);
+  hdr.innerHTML='';hdr.id='topBar';hdr.innerHTML='<button id="menuB">☰ القائمة</button><span id="viewTitle">📻 المحطات</span>';
+  document.body.classList.add('hasSide');
+  const close=()=>document.body.classList.remove('sideOpen');
+  $('menuB').onclick=()=>document.body.classList.add('sideOpen');
+  $('sideClose').onclick=close;ov.onclick=close;
+  side.addEventListener('click',e=>{if(innerWidth<=900&&e.target.closest('.nav button,#masp [data-m],#chips [data-c],#ago,#go,#eg'))close()});
+  if($('byMe'))$('byMe').onclick=()=>$('aboutBox').style.display='flex';
+  // اسم البرنامج في العنوان الثابت
+  $('alarmBox').style.zIndex=31;
+})();
+
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';search()})();
 </script>
 </body>
