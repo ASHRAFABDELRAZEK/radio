@@ -359,6 +359,7 @@ setInterval(()=>{if(!alarm)return;const d=new Date(),hm=d.toTimeString().slice(0
 $('eg').onclick=()=>{$('q').value='';$('lang').value='';$('tag').value='';$('country').value='EG';search()};
 const DM={7:'x84wyku',8:'x8n6dpk',9:'x8n6dqq',10:'x8n6dt3',11:'x8n6dzo',12:'x8n6eci',13:'x8n6dyz',14:'x8n6ebs',15:'x8n6e96',16:'x8n6drt',18:'x8n6e6w'};
 function maspPlay(n,name){
+  if(n===7){const q={stationuuid:'quran-cairo',name:'إذاعة القرآن الكريم (القاهرة)',country:'Egypt',tags:'قرآن',favicon:'',url_resolved:'https://radio.xecod.com/station/quran-cairo'};playlist=[q];play(q);return}
   au.pause();try{$('vid').pause()}catch{}
   window.open('https://www.maspero.eg/stream/'+n,'_blank');
   $('now').textContent='📡 '+name+' (اتفتحت في صفحة ماسبيرو)';
@@ -688,8 +689,9 @@ function showHome(){
    tile('📡','إذاعات ماسبيرو','البرنامج العام، صوت العرب...','masp')+
    tile('🎭','أرشيف المسرحيات','مسرحيات وسهرات ومسلسلات','arc')+
    tile('🌍','كل المحطات','بحث بالدولة واللغة','all')+
-   (recent.length?`<div class="secT">🕘 سمعتهم مؤخراً</div>`+recent.slice(0,6).map((r,i)=>`<div class="st" data-ri="${i}" data-u="${esc(r.stationuuid)}"><div style="font-size:24px">${String(r.stationuuid).startsWith('ia:')?(r.video?'🎬':'🎭'):'📻'}</div><div class="i"><div class="n">${esc(r.name)}</div><div class="m">${esc(r.country||'')}</div></div></div>`).join(''):'');
+   (recent.length?`<div class="secT" style="display:flex;justify-content:space-between;align-items:center">🕘 سمعتهم مؤخراً <button class="clrRec" style="background:var(--btn2);font-size:13px;padding:5px 12px">🗑 مسح السجل</button></div>`+recent.slice(0,6).map((r,i)=>`<div class="st" data-ri="${i}" data-u="${esc(r.stationuuid)}"><div style="font-size:24px">${String(r.stationuuid).startsWith('ia:')?(r.video?'🎬':'🎭'):'📻'}</div><div class="i"><div class="n">${esc(r.name)}</div><div class="m">${esc(r.country||'')}</div></div></div>`).join(''):'');
   $('list').onclick=e=>{
+    if(e.target.closest('.clrRec')){askClear();return}
     const r=e.target.closest('[data-ri]');if(r){playlist=recent;playMedia(recent[r.dataset.ri]);return}
     const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;navPush();
     if(a==='resume')resume();
@@ -776,6 +778,24 @@ if('mediaSession'in navigator){const ms=navigator.mediaSession,h=(a,f)=>{try{ms.
     window.close();
     setTimeout(()=>{document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px"><div style="font-size:44px">📻</div><b style="font-size:20px">تم الخروج</b><button onclick="location.reload()" style="background:#0F766E;padding:10px 24px">فتح</button></div>';
       try{history.replaceState(null,'')}catch{}},300)}})();
+
+// --- مسح سجل «آخر ما سمعته» ---
+function askClear(){
+  let d=$('clrDlg');
+  if(!d){d=document.createElement('div');d.id='clrDlg';d.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;align-items:center;justify-content:center';
+    d.innerHTML='<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(300px,85vw);text-align:center;color:var(--txt)"><b style="font-size:17px">مسح السجل؟</b><div style="display:flex;gap:10px;margin-top:18px"><button id="clrYes" style="flex:1;background:#b91c1c;padding:10px">مسح</button><button id="clrNo" style="flex:1;background:var(--btn2);padding:10px">إلغاء</button></div></div>';
+    document.body.appendChild(d);
+    $('clrNo').onclick=()=>d.style.display='none';d.onclick=e=>{if(e.target===d)d.style.display='none'};
+    $('clrYes').onclick=()=>{recent=[];ls.set('radioRecent',recent);ls.set('radioLast',null);d.style.display='none';$('status').textContent='اتمسح السجل ✔';view==='rec'?render(recent):showHome()}}
+  d.style.display='flex';
+}
+(function(){const _r=render;render=function(arr){_r(arr);
+  if(view==='rec'&&arr===recent){
+    if(arr.length)$('list').insertAdjacentHTML('afterbegin','<div style="grid-column:1/-1;display:flex;justify-content:flex-end"><button class="clrRec" style="background:#b91c1c;padding:7px 14px">🗑 مسح السجل كله</button></div>');
+    $('list').querySelectorAll('.st[data-i]').forEach(el=>el.insertAdjacentHTML('beforeend',`<button class="rmRec" data-rm="${el.dataset.i}" title="شيل من السجل" style="background:var(--btn2);padding:4px 9px">✕</button>`))}}})();
+$('list').addEventListener('click',e=>{
+  if(view==='rec'&&e.target.closest('.clrRec')){e.stopPropagation();askClear();return}
+  const b=e.target.closest('.rmRec');if(!b)return;e.stopPropagation();recent.splice(+b.dataset.rm,1);ls.set('radioRecent',recent);render(recent)},true);
 
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
 </script>
