@@ -120,6 +120,7 @@ body.hasSide>#player{right:300px;margin-right:0}
   body.hasSide>#player{right:0}
   #menuB,#sideClose{display:inline-block}
 }
+@media (max-width:900px){#sleep{flex:0 0 auto;max-width:120px;padding:7px 6px}}
 </style>
 </head>
 <body>
@@ -159,7 +160,7 @@ body.hasSide>#player{right:300px;margin-right:0}
 </div>
 <div id="list"></div>
 <div id="player">
-  <button id="pp">⏸</button>
+  <button id="pp">▶</button>
   <span id="seekBox" style="display:none;align-items:center;gap:6px;flex:2;min-width:220px">
     <button id="back30" title="رجوع 30 ثانية" style="background:#334155">−30 ث</button>
     <span id="tCur" style="font-size:13px">0:00</span>
@@ -177,7 +178,7 @@ body.hasSide>#player{right:300px;margin-right:0}
   <span id="status"></span>
   <button id="moreB" title="خيارات أكتر" style="background:#334155">⚙️ خيارات</button>
   <button id="rec" class="xtra" title="تسجيل">⏺ تسجيل</button>
-  <select id="sleep" class="xtra" title="مؤقت النوم"><option value="0">⏲ مؤقت النوم</option><option value="15">15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="120">ساعتين</option></select>
+  <select id="sleep" title="مؤقت النوم"><option value="0">⏲ مؤقت</option><option value="5">5 دقايق</option><option value="15">15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="90">ساعة ونص</option><option value="120">ساعتين</option><option value="-1">✕ إلغاء المؤقت</option></select>
   <button id="alarmBtn" class="xtra" title="منبّه">⏰ منبّه</button>
   <input type="range" id="vol" min="0" max="1" step="0.05" value="0.8" style="width:110px">
 </div>
@@ -233,7 +234,7 @@ function render(arr){
   if(!arr.length){$('list').innerHTML='<p>لا توجد محطات.</p>';return}
   $('list').innerHTML=arr.map((s,i)=>`<div class="st ${current&&current.stationuuid===s.stationuuid?'playing':''}" data-i="${i}" data-u="${esc(s.stationuuid)}">
     <img src="${esc(s.favicon)}" onerror="this.style.visibility='hidden'">
-    <div class="i"><div class="n">${esc(s.name)}</div><div class="m">${esc(s.country)} · ${esc(s.tags).slice(0,40)} ${s.bitrate?'· '+s.bitrate+'kbps':''}</div></div>
+    <div class="i"><div class="n">${esc(s.name)}</div><div class="m">${[esc(s.country),esc(s.tags).slice(0,40),s.bitrate?s.bitrate+'kbps':''].filter(Boolean).join(' · ')}</div></div>
     <button class="fav" data-f="${i}">${favs.some(f=>f.stationuuid===s.stationuuid)?'★':'☆'}</button></div>`).join('');
   $('list').onclick=e=>{
     const f=e.target.closest('[data-f]');if(f){toggleFav(arr[f.dataset.f]);e.stopPropagation();return}
@@ -289,10 +290,20 @@ $('rec').onclick=async()=>{
   }
 };
 /* ===== مؤقت النوم ===== */
-let sleepT=null;
-$('sleep').onchange=e=>{clearTimeout(sleepT);const m=+e.target.value;if(!m)return;
-  sleepT=setTimeout(()=>{au.pause();if(recCtl)recCtl.abort();$('sleep').value='0';$('status').textContent='تم الإيقاف بمؤقت النوم'},m*60000);
-  $('status').textContent=`هيقفل بعد ${m} دقيقة`};
+let sleepAt=0;
+const sleepOpt0=$('sleep').options[0];
+function sleepTick(){
+  if(!sleepAt)return;const left=sleepAt-Date.now();
+  if(left<=0){sleepAt=0;au.pause();try{$('vid').pause()}catch{}if(recCtl)recCtl.abort();$('sleep').value='0';sleepOpt0.textContent='⏲ مؤقت';$('status').textContent='تم الإيقاف بمؤقت النوم 🌙';return}
+  const m=Math.floor(left/60000),x=String(Math.floor(left%60000/1000)).padStart(2,'0');
+  sleepOpt0.textContent=`⏲ ${m}:${x}`;$('sleep').value='0';
+}
+$('sleep').onchange=e=>{const m=+e.target.value;
+  if(m===-1){sleepAt=0;sleepOpt0.textContent='⏲ مؤقت';$('sleep').value='0';$('status').textContent='اتلغى مؤقت النوم';return}
+  if(!m)return;sleepAt=Date.now()+m*60000;$('status').textContent=`هيقفل بعد ${m} دقيقة`;sleepTick()};
+setInterval(sleepTick,1000);
+au.addEventListener('timeupdate',sleepTick);
+document.addEventListener('visibilitychange',sleepTick);
 /* ===== منبّه ===== */
 let alarm=ls.get('radioAlarm',null);
 const showAlarm=()=>$('alarmInfo').textContent=alarm?`مفعّل ${alarm.time} على: ${alarm.st.name}`:'غير مفعّل';
@@ -563,7 +574,7 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
   sec('📡 إذاعات ماسبيرو الرسمية',false,$('masp'));
   sec('🎭 بحث الأرشيف والصيغ',false,$('arcBar'));
   const play=document.createElement('div');play.style.cssText='display:flex;flex-direction:column;gap:6px';
-  ['upB','endMode','repN','sleep','alarmBtn','rec'].forEach(id=>$(id)&&play.appendChild($(id)));
+  ['upB','endMode','repN','alarmBtn','rec'].forEach(id=>$(id)&&play.appendChild($(id)));
   sec('⚙️ التشغيل والتكرار والمنبّه',false,play);
   document.body.appendChild(side);
   const ov=document.createElement('div');ov.id='overlay';document.body.appendChild(ov);
