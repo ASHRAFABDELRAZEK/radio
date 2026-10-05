@@ -155,9 +155,9 @@ button{color:#fff}
 #maspZ{position:absolute;top:2px;right:2px;padding:0 5px!important;font-size:11px;line-height:16px;background:var(--btn2);border-radius:6px;z-index:2}
 #maspBox.big #maspZ{top:6px;right:6px;font-size:14px;padding:2px 8px!important}
 #maspName{display:none}
-#maspBox.big{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90vw,640px);height:auto;aspect-ratio:16/9;z-index:45;box-shadow:0 0 0 100vmax rgba(0,0,0,.6)}
+#maspBox.big{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(94vw,720px);height:min(80vh,620px);z-index:45;box-shadow:0 0 0 100vmax rgba(0,0,0,.6)}
 #maspBox.big iframe{width:100%;left:0;transform:none}
-#maspBox.big #maspTap{inset:0 0 auto 0;height:36px;cursor:zoom-out;background:linear-gradient(rgba(0,0,0,.5),transparent)}
+#maspBox.big #maspTap{display:none}
 #maspBox.big #maspX{top:6px;left:6px;font-size:14px;padding:2px 8px!important}
 @media (max-width:700px){#topBar{gap:6px;flex-wrap:nowrap}#topBar button{padding:8px 10px;flex:0 0 auto}#viewTitle{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}}
 </style>
@@ -360,19 +360,11 @@ $('eg').onclick=()=>{$('q').value='';$('lang').value='';$('tag').value='';$('cou
 const DM={7:'x84wyku',8:'x8n6dpk',9:'x8n6dqq',10:'x8n6dt3',11:'x8n6dzo',12:'x8n6eci',13:'x8n6dyz',14:'x8n6ebs',15:'x8n6e96',16:'x8n6drt',18:'x8n6e6w'};
 function maspPlay(n,name){
   au.pause();try{$('vid').pause()}catch{}
-  let box=$('maspBox');
-  if(!box){box=document.createElement('div');box.id='maspBox';box.title='اضغط للتكبير';
-    box.innerHTML='<iframe id="maspFrame" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><div id="maspTap"></div><button id="maspX" title="قفل">✕</button><button id="maspZ" title="تكبير">⤢</button><b id="maspName"></b>';
-    $('player').insertBefore(box,$('now'));
-    $('maspX').onclick=e=>{e.stopPropagation();maspStop();$('now').textContent='اختر محطة للاستماع'};
-    const tg=e=>{e&&e.stopPropagation();box.classList.toggle('big');$('maspZ').textContent=box.classList.contains('big')?'⤡':'⤢';$('maspZ').title=box.classList.contains('big')?'تصغير':'تكبير'};$('maspTap').onclick=tg;$('maspZ').onclick=tg}
-  box.style.display='block';box.classList.remove('big');$('maspZ').textContent='⤢';
-  $('maspName').textContent='📡 '+name;
-  $('maspFrame').src='https://www.dailymotion.com/embed/video/'+DM[n]+'?autoplay=1&ui-logo=0&queue-enable=0&sharing-enable=0';
-  $('now').textContent='📡 '+name+' (بث ماسبيرو)';
+  window.open('https://www.maspero.eg/stream/'+n,'_blank');
+  $('now').textContent='📡 '+name+' (اتفتحت في صفحة ماسبيرو)';
   current={stationuuid:'masp:'+n,name,country:'ماسبيرو',tags:'',url_resolved:'',masp:n};addRecent&&addRecent(current);
 }
-window.maspStop=()=>{const f=$('maspFrame');if(f){f.src='about:blank';$('maspBox').style.display='none';$('maspBox').classList.remove('big')}};
+window.maspStop=()=>{return;const f=$('maspFrame');if(f){f.src='about:blank';$('maspBox').style.display='none';$('maspBox').classList.remove('big')}};
 $('masp').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;maspPlay(+b.dataset.m,b.textContent)};
 
 /* ===== أرشيف المسرحيات والسهرات (Internet Archive) ===== */
