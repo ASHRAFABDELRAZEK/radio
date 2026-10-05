@@ -697,9 +697,10 @@ function showHome(){
    tile('📡','إذاعات ماسبيرو','البرنامج العام، صوت العرب...','masp')+
    tile('🎭','أرشيف المسرحيات','مسرحيات وسهرات ومسلسلات','arc')+
    tile('🌍','كل المحطات','بحث بالدولة واللغة','all')+
-   (recent.length?`<div class="secT" style="display:flex;justify-content:space-between;align-items:center">🕘 سمعتهم مؤخراً <button class="clrRec" style="background:var(--btn2);font-size:13px;padding:5px 12px">🗑 مسح السجل</button></div>`+recent.slice(0,6).map((r,i)=>`<div class="st" data-ri="${i}" data-u="${esc(r.stationuuid)}"><div style="font-size:24px">${String(r.stationuuid).startsWith('ia:')?(r.video?'🎬':'🎭'):'📻'}</div><div class="i"><div class="n">${esc(r.name)}</div><div class="m">${esc(r.country||'')}</div></div></div>`).join(''):'');
+   (recent.length?`<div class="secT" style="display:flex;justify-content:space-between;align-items:center">🕘 سمعتهم مؤخراً <button class="clrRec" style="background:var(--btn2);font-size:13px;padding:5px 12px">🗑 مسح السجل</button></div>`+recent.slice(0,6).map((r,i)=>`<div class="st" data-ri="${i}" data-u="${esc(r.stationuuid)}"><div style="font-size:24px">${String(r.stationuuid).startsWith('ia:')?(r.video?'🎬':'🎭'):'📻'}</div><div class="i"><div class="n">${esc(r.name)}</div><div class="m">${esc(r.country||'')}</div></div><button class="rmHome" data-rh="${i}" title="شيل من السجل" style="background:var(--btn2);padding:4px 9px">✕</button></div>`).join(''):'');
   $('list').onclick=e=>{
     if(e.target.closest('.clrRec')){askClear();return}
+    const rh=e.target.closest('.rmHome');if(rh){recent.splice(+rh.dataset.rh,1);ls.set('radioRecent',recent);showHome();return}
     const r=e.target.closest('[data-ri]');if(r){playlist=recent;playMedia(recent[r.dataset.ri]);return}
     const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;navPush();
     if(a==='resume')resume();
