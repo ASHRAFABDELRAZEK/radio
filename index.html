@@ -148,6 +148,12 @@ button{color:#fff}
 #topBar #themeB{flex:0 0 auto!important;width:auto}
 :root[data-theme=light] #byMe{background:linear-gradient(90deg,#9a7a10,#C9A227,#7a5f0a,#9a7a10);background-size:300% 100%;-webkit-background-clip:text;background-clip:text}
 :root[data-theme=light] #side h1{color:#112240}
+#maspBox{display:none;position:fixed;left:12px;bottom:100px;width:min(420px,calc(100vw - 24px));background:var(--card);border:1px solid var(--gold);border-radius:14px;z-index:25;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+#maspBox .mbHead{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;color:var(--txt)}
+#maspBox .mbHead button{padding:4px 10px;background:var(--btn2)}
+#maspBox .mbFrame{position:relative;padding-top:56.25%}#maspBox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#maspBox.mini .mbFrame{padding-top:0;height:0}
+@media (max-width:700px){#maspBox{bottom:140px}}
 </style>
 </head>
 <body>
@@ -321,7 +327,7 @@ let sleepAt=0;
 const sleepOpt0=$('sleep').options[0];
 function sleepTick(){
   if(!sleepAt)return;const left=sleepAt-Date.now();
-  if(left<=0){sleepAt=0;au.pause();try{$('vid').pause()}catch{}if(recCtl)recCtl.abort();$('sleep').value='0';sleepOpt0.textContent='⏲ مؤقت';$('status').textContent='تم الإيقاف بمؤقت النوم 🌙';return}
+  if(left<=0){sleepAt=0;au.pause();window.maspStop&&maspStop();try{$('vid').pause()}catch{}if(recCtl)recCtl.abort();$('sleep').value='0';sleepOpt0.textContent='⏲ مؤقت';$('status').textContent='تم الإيقاف بمؤقت النوم 🌙';return}
   const m=Math.floor(left/60000),x=String(Math.floor(left%60000/1000)).padStart(2,'0');
   sleepOpt0.textContent=`⏲ ${m}:${x}`;$('sleep').value='0';
 }
@@ -345,8 +351,23 @@ setInterval(()=>{if(!alarm)return;const d=new Date(),hm=d.toTimeString().slice(0
     let v=0.1;const up=setInterval(()=>{v=Math.min(+$('vol').value,v+0.05);au.volume=v;if(v>=+$('vol').value)clearInterval(up)},2000)}},10000);
 
 $('eg').onclick=()=>{$('q').value='';$('lang').value='';$('tag').value='';$('country').value='EG';search()};
-$('masp').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;au.pause();
-  window.open('https://www.maspero.eg/stream/'+b.dataset.m,'maspero','width=520,height=560');$('now').textContent='📡 '+b.textContent+' (من موقع ماسبيرو)'};
+const DM={7:'x84wyku',8:'x8n6dpk',9:'x8n6dqq',10:'x8n6dt3',11:'x8n6dzo',12:'x8n6eci',13:'x8n6dyz',14:'x8n6ebs',15:'x8n6e96',16:'x8n6drt',18:'x8n6e6w'};
+function maspPlay(n,name){
+  au.pause();try{$('vid').pause()}catch{}
+  let box=$('maspBox');
+  if(!box){box=document.createElement('div');box.id='maspBox';
+    box.innerHTML='<div class="mbHead"><b id="maspName"></b><span><button id="maspMin">▁</button> <button id="maspX" style="background:#b91c1c">✕</button></span></div><div class="mbFrame"><iframe id="maspFrame" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+    document.body.appendChild(box);
+    $('maspX').onclick=()=>{$('maspFrame').src='about:blank';box.style.display='none';$('now').textContent='اختر محطة للاستماع'};
+    $('maspMin').onclick=()=>box.classList.toggle('mini')}
+  box.style.display='block';box.classList.remove('mini');
+  $('maspName').textContent='📡 '+name;
+  $('maspFrame').src='https://www.dailymotion.com/embed/video/'+DM[n]+'?autoplay=1&ui-logo=0&queue-enable=0&sharing-enable=0';
+  $('now').textContent='📡 '+name+' (بث ماسبيرو)';
+  current={stationuuid:'masp:'+n,name,country:'ماسبيرو',tags:'',url_resolved:'',masp:n};addRecent&&addRecent(current);
+}
+window.maspStop=()=>{const f=$('maspFrame');if(f){f.src='about:blank';$('maspBox').style.display='none'}};
+$('masp').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;maspPlay(+b.dataset.m,b.textContent)};
 
 /* ===== أرشيف المسرحيات والسهرات (Internet Archive) ===== */
 const IA='https://archive.org';
@@ -448,6 +469,8 @@ async function arcOpen(id,title){
   }catch(e){$('list').innerHTML='<p>تعذر تحميل المجموعة.</p>'}
 }
 function playMedia(it){
+  if(it.masp){maspPlay(it.masp,it.name);return}
+  window.maspStop&&maspStop();
   if(it.video){au.pause();$('vidTitle').textContent=it.country+' — '+it.name;$('vid').src=it.url_resolved;$('vidBox').style.display='flex';window.navPush&&navPush();$('vid').play().catch(()=>{});return}
   play(it);
 }
@@ -653,7 +676,7 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
 let recent=ls.get('radioRecent',[]),bad=new Set(ls.get('radioBad',[]));
 const TABS={home:'tHome',all:'tAll',fav:'tFav',arc:'tArc',rec:'tRec'},TT={home:'🏠 الرئيسية',all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف المسرحيات والسهرات',rec:'🕘 آخر ما سمعته'};
 setTab=function(t){view=t;if($('viewTitle'))$('viewTitle').textContent=TT[t];Object.entries(TABS).forEach(([k,id])=>$(id)&&$(id).classList.toggle('on',k===t));if(t!=='arc')$('selBar').style.display='none';$('favTools')&&($('favTools').style.display=t==='fav'?'flex':'none')};
-const slim=s=>({stationuuid:s.stationuuid,name:s.name,country:s.country,tags:s.tags,favicon:s.favicon,url_resolved:s.url_resolved,url:s.url,bitrate:s.bitrate,hls:s.hls,video:s.video,id:s.id,file:s.file,size:s.size});
+const slim=s=>({masp:s.masp,stationuuid:s.stationuuid,name:s.name,country:s.country,tags:s.tags,favicon:s.favicon,url_resolved:s.url_resolved,url:s.url,bitrate:s.bitrate,hls:s.hls,video:s.video,id:s.id,file:s.file,size:s.size});
 function addRecent(s){recent=[slim(s),...recent.filter(r=>r.stationuuid!==s.stationuuid)].slice(0,20);ls.set('radioRecent',recent)}
 function showHome(){
   setTab('home');
@@ -751,7 +774,7 @@ if('mediaSession'in navigator){const ms=navigator.mediaSession,h=(a,f)=>{try{ms.
   $('exitNo').onclick=()=>dlg.style.display='none';
   dlg.onclick=e=>{if(e.target===dlg)dlg.style.display='none'};
   $('exitYes').onclick=()=>{
-    try{au.pause();au.removeAttribute('src');au.load();$('vid').pause()}catch{}sleepAt=0;
+    try{au.pause();au.removeAttribute('src');au.load();$('vid').pause();maspStop()}catch{}sleepAt=0;
     window.close();
     setTimeout(()=>{document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px"><div style="font-size:44px">📻</div><b style="font-size:20px">تم الخروج</b><button onclick="location.reload()" style="background:#0F766E;padding:10px 24px">فتح</button></div>';
       try{history.replaceState(null,'')}catch{}},300)}})();
