@@ -740,6 +740,16 @@ if('mediaSession'in navigator){const ms=navigator.mediaSession,h=(a,f)=>{try{ms.
   apply(ls.get('radioTheme','dark'));b.onclick=()=>apply(document.documentElement.dataset.theme==='light'?'dark':'light');
   $('topBar').appendChild(b)})();
 
+// --- زرار الخروج ---
+(function(){const b=document.createElement('button');b.id='exitB';b.title='خروج';b.textContent='⏻';b.style.cssText='background:#b91c1c;flex:0 0 auto';
+  $('topBar').appendChild(b);
+  b.onclick=()=>{if(!confirm('تقفل البرنامج؟'))return;
+    try{au.pause();au.removeAttribute('src');au.load();$('vid').pause()}catch{}sleepAt=0;
+    document.body.classList.remove('sideOpen');
+    window.close();
+    setTimeout(()=>{document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:14px;text-align:center;padding:20px"><div style="font-size:48px">📻</div><b style="font-size:20px">اتقفل البرنامج</b><div style="color:#94a3b8">اضغط زرار الرجوع في الموبايل للخروج،<br>أو اسحب البرنامج من قائمة التطبيقات المفتوحة</div><button onclick="location.reload()" style="background:#0F766E;padding:10px 20px">▶ افتح تاني</button></div>';
+      try{history.replaceState(null,'')}catch{}},300)}})();
+
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
 </script>
 </body>
