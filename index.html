@@ -148,12 +148,18 @@ button{color:#fff}
 #topBar #themeB{flex:0 0 auto!important;width:auto}
 :root[data-theme=light] #byMe{background:linear-gradient(90deg,#9a7a10,#C9A227,#7a5f0a,#9a7a10);background-size:300% 100%;-webkit-background-clip:text;background-clip:text}
 :root[data-theme=light] #side h1{color:#112240}
-#maspBox{display:none;position:fixed;left:12px;bottom:100px;width:min(420px,calc(100vw - 24px));background:var(--card);border:1px solid var(--gold);border-radius:14px;z-index:25;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.5)}
-#maspBox .mbHead{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;color:var(--txt)}
-#maspBox .mbHead button{padding:4px 10px;background:var(--btn2)}
-#maspBox .mbFrame{position:relative;padding-top:56.25%}#maspBox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-#maspBox.mini .mbFrame{padding-top:0;height:0}
-@media (max-width:700px){#maspBox{bottom:140px}}
+#maspBox{display:none;position:relative;width:64px;height:64px;flex:0 0 64px;border-radius:10px;overflow:hidden;border:2px solid var(--gold);background:#000}
+#maspBox iframe{position:absolute;top:0;left:50%;height:100%;width:178%;transform:translateX(-50%);border:0}
+#maspTap{position:absolute;inset:0;cursor:zoom-in}
+#maspX{position:absolute;top:2px;left:2px;padding:0 5px!important;font-size:11px;line-height:16px;background:#b91c1c;border-radius:6px;z-index:2}
+#maspZ{position:absolute;top:2px;right:2px;padding:0 5px!important;font-size:11px;line-height:16px;background:var(--btn2);border-radius:6px;z-index:2}
+#maspBox.big #maspZ{top:6px;right:6px;font-size:14px;padding:2px 8px!important}
+#maspName{display:none}
+#maspBox.big{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90vw,640px);height:auto;aspect-ratio:16/9;z-index:45;box-shadow:0 0 0 100vmax rgba(0,0,0,.6)}
+#maspBox.big iframe{width:100%;left:0;transform:none}
+#maspBox.big #maspTap{inset:0 0 auto 0;height:36px;cursor:zoom-out;background:linear-gradient(rgba(0,0,0,.5),transparent)}
+#maspBox.big #maspX{top:6px;left:6px;font-size:14px;padding:2px 8px!important}
+@media (max-width:700px){#topBar{gap:6px;flex-wrap:nowrap}#topBar button{padding:8px 10px;flex:0 0 auto}#viewTitle{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}}
 </style>
 </head>
 <body>
@@ -355,18 +361,18 @@ const DM={7:'x84wyku',8:'x8n6dpk',9:'x8n6dqq',10:'x8n6dt3',11:'x8n6dzo',12:'x8n6
 function maspPlay(n,name){
   au.pause();try{$('vid').pause()}catch{}
   let box=$('maspBox');
-  if(!box){box=document.createElement('div');box.id='maspBox';
-    box.innerHTML='<div class="mbHead"><b id="maspName"></b><span><button id="maspMin">▁</button> <button id="maspX" style="background:#b91c1c">✕</button></span></div><div class="mbFrame"><iframe id="maspFrame" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
-    document.body.appendChild(box);
-    $('maspX').onclick=()=>{$('maspFrame').src='about:blank';box.style.display='none';$('now').textContent='اختر محطة للاستماع'};
-    $('maspMin').onclick=()=>box.classList.toggle('mini')}
-  box.style.display='block';box.classList.remove('mini');
+  if(!box){box=document.createElement('div');box.id='maspBox';box.title='اضغط للتكبير';
+    box.innerHTML='<iframe id="maspFrame" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><div id="maspTap"></div><button id="maspX" title="قفل">✕</button><button id="maspZ" title="تكبير">⤢</button><b id="maspName"></b>';
+    $('player').insertBefore(box,$('now'));
+    $('maspX').onclick=e=>{e.stopPropagation();maspStop();$('now').textContent='اختر محطة للاستماع'};
+    const tg=e=>{e&&e.stopPropagation();box.classList.toggle('big');$('maspZ').textContent=box.classList.contains('big')?'⤡':'⤢';$('maspZ').title=box.classList.contains('big')?'تصغير':'تكبير'};$('maspTap').onclick=tg;$('maspZ').onclick=tg}
+  box.style.display='block';box.classList.remove('big');$('maspZ').textContent='⤢';
   $('maspName').textContent='📡 '+name;
   $('maspFrame').src='https://www.dailymotion.com/embed/video/'+DM[n]+'?autoplay=1&ui-logo=0&queue-enable=0&sharing-enable=0';
   $('now').textContent='📡 '+name+' (بث ماسبيرو)';
   current={stationuuid:'masp:'+n,name,country:'ماسبيرو',tags:'',url_resolved:'',masp:n};addRecent&&addRecent(current);
 }
-window.maspStop=()=>{const f=$('maspFrame');if(f){f.src='about:blank';$('maspBox').style.display='none'}};
+window.maspStop=()=>{const f=$('maspFrame');if(f){f.src='about:blank';$('maspBox').style.display='none';$('maspBox').classList.remove('big')}};
 $('masp').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;maspPlay(+b.dataset.m,b.textContent)};
 
 /* ===== أرشيف المسرحيات والسهرات (Internet Archive) ===== */
@@ -628,7 +634,7 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
   sec('⚙️ التشغيل والتكرار والمنبّه',false,play);
   document.body.appendChild(side);
   const ov=document.createElement('div');ov.id='overlay';document.body.appendChild(ov);
-  hdr.innerHTML='';hdr.id='topBar';hdr.innerHTML='<button id="menuB">☰ القائمة</button><span id="viewTitle">📻 المحطات</span>';
+  hdr.innerHTML='';hdr.id='topBar';hdr.innerHTML='<button id="menuB">☰<span class="lbl"> القائمة</span></button><span id="viewTitle">📻 المحطات</span>';
   document.body.classList.add('hasSide');
   const close=()=>document.body.classList.remove('sideOpen');
   $('menuB').onclick=()=>document.body.classList.add('sideOpen');
@@ -658,7 +664,7 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
   function updBack(){const b=$('backB');if(b)b.style.display=isRoot()?'none':'inline-block'}
   window.updBack=updBack;
   addEventListener('popstate',()=>{goBack();if(!isRoot())try{history.pushState({r:1},'')}catch{}});
-  const bb=document.createElement('button');bb.id='backB';bb.textContent='→ رجوع';bb.style.cssText='background:var(--btn2);display:none';
+  const bb=document.createElement('button');bb.id='backB';bb.innerHTML='→<span class="lbl"> رجوع</span>';bb.style.cssText='background:var(--btn2);display:none';
   const tb=$('topBar');if(tb)tb.insertBefore(bb,tb.firstChild);
   bb.onclick=()=>{goBack();};
   // كل ما تدخل مستوى أعمق نسجّل خطوة في السجل
@@ -679,7 +685,7 @@ setTab=function(t){view=t;if($('viewTitle'))$('viewTitle').textContent=TT[t];Obj
 const slim=s=>({masp:s.masp,stationuuid:s.stationuuid,name:s.name,country:s.country,tags:s.tags,favicon:s.favicon,url_resolved:s.url_resolved,url:s.url,bitrate:s.bitrate,hls:s.hls,video:s.video,id:s.id,file:s.file,size:s.size});
 function addRecent(s){recent=[slim(s),...recent.filter(r=>r.stationuuid!==s.stationuuid)].slice(0,20);ls.set('radioRecent',recent)}
 function showHome(){
-  setTab('home');
+  setTab('home');window.updBack&&setTimeout(updBack,0);
   const tile=(ic,t,sub,act)=>`<div class="tile" data-act="${act}"><div class="tIc">${ic}</div><div><b>${t}</b><div class="m">${sub}</div></div></div>`;
   const last=ls.get('radioLast',null);
   $('list').innerHTML=
