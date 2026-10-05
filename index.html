@@ -168,6 +168,10 @@ a.ext{background:var(--btn2);color:#fff;padding:8px 14px;border-radius:8px;text-
 body.hasSide>#gBar{margin-right:300px}
 @media (max-width:900px){body.hasSide>#gBar{margin-right:0}}
 @media (max-width:700px){#gBar{padding:6px 12px;top:56px}}
+#prBox{border-top:1px solid var(--line);margin-top:8px;padding-top:10px;display:flex;flex-direction:column;gap:8px}
+#prMore{flex-direction:column;gap:8px}.prRow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.prRow input[type=number]{width:60px}
+.prTimes{display:flex;flex-wrap:wrap;gap:6px}.prTimes span{background:var(--card2);padding:4px 8px;border-radius:8px;font-size:13px}
+@media (max-width:900px){#side #rec{display:none!important}}
 </style>
 </head>
 <body>
@@ -632,7 +636,7 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
   sec('🎭 بحث الأرشيف والصيغ',false,$('arcBar'));
   const play=document.createElement('div');play.style.cssText='display:flex;flex-direction:column;gap:6px';
   ['upB','endMode','repN','alarmBtn','rec'].forEach(id=>$(id)&&play.appendChild($(id)));
-  sec('⚙️ التشغيل والتكرار والمنبّه',false,play);
+  sec('⚙️ الإعدادات (التشغيل والمنبّه والصلاة)',false,play);
   document.body.appendChild(side);
   const ov=document.createElement('div');ov.id='overlay';document.body.appendChild(ov);
   hdr.innerHTML='';hdr.id='topBar';hdr.innerHTML='<button id="menuB">☰<span class="lbl"> القائمة</span></button><span id="viewTitle">📻 المحطات</span>';
@@ -857,6 +861,63 @@ async function gSearch(){
     if(k==='arc'){navPush();setTab('arc');arcOpen(x.id,x.name);return}
     playlist=gRes[k];playMedia(x)};
 }
+
+// --- إيقاف الأغاني وقت الصلاة ---
+const PN={Fajr:'الفجر',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
+let pCfg=Object.assign({on:false,scope:'music',before:10,dur:30,resume:true,city:'Riyadh',country:'SA',lat:null,lon:null},ls.get('prayerCfg',{}));
+let pTimes=ls.get('prayerTimes',null),pPaused=false,pWin=null;
+const isQuran=s=>{if(!s)return false;if(s.masp)return s.masp===7;if(s.stationuuid==='quran-cairo')return true;
+  return /quran|qur'an|koran|قرآن|القران|القرآن|قران/i.test((s.tags||'')+' '+s.name+' '+(s.country||''))};
+async function loadPrayer(force){
+  const today=new Date().toDateString();if(!force&&pTimes&&pTimes.day===today)return;
+  try{const u=pCfg.lat!=null?`https://api.aladhan.com/v1/timings?latitude=${pCfg.lat}&longitude=${pCfg.lon}&method=4`:`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(pCfg.city)}&country=${encodeURIComponent(pCfg.country)}&method=4`;
+    const d=(await (await fetch(u)).json()).data;pTimes={day:today,t:{},where:pCfg.lat!=null?'موقعك الحالي':pCfg.city};Object.keys(PN).forEach(k=>pTimes.t[k]=d.timings[k].slice(0,5));ls.set('prayerTimes',pTimes)}catch{}
+  showPrayer();
+}
+function prayerWindow(){
+  if(!pTimes)return null;const now=new Date();
+  for(const k of Object.keys(PN)){const [h,m]=pTimes.t[k].split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);
+    const a=+t-pCfg.before*60000,b=a+pCfg.dur*60000;if(+now>=a&&+now<b)return{k,end:new Date(b)}}return null}
+function blocked(s){return pCfg.on&&pWin&&(pCfg.scope==='all'||!isQuran(s))}
+function prayerCheck(){
+  if(!pCfg.on){pWin=null;return}
+  if(pTimes&&pTimes.day!==new Date().toDateString())loadPrayer();
+  const w=prayerWindow(),hm=d=>d.toTimeString().slice(0,5);
+  if(w&&!pWin){pWin=w;if(current&&!au.paused&&blocked(current)){au.pause();try{$('vid').pause()}catch{}pPaused=true}}
+  else if(!w&&pWin){pWin=null;if(pPaused&&pCfg.resume&&current){au.play().catch(()=>{});$('status').textContent='▶ رجع التشغيل بعد الصلاة'}pPaused=false}
+  if(pWin&&pPaused)$('status').textContent=`🕌 صلاة ${PN[pWin.k]} — متوقف لحد ${hm(pWin.end)}`;
+}
+setInterval(prayerCheck,15000);au.addEventListener('timeupdate',()=>{if(pCfg.on&&Date.now()%5000<300)prayerCheck()});
+document.addEventListener('visibilitychange',prayerCheck);
+(function(){const _p=play;play=function(s){prayerCheck();if(blocked(s)){$('status').textContent=`🕌 وقت صلاة ${PN[pWin.k]} — القرآن بس المسموح لحد ${pWin.end.toTimeString().slice(0,5)}`;current=s;pPaused=true;$('now').textContent='⏸ '+s.name;return}_p(s)}})();
+(function(){const _m=maspPlay;maspPlay=function(n,name){prayerCheck();if(blocked({masp:n,name})){$('status').textContent=`🕌 وقت صلاة ${PN[pWin.k]} — القرآن بس المسموح`;return}_m(n,name)}})();
+// واجهة الإعدادات
+function showPrayer(){const el=$('prList');if(!el)return;
+  el.innerHTML=pTimes?Object.keys(PN).map(k=>`<span>${PN[k]} <b>${pTimes.t[k]}</b></span>`).join('')+`<div class="m" style="width:100%">المكان: ${esc(pTimes.where)}</div>`:'<span class="m">لسه ما اتحمّلتش المواقيت</span>'}
+(function(){
+  const box=document.createElement('div');box.id='prBox';
+  box.innerHTML=`<label style="display:flex;gap:8px;align-items:center;font-weight:bold"><input type="checkbox" id="prOn" style="width:20px;height:20px"> 🕌 الإيقاف وقت الصلاة (القرآن بس شغال)</label>
+   <div id="prMore">
+    <div class="prRow">قبل الأذان بـ <input type="number" id="prBefore" min="0" max="60"> دقيقة، لمدة <input type="number" id="prDur" min="5" max="120"> دقيقة</div>
+    <select id="prScope"><option value="music">يوقف كل حاجة ما عدا القرآن الكريم</option><option value="all">يوقف كل الصوت حتى القرآن</option></select>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="prResume"> يرجّع التشغيل لوحده بعد الوقت</label>
+    <div class="prRow"><input id="prCity" placeholder="المدينة (بالإنجليزي) مثلاً Riyadh"><input id="prCountry" placeholder="الدولة مثلاً SA" style="width:70px"></div>
+    <button id="prGeo" style="background:var(--btn2)">📍 حدّث حسب موقعي الحالي</button><div class="m" style="font-size:12px">المواقيت بتتحسب تلقائي من موقعك، ولو سافرت بتتحدّث لوحدها. ولو رفضت الموقع اكتب المدينة.</div>
+    <div id="prList" class="prTimes"></div>
+   </div>`;
+  const play=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#endMode'));
+  (play?play.querySelector('.sBody'):$('side')).appendChild(box);
+  const sync=()=>{$('prOn').checked=pCfg.on;$('prBefore').value=pCfg.before;$('prDur').value=pCfg.dur;$('prScope').value=pCfg.scope;$('prResume').checked=pCfg.resume;$('prCity').value=pCfg.lat!=null?'':pCfg.city;$('prCountry').value=pCfg.lat!=null?'':pCfg.country;$('prMore').style.display=pCfg.on?'flex':'none'};
+  const save=reload=>{ls.set('prayerCfg',pCfg);sync();if(reload)loadPrayer(true);prayerCheck()};
+  $('prOn').onchange=e=>{pCfg.on=e.target.checked;save(pCfg.on);if(pCfg.on&&pCfg.lat==null)$('prGeo').click()};
+  $('prBefore').onchange=e=>{pCfg.before=Math.max(0,+e.target.value||0);save()};
+  $('prDur').onchange=e=>{pCfg.dur=Math.max(5,+e.target.value||30);save()};
+  $('prScope').onchange=e=>{pCfg.scope=e.target.value;save()};
+  $('prResume').onchange=e=>{pCfg.resume=e.target.checked;save()};
+  $('prCity').onchange=$('prCountry').onchange=()=>{const c=$('prCity').value.trim();if(!c)return;pCfg.city=c;pCfg.country=$('prCountry').value.trim()||pCfg.country;pCfg.lat=pCfg.lon=null;save(true)};
+  $('prGeo').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{pCfg.lat=+p.coords.latitude.toFixed(3);pCfg.lon=+p.coords.longitude.toFixed(3);save(true)},()=>alert('مش قادر أوصل لموقعك، اكتب المدينة')):alert('الجهاز مش بيدعم تحديد الموقع');
+  sync();showPrayer();if(pCfg.on){loadPrayer();if(pCfg.lat!=null&&navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>{const la=+p.coords.latitude.toFixed(3),lo=+p.coords.longitude.toFixed(3);if(Math.abs(la-pCfg.lat)+Math.abs(lo-pCfg.lon)>0.2){pCfg.lat=la;pCfg.lon=lo;save(true)}},()=>{},{maximumAge:3600000})}
+})();
 
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
 </script>
