@@ -160,6 +160,14 @@ button{color:#fff}
 #maspBox.big #maspTap{display:none}
 #maspBox.big #maspX{top:6px;left:6px;font-size:14px;padding:2px 8px!important}
 @media (max-width:700px){#topBar{gap:6px;flex-wrap:nowrap}#topBar button{padding:8px 10px;flex:0 0 auto}#viewTitle{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}}
+#gBar{display:flex;gap:8px;padding:8px 16px;background:var(--bar);position:sticky;top:58px;z-index:5}
+#gBar input{flex:1;min-width:0;font-size:16px;padding:10px 12px;border-radius:10px}
+#gBar button{background:var(--acc);padding:0 18px}
+a.ext{background:var(--btn2);color:#fff;padding:8px 14px;border-radius:8px;text-decoration:none}
+#topBar{position:sticky;top:0;z-index:6}
+body.hasSide>#gBar{margin-right:300px}
+@media (max-width:900px){body.hasSide>#gBar{margin-right:0}}
+@media (max-width:700px){#gBar{padding:6px 12px;top:56px}}
 </style>
 </head>
 <body>
@@ -796,6 +804,58 @@ function askClear(){
 $('list').addEventListener('click',e=>{
   if(view==='rec'&&e.target.closest('.clrRec')){e.stopPropagation();askClear();return}
   const b=e.target.closest('.rmRec');if(!b)return;e.stopPropagation();recent.splice(+b.dataset.rm,1);ls.set('radioRecent',recent);render(recent)},true);
+
+// --- بحث بالكتابة في كل مكان ---
+(function(){
+  // فلترة الدول بالكتابة
+  const cf=document.createElement('input');cf.id='cFilter';cf.placeholder='اكتب اسم الدولة...';
+  $('country').parentNode.insertBefore(cf,$('country'));
+  cf.oninput=()=>{const q=cf.value.trim().toLowerCase();let first=null;
+    [...$('country').options].forEach(o=>{const hit=!q||o.value===''||o.text.toLowerCase().includes(q);o.hidden=!hit;if(hit&&o.value&&!first)first=o});
+    if(q&&first){$('country').value=first.value}};
+  cf.onkeydown=e=>{if(e.key==='Enter')search()};
+  // شريط بحث عام ثابت فوق
+  const bar=document.createElement('div');bar.id='gBar';
+  bar.innerHTML='<input id="gq" type="search" placeholder="🔍 ابحث عن محطة، إذاعة، مسرحية، دولة..."><button id="gGo">بحث</button>';
+  $('topBar').insertAdjacentElement('afterend',bar);
+  $('gGo').onclick=()=>gSearch();$('gq').onkeydown=e=>{if(e.key==='Enter')gSearch()};
+})();
+let gRes={};
+async function gSearch(){
+  const q=$('gq').value.trim();if(!q)return;$('gq').blur();
+  navPush();view='search';if($('viewTitle'))$('viewTitle').textContent='🔍 '+q;Object.values(TABS).forEach(id=>$(id)&&$(id).classList.remove('on'));$('selBar').style.display='none';
+  const ql=q.toLowerCase(),has=x=>(x.name+' '+(x.country||'')+' '+(x.tags||'')).toLowerCase().includes(ql);
+  const mine=[...favs,...recent].filter((x,i,a)=>has(x)&&a.findIndex(y=>y.stationuuid===x.stationuuid)===i);
+  const masp=[...document.querySelectorAll('#masp [data-m]')].filter(b=>b.textContent.includes(q)).map(b=>({stationuuid:'masp:'+b.dataset.m,name:b.textContent,country:'ماسبيرو',masp:+b.dataset.m}));
+  gRes={mine:[...masp,...mine],st:[],arc:[]};
+  const draw=(stLoading,arcLoading)=>{
+    const card=(x,k,i,ic)=>`<div class="st" data-g="${k}:${i}" data-u="${esc(x.stationuuid||'')}"><div style="font-size:24px">${ic}</div><div class="i"><div class="n">${esc(x.name)}</div><div class="m">${esc([x.country,x.tags&&String(x.tags).slice(0,40),x.bitrate?x.bitrate+'kbps':''].filter(Boolean).join(' · '))}</div></div></div>`;
+    const sec=(t,arr,k,ic,loading)=>`<div class="secT">${t} ${loading?'<span class="m">جاري البحث...</span>':'('+arr.length+')'}</div>`+(arr.length?arr.map((x,i)=>card(x,k,i,ic)).join(''):(loading?'':'<div class="m" style="grid-column:1/-1">مفيش نتائج</div>'));
+    $('list').innerHTML=
+      (gRes.mine.length?sec('⭐ عندك (المفضلة والسجل وماسبيرو)',gRes.mine,'mine','⭐',false):'')+
+      sec('📻 المحطات من كل العالم',gRes.st,'st','📻',stLoading)+
+      sec('🎭 الأرشيف (مسرحيات وسهرات)',gRes.arc,'arc','🎭',arcLoading)+
+      `<div class="secT">🌐 ابحث برا البرنامج</div><div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap">
+        <a class="ext" target="_blank" href="https://www.google.com/search?q=${encodeURIComponent(q+' بث مباشر راديو')}">Google</a>
+        <a class="ext" target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}">YouTube</a>
+        <a class="ext" target="_blank" href="https://www.radio-browser.info/search?name=${encodeURIComponent(q)}">Radio Browser</a>
+        <a class="ext" target="_blank" href="https://archive.org/search?query=${encodeURIComponent(q)}">Internet Archive</a></div>`;
+    markPlaying();
+  };
+  draw(true,true);
+  const pSt=fetch(API+'/json/stations/byname/'+encodeURIComponent(q)+'?hidebroken=true&order=clickcount&reverse=true&limit=100').then(r=>r.json()).then(async a=>{
+      if(a.length<10){const t=await (await fetch(API+'/json/stations/bytag/'+encodeURIComponent(q)+'?hidebroken=true&order=clickcount&reverse=true&limit=60')).json().catch(()=>[]);a=[...a,...t.filter(x=>!a.some(y=>y.stationuuid===x.stationuuid))]}
+      const cs=[...$('country').options].find(o=>o.value&&o.text.toLowerCase().startsWith(ql));
+      if(cs){const t=await (await fetch(API+'/json/stations/search?countrycode='+cs.value+'&hidebroken=true&order=clickcount&reverse=true&limit=100')).json().catch(()=>[]);a=[...a,...t.filter(x=>!a.some(y=>y.stationuuid===x.stationuuid))]}
+      gRes.st=a}).catch(()=>{});
+  const pArc=fetch(`https://archive.org/advancedsearch.php?q=${encodeURIComponent('('+q+') AND mediatype:(audio OR movies)')}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=item_size&sort[]=downloads+desc&rows=40&output=json`).then(r=>r.json()).then(d=>{gRes.arc=d.response.docs.map(x=>({id:x.identifier,name:Array.isArray(x.title)?x.title[0]:x.title,country:x.mediatype==='movies'?'فيديو':'صوت',tags:gb(+x.item_size||0)}))}).catch(()=>{});
+  let stDone=false,arcDone=false;
+  pSt.finally(()=>{stDone=true;if(view==='search')draw(!stDone,!arcDone)});
+  pArc.finally(()=>{arcDone=true;if(view==='search')draw(!stDone,!arcDone)});
+  $('list').onclick=e=>{const c=e.target.closest('[data-g]');if(!c)return;const [k,i]=c.dataset.g.split(':');const x=gRes[k][+i];
+    if(k==='arc'){navPush();setTab('arc');arcOpen(x.id,x.name);return}
+    playlist=gRes[k];playMedia(x)};
+}
 
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
 </script>
