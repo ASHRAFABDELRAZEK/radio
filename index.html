@@ -186,7 +186,7 @@ body.hasSide>#gBar{margin-right:300px}
   <button id="go">بحث</button>
   <button id="eg" style="background:#b91c1c">🇪🇬 محطات مصر</button>
   </span>
-  <span class="tabs"><button id="tAll" class="on">📻 المحطات</button><button id="tFav">⭐ المفضلة</button><button id="tArc">🎭 <span class="lbl2">أرشيف المسرحيات والسهرات</span><span class="sh2">الأرشيف</span></button></span>
+  <span class="tabs"><button id="tAll" class="on">📻 المحطات</button><button id="tFav">⭐ المفضلة</button><button id="tArc">🎭 <span class="lbl2">أرشيف زمان</span><span class="sh2">الأرشيف</span></button></span>
 </header>
 <div id="masp" style="padding:10px 16px;background:var(--card2);display:flex;gap:6px;flex-wrap:wrap;align-items:center">
   <b style="margin-left:6px">📡 إذاعات ماسبيرو الرسمية:</b>
@@ -239,7 +239,7 @@ body.hasSide>#gBar{margin-right:300px}
     <div style="font-size:40px" class="radioIcon">📻</div>
     <h2 style="margin:6px 0">راديو العالم</h2>
     <div style="color:#fbbf24;font-size:18px;font-weight:bold;margin:8px 0" class="byAnim">إعداد وتصميم: ASHRAF FATHY</div>
-    <div style="color:var(--mut);font-size:13px;line-height:1.8">إذاعات العالم · إذاعات ماسبيرو · أرشيف المسرحيات والسهرات<br>جميع الحقوق محفوظة © 2026</div>
+    <div style="color:var(--mut);font-size:13px;line-height:1.8">إذاعات العالم · إذاعات ماسبيرو · أرشيف زمان<br>جميع الحقوق محفوظة © 2026</div>
     <button id="aboutClose" style="margin-top:14px">إغلاق</button>
   </div>
 </div>
@@ -380,7 +380,7 @@ function maspPlay(n,name){
 window.maspStop=()=>{return;const f=$('maspFrame');if(f){f.src='about:blank';$('maspBox').style.display='none';$('maspBox').classList.remove('big')}};
 $('masp').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;maspPlay(+b.dataset.m,b.textContent)};
 
-/* ===== أرشيف المسرحيات والسهرات (Internet Archive) ===== */
+/* ===== أرشيف زمان (Internet Archive) ===== */
 const IA='https://archive.org';
 const gb=b=>b>=1073741824?(b/1073741824).toFixed(2)+' جيجا':(b/1048576).toFixed(0)+' ميجا';
 const cleanName=t=>String(t||'').replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').trim().slice(0,150);
@@ -419,7 +419,7 @@ const chips=['مسرحية إذاعية','سهرة إذاعية','مسلسل إ�
 $('chips').innerHTML=chips.map(c=>`<button data-c="${c}" style="background:#6b4423;margin:2px">${c}</button>`).join('');
 $('chips').onclick=e=>{const b=e.target.closest('[data-c]');if(b){$('aq').value=b.dataset.c;arcSearch()}};
 $('ago').onclick=()=>arcSearch();$('aq').onkeydown=e=>e.key==='Enter'&&arcSearch();
-function setTab(t){view=t;const T={all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف المسرحيات والسهرات'};if($('viewTitle'))$('viewTitle').textContent=T[t];['tAll','tFav','tArc'].forEach(x=>$(x).classList.toggle('on',x==={all:'tAll',fav:'tFav',arc:'tArc'}[t]));if(t!=='arc')$('selBar').style.display='none'}
+function setTab(t){view=t;const T={all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف زمان'};if($('viewTitle'))$('viewTitle').textContent=T[t];['tAll','tFav','tArc'].forEach(x=>$(x).classList.toggle('on',x==={all:'tAll',fav:'tFav',arc:'tArc'}[t]));if(t!=='arc')$('selBar').style.display='none'}
 $('tArc').onclick=()=>{setTab('arc');arcCats()};
 
 let arcState={mode:'search',docs:[],items:[],id:null,title:''};
@@ -687,7 +687,7 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
 /* ===== مزايا إضافية ===== */
 // --- الأقسام الجديدة: الرئيسية + آخر ما سمعته ---
 let recent=ls.get('radioRecent',[]),bad=new Set(ls.get('radioBad',[]));
-const TABS={home:'tHome',all:'tAll',fav:'tFav',arc:'tArc',rec:'tRec'},TT={home:'🏠 الرئيسية',all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف المسرحيات والسهرات',rec:'🕘 آخر ما سمعته'};
+const TABS={home:'tHome',all:'tAll',fav:'tFav',arc:'tArc',rec:'tRec'},TT={home:'🏠 الرئيسية',all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف زمان',rec:'🕘 آخر ما سمعته'};
 setTab=function(t){view=t;if($('viewTitle'))$('viewTitle').textContent=TT[t];Object.entries(TABS).forEach(([k,id])=>$(id)&&$(id).classList.toggle('on',k===t));if(t!=='arc')$('selBar').style.display='none';$('favTools')&&($('favTools').style.display=t==='fav'?'flex':'none')};
 const slim=s=>({masp:s.masp,stationuuid:s.stationuuid,name:s.name,country:s.country,tags:s.tags,favicon:s.favicon,url_resolved:s.url_resolved,url:s.url,bitrate:s.bitrate,hls:s.hls,video:s.video,id:s.id,file:s.file,size:s.size});
 function addRecent(s){recent=[slim(s),...recent.filter(r=>r.stationuuid!==s.stationuuid)].slice(0,20);ls.set('radioRecent',recent)}
@@ -701,7 +701,7 @@ function showHome(){
    tile('🕘','آخر ما سمعته',recent.length+' عنصر','rec')+
    tile('🇪🇬','محطات مصر','كل الإذاعات المصرية','eg')+
    tile('📡','إذاعات ماسبيرو','البرنامج العام، صوت العرب...','masp')+
-   tile('🎭','أرشيف المسرحيات','مسرحيات وسهرات ومسلسلات','arc')+
+   tile('🎭','أرشيف زمان','مسرحيات وسهرات ومسلسلات وأغاني قديمة','arc')+
    tile('🌍','كل المحطات','بحث بالدولة واللغة','all')+
    (recent.length?`<div class="secT" style="display:flex;justify-content:space-between;align-items:center">🕘 سمعتهم مؤخراً <button class="clrRec" style="background:var(--btn2);font-size:13px;padding:5px 12px">🗑 مسح السجل</button></div>`+recent.slice(0,6).map((r,i)=>`<div class="st" data-ri="${i}" data-u="${esc(r.stationuuid)}"><div style="font-size:24px">${String(r.stationuuid).startsWith('ia:')?(r.video?'🎬':'🎭'):'📻'}</div><div class="i"><div class="n">${esc(r.name)}</div><div class="m">${esc(r.country||'')}</div></div><button class="rmHome" data-rh="${i}" title="شيل من السجل" style="background:var(--btn2);padding:4px 9px">✕</button></div>`).join(''):'');
   $('list').onclick=e=>{
@@ -841,7 +841,7 @@ async function gSearch(){
     $('list').innerHTML=
       (gRes.mine.length?sec('⭐ عندك (المفضلة والسجل وماسبيرو)',gRes.mine,'mine','⭐',false):'')+
       sec('📻 المحطات من كل العالم',gRes.st,'st','📻',stLoading)+
-      sec('🎭 الأرشيف (مسرحيات وسهرات)',gRes.arc,'arc','🎭',arcLoading)+
+      sec('📼 أرشيف زمان',gRes.arc,'arc','🎭',arcLoading)+
       `<div class="secT">🌐 ابحث برا البرنامج</div><div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap">
         <a class="ext" target="_blank" href="https://www.google.com/search?q=${encodeURIComponent(q+' بث مباشر راديو')}">Google</a>
         <a class="ext" target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}">YouTube</a>
@@ -929,7 +929,7 @@ const CATS=[['🎭','مسرحيات إذاعية','title:(مسرحية OR مسر
  ['🎵','أغاني زمان','title:("أم كلثوم" OR "ام كلثوم" OR "عبد الحليم" OR "عبد الوهاب" OR "فريد الأطرش")','audio']];
 function arcCats(){
   setTab('arc');$('selBar').style.display='none';arcState={mode:'cats',docs:[],items:[],id:null,title:''};
-  $('list').innerHTML=`<div class="secT" style="display:flex;justify-content:space-between;align-items:center">🎭 أقسام الأرشيف <label style="font-size:13px;color:var(--txt)"><input type="checkbox" id="arOnlyC" ${arOnly()?'checked':''}> عربي بس</label></div>`+
+  $('list').innerHTML=`<div class="secT" style="display:flex;justify-content:space-between;align-items:center">📼 أقسام أرشيف زمان <label style="font-size:13px;color:var(--txt)"><input type="checkbox" id="arOnlyC" ${arOnly()?'checked':''}> عربي بس</label></div>`+
    CATS.map((c,i)=>`<div class="tile" data-cat="${i}"><div class="tIc">${c[0]}</div><div><b>${c[1]}</b><div class="m">${c[3]==='movies'?'فيديو':'صوت'}</div></div></div>`).join('')+
    `<div class="tile" data-cat="free"><div class="tIc">🔍</div><div><b>بحث حر في الأرشيف</b><div class="m">اكتب اللي انت عايزه</div></div></div>`;
   $('list').onclick=e=>{
