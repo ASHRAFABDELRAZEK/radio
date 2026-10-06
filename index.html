@@ -172,6 +172,18 @@ body.hasSide>#gBar{margin-right:300px}
 #prMore{flex-direction:column;gap:8px}.prRow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.prRow input[type=number]{width:60px}
 .prTimes{display:flex;flex-wrap:wrap;gap:6px}.prTimes span{background:var(--card2);padding:4px 8px;border-radius:8px;font-size:13px}
 @media (max-width:900px){#side #rec{display:none!important}}
+#npBox{display:none;position:fixed;inset:0;z-index:35;background:linear-gradient(180deg,#112240,#081120);color:#fff;align-items:center;justify-content:center}
+.npIn{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(420px,90vw);text-align:center}
+.npX{position:absolute;top:14px;right:14px;font-size:22px;background:var(--btn2)}
+#npArt{width:min(220px,55vw);height:min(220px,55vw);border-radius:24px;background:#1f3358;display:flex;align-items:center;justify-content:center;font-size:90px;overflow:hidden;border:2px solid var(--gold)}
+#npArt img{width:100%;height:100%;object-fit:cover}
+#npName{font-size:24px;font-weight:bold}
+.npCtl{display:flex;gap:18px;margin-top:10px}.npCtl button{font-size:28px;width:70px;height:70px;border-radius:50%;background:#1f3358}
+.npCtl #npPP{width:86px;height:86px;font-size:34px;background:var(--acc)}
+.npCtl2{display:flex;gap:10px}.npCtl2 button{background:#1f3358}
+.tile.wide2{grid-column:1/-1;border-color:var(--gold)}
+.grpBar{display:flex;gap:6px;flex-wrap:wrap}.grpBar button{background:var(--btn2);padding:6px 12px}.grpBar button.on{background:var(--acc)}
+.grpSet{background:var(--btn2);padding:4px 8px}
 </style>
 </head>
 <body>
@@ -294,7 +306,7 @@ function render(arr){
 }
 function toggleFav(s){
   const k=favs.findIndex(f=>f.stationuuid===s.stationuuid);
-  k>=0?favs.splice(k,1):favs.push({stationuuid:s.stationuuid,name:s.name,country:s.country,tags:s.tags,favicon:s.favicon,url_resolved:s.url_resolved,url:s.url,bitrate:s.bitrate,hls:s.hls,video:s.video});
+  k>=0?favs.splice(k,1):favs.push({stationuuid:s.stationuuid,name:s.name,country:s.country,tags:s.tags,favicon:s.favicon,url_resolved:s.url_resolved,url:s.url,bitrate:s.bitrate,hls:s.hls,video:s.video,id:s.id,file:s.file,masp:s.masp});
   ls.set('radioFavs',favs);if(view!=='arc')render(view==='fav'?favs:results);
 }
 function play(s){
@@ -654,12 +666,13 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
 
 /* ===== زرار الرجوع (الموبايل والمتصفح) ===== */
 (function(){
-  const deep=()=>({vid:$('vidBox').style.display==='flex',about:$('aboutBox').style.display==='flex',alarm:$('alarmBox').style.display==='block',side:document.body.classList.contains('sideOpen'),item:view==='arc'&&arcState.mode==='item',arcl:view==='arc'&&arcState.mode==='search',tab:view!=='home'});
-  const isRoot=()=>{const d=deep();return !(d.vid||d.about||d.alarm||d.side||d.item||d.arcl||d.tab)};
+  const deep=()=>({np:$('npBox')&&$('npBox').style.display==='flex',vid:$('vidBox').style.display==='flex',about:$('aboutBox').style.display==='flex',alarm:$('alarmBox').style.display==='block',side:document.body.classList.contains('sideOpen'),item:view==='arc'&&arcState.mode==='item',arcl:view==='arc'&&arcState.mode==='search',tab:view!=='home'});
+  const isRoot=()=>{const d=deep();return !(d.np||d.vid||d.about||d.alarm||d.side||d.item||d.arcl||d.tab)};
   window.navPush=()=>{try{history.pushState({r:1},'')}catch{}updBack()};
   function goBack(){
     const d=deep();
-    if(d.vid){$('vidClose').click()}
+    if(d.np){$('npBox').style.display='none'}
+    else if(d.vid){$('vidClose').click()}
     else if(d.about){$('aboutBox').style.display='none'}
     else if(d.alarm){$('alarmBox').style.display='none'}
     else if(d.side){document.body.classList.remove('sideOpen')}
@@ -924,8 +937,8 @@ function showPrayer(){const el=$('prList');if(!el)return;
 // --- أقسام الأرشيف ---
 const arOnly=()=>{try{return localStorage.getItem('arOnly')!=='0'}catch{return true}};
 const CATS=[['🎭','مسرحيات إذاعية','title:(مسرحية OR مسرحيات)','audio'],['🎬','مسرحيات مصوّرة','title:(مسرحية OR مسرحيات)','movies'],['🌙','سهرات إذاعية','title:(سهرة OR سهرات)','audio'],
- ['📻','مسلسلات إذاعية','title:(مسلسل OR مسلسلات)','audio'],['🎙️','تمثيليات إذاعية','title:(تمثيلية OR تمثيليات)','audio'],['✨','ألف ليلة وليلة','ألف ليلة وليلة','audio'],
- ['😂','ساعة لقلبك','ساعة لقلبك','audio'],['📜','برامج إذاعية قديمة','title:(برنامج OR برامج) AND (إذاعي OR الإذاعة OR اذاعة OR زمان)','audio'],
+ ['📻','مسلسلات إذاعية','title:(مسلسل OR مسلسلات)','audio'],['🎙️','تمثيليات إذاعية','title:(تمثيلية OR تمثيليات)','audio'],['✨','ألف ليلة وليلة','title:("ألف ليلة" OR "الف ليلة" OR "الف ليله")','audio'],
+ ['😂','ساعة لقلبك','title:("ساعة لقلبك" OR "ساعه لقلبك")','audio'],['📜','برامج إذاعية قديمة','title:(برنامج OR برامج) AND (إذاعي OR الإذاعة OR اذاعة OR زمان)','audio'],
  ['🎵','أغاني زمان','title:("أم كلثوم" OR "ام كلثوم" OR "عبد الحليم" OR "عبد الوهاب" OR "فريد الأطرش")','audio']];
 function arcCats(){
   setTab('arc');$('selBar').style.display='none';arcState={mode:'cats',docs:[],items:[],id:null,title:''};
@@ -938,6 +951,96 @@ function arcCats(){
     if(t.dataset.cat==='free'){document.body.classList.add('sideOpen');const d=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#arcBar'));if(d){d.open=true;setTimeout(()=>$('aq').focus(),300)}return}
     const c=CATS[+t.dataset.cat];$('aq').value=c[2];$('amt').value=c[3];arcSearch()};
 }
+
+// ===== 1) شاشة «جاري التشغيل» =====
+(function(){
+  const np=document.createElement('div');np.id='npBox';
+  np.innerHTML=`<div class="npIn"><button id="npClose" class="npX">⌄</button>
+   <div id="npArt">📻</div><div id="npName"></div><div id="npSub" class="m"></div><div id="npStatus" class="m"></div>
+   <div class="npCtl"><button id="npPrev">⏮</button><button id="npPP">▶</button><button id="npNext">⏭</button></div>
+   <div class="npCtl2"><button id="npFav">☆ مفضلة</button><button id="npLoc">📍 مكانها</button></div></div>`;
+  document.body.appendChild(np);
+  const upd=()=>{if(np.style.display!=='flex'||!current)return;
+    $('npName').textContent=current.name;$('npSub').textContent=current.country||'';$('npStatus').textContent=$('status').textContent;
+    const a=$('npArt');a.innerHTML=current.favicon?`<img src="${esc(current.favicon)}" onerror="this.parentNode.textContent='📻'">`:(String(current.stationuuid).startsWith('ia:')?'📼':current.masp?'📡':'📻');
+    $('npPP').textContent=au.paused?'▶':'⏸';$('npFav').textContent=favs.some(f=>f.stationuuid===current.stationuuid)?'★ في المفضلة':'☆ مفضلة'};
+  window.npOpen=()=>{if(!current)return;np.style.display='flex';navPush();upd()};
+  $('now').onclick=npOpen;
+  $('npClose').onclick=()=>np.style.display='none';
+  $('npPP').onclick=()=>{$('pp').click();setTimeout(upd,300)};
+  $('npPrev').onclick=()=>{$('prevB').click();setTimeout(upd,300)};
+  $('npNext').onclick=()=>{$('nextB').click();setTimeout(upd,300)};
+  $('npFav').onclick=()=>{toggleFav(current);upd()};
+  $('npLoc').onclick=()=>{np.style.display='none';$('locB').click()};
+  ['play','pause','playing'].forEach(ev=>au.addEventListener(ev,upd));setInterval(upd,2000);
+})();
+// ===== 2) مواقيت الصلاة في الرئيسية =====
+function prayerTile(){
+  if(!pTimes)return `<div class="tile wide2" data-act="prset"><div class="tIc">🕌</div><div><b>مواقيت الصلاة</b><div class="m">اضغط عشان تحدد موقعك</div></div></div>`;
+  const now=new Date();let next=null;
+  for(const k of Object.keys(PN)){const [h,m]=pTimes.t[k].split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);if(t>now){next={k,t};break}}
+  if(!next){const [h,m]=pTimes.t.Fajr.split(':').map(Number);const t=new Date();t.setDate(t.getDate()+1);t.setHours(h,m,0,0);next={k:'Fajr',t}}
+  const mins=Math.round((next.t-now)/60000),left=mins>=60?`${Math.floor(mins/60)} س ${mins%60} د`:`${mins} دقيقة`;
+  return `<div class="tile wide2" data-act="prset"><div class="tIc">🕌</div><div style="flex:1"><b>صلاة ${PN[next.k]} ${pTimes.t[next.k]}</b> <span class="m">· باقي ${left}</span>
+   <div class="prTimes" style="margin-top:6px">${Object.keys(PN).map(k=>`<span ${k===next.k?'style="outline:1px solid var(--gold)"':''}>${PN[k]} ${pTimes.t[k]}</span>`).join('')}</div></div></div>`;
+}
+(function(){const _sh=showHome;showHome=function(){_sh();$('list').insertAdjacentHTML('afterbegin',prayerTile());
+  const ol=$('list').onclick;$('list').onclick=e=>{if(e.target.closest('[data-act="prset"]')){document.body.classList.add('sideOpen');const d=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#prBox'));if(d){d.open=true;setTimeout(()=>$('prBox').scrollIntoView(),200)}if(!pTimes)$('prGeo').click();return}ol&&ol(e)}};
+  if(!pTimes||pTimes.day!==new Date().toDateString())loadPrayer(true).then(()=>{if(view==='home')showHome()});
+  setInterval(()=>{if(view==='home'&&document.visibilityState==='visible'&&!document.body.classList.contains('sideOpen')){const t=$('list').querySelector('[data-act="prset"]');if(t)t.outerHTML=prayerTile()}},60000);
+})();
+// ===== 3) منبّه بمواعيد الصلاة =====
+(function(){
+  const box=$('alarmBox');
+  box.innerHTML=`<div style="margin-bottom:8px;font-weight:bold">⏰ شغّل المحطة الحالية:</div>
+   <select id="alarmMode"><option value="time">في ساعة محددة</option>${Object.keys(PN).map(k=>`<option value="${k}">بعد ${PN[k]}</option>`).join('')}</select>
+   <span id="alarmT"><input type="time" id="alarmTime"></span><span id="alarmO" style="display:none">بـ <input type="number" id="alarmOff2" value="10" min="0" max="120" style="width:60px"> دقيقة</span>
+   <label style="display:block;margin-top:6px"><input type="checkbox" id="alarmDaily" checked> كل يوم</label>
+   <div style="margin-top:8px"><button id="alarmSet">تفعيل</button> <button id="alarmOff" style="background:#64748b">إلغاء</button> <button id="alarmClose" style="background:var(--btn2)">قفل</button></div>
+   <div id="alarmInfo" style="font-size:13px;color:var(--mut);margin-top:8px"></div>`;
+  const desc=a=>a?(a.k?`بعد ${PN[a.k]} بـ ${a.off} دقيقة (${a.time||'—'})`:`الساعة ${a.time}`)+` على: ${a.st.name}${a.daily===false?' (مرة واحدة)':''}`:'غير مفعّل';
+  const show=()=>{$('alarmInfo').textContent=desc(alarm);$('alarmBtn').textContent=alarm?'⏰ '+(alarm.time||''):'⏰ منبّه'};
+  const calc=()=>{if(alarm&&alarm.k&&pTimes){const [h,m]=pTimes.t[alarm.k].split(':').map(Number);const t=new Date();t.setHours(h,m+alarm.off,0,0);alarm.time=t.toTimeString().slice(0,5)}};
+  $('alarmMode').onchange=e=>{const p=e.target.value!=='time';$('alarmT').style.display=p?'none':'';$('alarmO').style.display=p?'':'none'};
+  $('alarmSet').onclick=()=>{if(!current){alert('شغّل المحطة اللي عايزها للمنبّه الأول');return}
+    const m=$('alarmMode').value;
+    if(m==='time'){if(!$('alarmTime').value)return;alarm={time:$('alarmTime').value,st:slim(current),daily:$('alarmDaily').checked}}
+    else{if(!pTimes){loadPrayer(true)}alarm={k:m,off:+$('alarmOff2').value||0,st:slim(current),daily:$('alarmDaily').checked};calc()}
+    ls.set('radioAlarm',alarm);show()};
+  $('alarmOff').onclick=()=>{alarm=null;ls.set('radioAlarm',null);show()};
+  $('alarmClose').onclick=()=>box.style.display='none';
+  $('alarmBtn').onclick=()=>{box.style.display=box.style.display==='none'?'block':'none';calc();show()};
+  setInterval(()=>{calc();if(alarm&&alarm.daily===false&&alarm.fired===new Date().toDateString()){alarm=null;ls.set('radioAlarm',null);show()}},30000);
+  au.addEventListener('playing',()=>{if(alarm&&alarm.daily===false&&current&&alarm.st.stationuuid===current.stationuuid&&new Date().toTimeString().slice(0,5)===alarm.time){alarm.fired=new Date().toDateString();ls.set('radioAlarm',alarm)}});
+  calc();show();
+})();
+// ===== 4) محطات مختارة =====
+async function featured(){
+  setTab('all');$('viewTitle').textContent='⭐ محطات مختارة';$('list').innerHTML='<p>جاري التحميل...</p>';
+  try{const a=await (await fetch(API+'/json/stations/search?language=arabic&hidebroken=true&order=clickcount&reverse=true&limit=120')).json();
+    const ok=a.filter(s=>s.lastcheckok===1&&/^https:/.test(s.url_resolved||'')).slice(0,30);
+    results=ok;render(ok);$('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1">⭐ أشهر 30 محطة عربية شغالة دلوقتي <button onclick="search()" style="background:var(--btn2);font-size:13px;padding:5px 10px">📻 كل المحطات</button></div>`)}
+  catch{$('list').innerHTML='<p>تعذر الاتصال.</p>'}
+}
+$('tAll').onclick=()=>{featured()};
+// ===== 5) فولدرات المفضلة =====
+let favGrp=ls.get('favGrp','');
+const grps=()=>[...new Set(['قرآن','أخبار','طرب','مسرحيات',...favs.map(f=>f.grp).filter(Boolean)])];
+(function(){const _r=render;render=function(arr){
+  if(view==='fav'&&arr===favs&&favGrp){const sub=favs.filter(f=>f.grp===favGrp);_r(sub);}else _r(arr);
+  if(view==='fav'&&arr===favs){
+    $('list').insertAdjacentHTML('afterbegin',`<div class="grpBar" style="grid-column:1/-1">${['',...grps()].map(g=>`<button data-grp="${g}" class="${g===favGrp?'on':''}">${g||'الكل'} ${g?'('+favs.filter(f=>f.grp===g).length+')':'('+favs.length+')'}</button>`).join('')}</div>`);
+    $('list').querySelectorAll('.st[data-i]').forEach(el=>el.insertAdjacentHTML('beforeend',`<button class="grpSet" data-gu="${el.dataset.u}" title="فولدر">📁</button>`))}}})();
+$('list').addEventListener('click',e=>{
+  const g=e.target.closest('[data-grp]');if(g&&view==='fav'){e.stopPropagation();favGrp=g.dataset.grp;ls.set('favGrp',favGrp);render(favs);return}
+  const s=e.target.closest('.grpSet');if(!s)return;e.stopPropagation();const f=favs.find(x=>x.stationuuid===s.dataset.gu);if(!f)return;
+  let d=$('grpDlg');if(!d){d=document.createElement('div');d.id='grpDlg';d.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;align-items:center;justify-content:center';document.body.appendChild(d);d.onclick=ev=>{if(ev.target===d)d.style.display='none'}}
+  d.innerHTML=`<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(320px,88vw);color:var(--txt)"><b>📁 ${esc(f.name)}</b><div class="grpBar" style="margin:12px 0">${grps().map(x=>`<button data-pick="${x}" class="${f.grp===x?'on':''}">${x}</button>`).join('')}<button data-pick="">بدون</button></div><div style="display:flex;gap:6px"><input id="grpNew" placeholder="فولدر جديد..." style="flex:1;min-width:0"><button id="grpAdd">إضافة</button></div></div>`;
+  d.style.display='flex';
+  const setG=v=>{f.grp=v||undefined;ls.set('radioFavs',favs);d.style.display='none';render(favs)};
+  d.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>setG(b.dataset.pick));
+  $('grpAdd').onclick=()=>{const v=$('grpNew').value.trim();if(v)setG(v)};
+},true);
 
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
 </script>
