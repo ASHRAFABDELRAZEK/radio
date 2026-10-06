@@ -385,7 +385,7 @@ const IA='https://archive.org';
 const gb=b=>b>=1073741824?(b/1073741824).toFixed(2)+' جيجا':(b/1048576).toFixed(0)+' ميجا';
 const cleanName=t=>String(t||'').replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').trim().slice(0,150);
 // سُلّم الصيغ من الأعلى جودة للأقل
-const AUD=[['24bit Flac','FLAC 24bit'],['Flac','FLAC'],['320Kbps MP3','MP3 320'],['256Kbps MP3','MP3 256'],['224Kbps MP3','MP3 224'],['192Kbps MP3','MP3 192'],['VBR MP3','MP3 VBR (العادي)'],['160Kbps MP3','MP3 160'],['128Kbps MP3','MP3 128'],['Ogg Vorbis','OGG'],['96Kbps MP3','MP3 96'],['64Kbps MP3','MP3 64'],['32Kbps MP3','MP3 32']];
+const AUD=[['24bit Flac','FLAC 24bit'],['Flac','FLAC'],['320Kbps MP3','MP3 320'],['256Kbps MP3','MP3 256'],['224Kbps MP3','MP3 224'],['192Kbps MP3','MP3 192'],['VBR MP3','MP3 VBR (العادي)'],['MP3','MP3'],['160Kbps MP3','MP3 160'],['128Kbps MP3','MP3 128'],['Ogg Vorbis','OGG'],['96Kbps MP3','MP3 96'],['64Kbps MP3','MP3 64'],['32Kbps MP3','MP3 32']];
 const VID=[['h.264 HD','MP4 HD'],['MPEG4','MP4 (الأصلي)'],['h.264','MP4 h.264'],['MPEG2','MPEG2'],['512Kb MPEG4','MP4 512k (صغير)'],['Ogg Video','OGV'],['h.264 IA','MP4 IA']];
 $('afmt').innerHTML=AUD.map((f,i)=>`<option value="${i}" ${f[0]==='VBR MP3'?'selected':''}>🎧 ${f[1]}</option>`).join('');
 $('vfmt').innerHTML=VID.map((f,i)=>`<option value="${i}" ${f[0]==='MPEG4'?'selected':''}>🎬 ${f[1]}</option>`).join('');
@@ -409,7 +409,8 @@ function pickFiles(files){
     const pref=+(arr[0].kind==='a'?$('afmt').value:$('vfmt').value);
     const below=arr.filter(x=>x.k>=pref).sort((a,b)=>a.k-b.k)[0];
     const above=arr.filter(x=>x.k<pref).sort((a,b)=>b.k-a.k)[0];
-    const f=below||above;
+    let f=below||above;
+    if(f&&f.format==='Ogg Vorbis'&&/iPhone|iPad|Macintosh/.test(navigator.userAgent)){const alt=arr.filter(x=>x.format!=='Ogg Vorbis').sort((a,b)=>b.k-a.k)[0];if(alt)f=alt}
     out.push({...f,exact:f.k===pref,fmtLabel:(f.kind==='a'?AUD:VID)[f.k][1]});
   }
   return out.sort((a,b)=>a.name.localeCompare(b.name,'ar',{numeric:true}));
@@ -419,7 +420,7 @@ $('chips').innerHTML=chips.map(c=>`<button data-c="${c}" style="background:#6b44
 $('chips').onclick=e=>{const b=e.target.closest('[data-c]');if(b){$('aq').value=b.dataset.c;arcSearch()}};
 $('ago').onclick=()=>arcSearch();$('aq').onkeydown=e=>e.key==='Enter'&&arcSearch();
 function setTab(t){view=t;const T={all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف المسرحيات والسهرات'};if($('viewTitle'))$('viewTitle').textContent=T[t];['tAll','tFav','tArc'].forEach(x=>$(x).classList.toggle('on',x==={all:'tAll',fav:'tFav',arc:'tArc'}[t]));if(t!=='arc')$('selBar').style.display='none'}
-$('tArc').onclick=()=>{setTab('arc');if(!$('aq').value)$('aq').value='مسرحية إذاعية';arcSearch()};
+$('tArc').onclick=()=>{setTab('arc');arcCats()};
 
 let arcState={mode:'search',docs:[],items:[],id:null,title:''};
 function updSel(){
@@ -436,11 +437,11 @@ async function arcSearch(){
   arcState={mode:'search',docs:[],items:[],id:null,title:''};
   $('selBar').style.display='flex';$('list').innerHTML='<p>جاري البحث في الأرشيف...</p>';
   const mt=$('amt').value==='both'?'(audio OR movies)':$('amt').value;
-  const u=`${IA}/advancedsearch.php?q=${encodeURIComponent('('+q+') AND mediatype:'+mt)}&fl[]=identifier&fl[]=title&fl[]=downloads&fl[]=item_size&fl[]=mediatype&sort[]=downloads+desc&rows=200&output=json`;
-  try{const d=await (await fetch(u)).json();const docs=d.response.docs;arcState.docs=docs;
+  const u=`${IA}/advancedsearch.php?q=${encodeURIComponent('('+q+') AND mediatype:'+mt+' AND format:("VBR MP3" OR MP3 OR "128Kbps MP3" OR "64Kbps MP3" OR "Ogg Vorbis" OR MPEG4 OR "h.264")')}&fl[]=identifier&fl[]=title&fl[]=downloads&fl[]=item_size&fl[]=mediatype&sort[]=downloads+desc&rows=400&output=json`;
+  try{const d=await (await fetch(u)).json();let docs=d.response.docs;if(arOnly())docs=docs.filter(x=>/[\u0600-\u06FF]/.test(Array.isArray(x.title)?x.title[0]:x.title||''));docs=docs.slice(0,200);arcState.docs=docs;
     if(!docs.length){$('list').innerHTML='<p>مفيش نتائج، جرّب كلمة تانية.</p>';updSel();return}
     const tot=docs.reduce((a,x)=>a+(+x.item_size||0),0);
-    $('list').innerHTML=`<div style="grid-column:1/-1;color:#fbbf24">${docs.length} مجموعة (من أصل ${d.response.numFound}) · الحجم الكلي بكل الصيغ حوالي <b>${gb(tot)}</b> — الحجم الفعلي بالصيغة اللي اخترتها بيتحسب قبل التنزيل</div>`+
+    $('list').innerHTML=`<div style="grid-column:1/-1"><button onclick="arcCats()" style="background:#6b4423">↩ الأقسام</button></div><div style="grid-column:1/-1;color:#fbbf24">${docs.length} مجموعة (من أصل ${d.response.numFound}) · الحجم الكلي بكل الصيغ حوالي <b>${gb(tot)}</b> — الحجم الفعلي بالصيغة اللي اخترتها بيتحسب قبل التنزيل</div>`+
       docs.map((x,i)=>`<div class="st" data-id="${esc(x.identifier)}" data-i="${i}">
         <input type="checkbox" class="sel" data-i="${i}" data-size="${+x.item_size||0}" style="width:20px;height:20px;flex:none">
         <div style="font-size:30px">${x.mediatype==='movies'?'🎬':'🎭'}</div>
@@ -653,8 +654,8 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
 
 /* ===== زرار الرجوع (الموبايل والمتصفح) ===== */
 (function(){
-  const deep=()=>({vid:$('vidBox').style.display==='flex',about:$('aboutBox').style.display==='flex',alarm:$('alarmBox').style.display==='block',side:document.body.classList.contains('sideOpen'),item:view==='arc'&&arcState.mode==='item',tab:view!=='home'});
-  const isRoot=()=>{const d=deep();return !(d.vid||d.about||d.alarm||d.side||d.item||d.tab)};
+  const deep=()=>({vid:$('vidBox').style.display==='flex',about:$('aboutBox').style.display==='flex',alarm:$('alarmBox').style.display==='block',side:document.body.classList.contains('sideOpen'),item:view==='arc'&&arcState.mode==='item',arcl:view==='arc'&&arcState.mode==='search',tab:view!=='home'});
+  const isRoot=()=>{const d=deep();return !(d.vid||d.about||d.alarm||d.side||d.item||d.arcl||d.tab)};
   window.navPush=()=>{try{history.pushState({r:1},'')}catch{}updBack()};
   function goBack(){
     const d=deep();
@@ -663,6 +664,7 @@ $('moreB').onclick=()=>{$('player').classList.toggle('open');$('moreB').textCont
     else if(d.alarm){$('alarmBox').style.display='none'}
     else if(d.side){document.body.classList.remove('sideOpen')}
     else if(d.item){arcSearch()}
+    else if(d.arcl){arcCats()}
     else if(d.tab){showHome()}
     updBack();
   }
@@ -712,7 +714,7 @@ function showHome(){
     else if(a==='rec'){setTab('rec');render(recent)}
     else if(a==='eg')$('eg').click();
     else if(a==='all'){setTab('all');results.length?render(results):search()}
-    else if(a==='arc')$('tArc').click();
+    else if(a==='arc'){setTab('arc');arcCats()}
     else if(a==='masp'){document.body.classList.add('sideOpen');const d=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#masp'));if(d){d.open=true;d.scrollIntoView()}}
   };
   markPlaying();
@@ -918,6 +920,24 @@ function showPrayer(){const el=$('prList');if(!el)return;
   $('prGeo').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{pCfg.lat=+p.coords.latitude.toFixed(3);pCfg.lon=+p.coords.longitude.toFixed(3);save(true)},()=>alert('مش قادر أوصل لموقعك، اكتب المدينة')):alert('الجهاز مش بيدعم تحديد الموقع');
   sync();showPrayer();if(pCfg.on){loadPrayer();if(pCfg.lat!=null&&navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>{const la=+p.coords.latitude.toFixed(3),lo=+p.coords.longitude.toFixed(3);if(Math.abs(la-pCfg.lat)+Math.abs(lo-pCfg.lon)>0.2){pCfg.lat=la;pCfg.lon=lo;save(true)}},()=>{},{maximumAge:3600000})}
 })();
+
+// --- أقسام الأرشيف ---
+const arOnly=()=>{try{return localStorage.getItem('arOnly')!=='0'}catch{return true}};
+const CATS=[['🎭','مسرحيات إذاعية','title:(مسرحية OR مسرحيات)','audio'],['🎬','مسرحيات مصوّرة','title:(مسرحية OR مسرحيات)','movies'],['🌙','سهرات إذاعية','title:(سهرة OR سهرات)','audio'],
+ ['📻','مسلسلات إذاعية','title:(مسلسل OR مسلسلات)','audio'],['🎙️','تمثيليات إذاعية','title:(تمثيلية OR تمثيليات)','audio'],['✨','ألف ليلة وليلة','ألف ليلة وليلة','audio'],
+ ['😂','ساعة لقلبك','ساعة لقلبك','audio'],['📜','برامج إذاعية قديمة','title:(برنامج OR برامج) AND (إذاعي OR الإذاعة OR اذاعة OR زمان)','audio'],
+ ['🎵','أغاني زمان','title:("أم كلثوم" OR "ام كلثوم" OR "عبد الحليم" OR "عبد الوهاب" OR "فريد الأطرش")','audio']];
+function arcCats(){
+  setTab('arc');$('selBar').style.display='none';arcState={mode:'cats',docs:[],items:[],id:null,title:''};
+  $('list').innerHTML=`<div class="secT" style="display:flex;justify-content:space-between;align-items:center">🎭 أقسام الأرشيف <label style="font-size:13px;color:var(--txt)"><input type="checkbox" id="arOnlyC" ${arOnly()?'checked':''}> عربي بس</label></div>`+
+   CATS.map((c,i)=>`<div class="tile" data-cat="${i}"><div class="tIc">${c[0]}</div><div><b>${c[1]}</b><div class="m">${c[3]==='movies'?'فيديو':'صوت'}</div></div></div>`).join('')+
+   `<div class="tile" data-cat="free"><div class="tIc">🔍</div><div><b>بحث حر في الأرشيف</b><div class="m">اكتب اللي انت عايزه</div></div></div>`;
+  $('list').onclick=e=>{
+    if(e.target.id==='arOnlyC'){try{localStorage.setItem('arOnly',e.target.checked?'1':'0')}catch{}return}
+    const t=e.target.closest('[data-cat]');if(!t)return;navPush();
+    if(t.dataset.cat==='free'){document.body.classList.add('sideOpen');const d=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#arcBar'));if(d){d.open=true;setTimeout(()=>$('aq').focus(),300)}return}
+    const c=CATS[+t.dataset.cat];$('aq').value=c[2];$('amt').value=c[3];arcSearch()};
+}
 
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
 </script>
