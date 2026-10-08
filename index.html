@@ -194,7 +194,7 @@ body.hasSide>#gBar{margin-right:300px}
 .mdet .mg .tile{padding:10px}
 .mdet .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 14px}
 .chip{background:var(--btn2);border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:14px}
-.chip:hover{border-color:var(--gold)}
+.chip.on{background:var(--acc);border-color:var(--gold);color:#fff}.chip:hover{border-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -1068,18 +1068,28 @@ const MODES=[
  ['📰','أخبار','نشرات وتحليلات',['news','talk','politics']],
  ['⚽','رياضة','تعليق ومباريات',['sport','football','soccer','sports']],
  ['👶','أطفال','أغاني وحكايات',['kids','children','childrens']],
+ ['📚','تعليم وتعلّم','محاضرات وبرامج تعليمية',['education','educational','learning','lectures','school']],
+ ['💼','أعمال ومحاسبة واقتصاد','أسواق وأعمال وتمويل',['business','finance','economy','economics','markets','investing']],
+ ['🔧','علوم وهندسة وتقنية','علوم وتكنولوجيا وهندسة',['science','technology','engineering','tech','innovation']],
+ ['🎓','راديو الجامعات والطلاب','إذاعات جامعية وطلابية',['university','college','student','campus']],
+ ['🗣','تعلّم اللغات','لغات وتعليم لغة',['language learning','languages','english learning','learn']],
+ ['📖','ثقافة وتاريخ وكتب','حوارات وكتب مسموعة',['culture','history','literature','audiobook','books','documentary']],
 ];
 const GENRES=[['🎤','بوب','pop'],['🎸','روك','rock'],['🎷','جاز','jazz'],['🎻','كلاسيك','classical'],['🪘','شرقي/طرب','oriental'],['🎧','راب وهيب هوب','hiphop'],['💃','إلكترونيك ودانس','electronic'],['🤠','كانتري','country'],['🌴','ريغي','reggae'],['🎼','بلوز وسول','blues'],['🎙','حوارات وثقافة','talk'],['😂','كوميدي','comedy'],['📻','أوبن/مجتمعي','community'],['🎶','أغاني قديمة','oldies']];
 const CCS=[['🇪🇬','مصر','EG'],['🇸🇦','السعودية','SA'],['🇦🇪','الإمارات','AE'],['🇰🇼','الكويت','KW'],['🇶🇦','قطر','QA'],['🇱🇧','لبنان','LB'],['🇸🇾','سوريا','SY'],['🇯🇴','الأردن','JO'],['🇮🇶','العراق','IQ'],['🇲🇦','المغرب','MA'],['🇩🇿','الجزائر','DZ'],['🇹🇳','تونس','TN'],['🇬🇧','بريطانيا','GB'],['🇺🇸','أمريكا','US'],['🇫🇷','فرنسا','FR'],['🇩🇪','ألمانيا','DE'],['🇹🇷','تركيا','TR'],['🇮🇹','إيطاليا','IT'],['🇪🇸','إسبانيا','ES'],['🇧🇷','البرازيل','BR']];
+const LANGS=[['','🌐 كل اللغات'],['arabic','عربي'],['english','إنجليزي'],['french','فرنسي'],['spanish','إسباني'],['turkish','تركي'],['german','ألماني'],['italian','إيطالي'],['persian','فارسي'],['urdu','أردو'],['hindi','هندي'],['russian','روسي']];
+let setLang=ls.get('setLang','');let lastLoad=null;
+const langBar=()=>`<div class="chips lbar" style="grid-column:1/-1;padding:0 0 4px">${LANGS.map(l=>`<span class="chip${l[0]===setLang?' on':''}" data-lang="${l[0]}">${l[1]}</span>`).join('')}</div>`;
 function modesPage(){
   setTab('modes');$('viewTitle').textContent='🎧 أوضاع وأقسام';
   const tl=i=>{const m=MODES[i];return `<div class="tile" data-mode="${i}"><div class="tIc">${m[0]}</div><div><b>${m[1]}</b><div class="m">${m[2]}</div></div></div>`};
   const grp=(t,ids,open)=>`<details class="mdet"${open?' open':''}><summary>${t}</summary><div class="mg">${ids.map(tl).join('')}</div></details>`;
   const chips=(t,arr,k,open)=>`<details class="mdet"${open?' open':''}><summary>${t}</summary><div class="chips">${arr.map((g,i)=>`<span class="chip" data-${k}="${i}">${g[0]} ${g[1]}</span>`).join('')}</div></details>`;
-  $('list').innerHTML=grp('🧘 هدوء وتركيز',[0,1,2,6],true)+grp('🏃 حركة ونشاط',[3,4],true)+grp('🕌 روحانيات وتراث',[5,7],true)+grp('📰 معلومات وترفيه',[8,9,10],false)
+  $('list').innerHTML=`<div class="secT" style="grid-column:1/-1;margin:0">🗣 اللغة (بتتطبق على كل الأقسام)</div>`+langBar()+grp('🧘 هدوء وتركيز',[0,1,2,6],true)+grp('🏃 حركة ونشاط',[3,4],true)+grp('🕌 روحانيات وتراث',[5,7],true)+grp('🎓 تعليم ومهنة',[11,12,13,14,15,16],true)+grp('📰 معلومات وترفيه',[8,9,10],false)
    +chips('🎼 حسب النوع',GENRES,'gen',false)+chips('🌍 حسب البلد',CCS,'cc',false);
 }
 async function loadSet(title,urls,opt={}){
+  lastLoad=[title,urls,opt];if(setLang)urls=urls.map(u=>u+'&language='+setLang);
   setTab('all');$('viewTitle').textContent=title;$('list').innerHTML='<p>جاري التحميل...</p>';
   try{
     const arrs=await Promise.all(urls.map(u=>fetch(API+u).then(r=>r.json()).catch(()=>[])));
@@ -1089,10 +1099,12 @@ async function loadSet(title,urls,opt={}){
     ok=ok.slice(0,opt.n||40);results=ok;
     if(!ok.length){$('list').innerHTML='<p>مفيش محطات شغالة دلوقتي في القسم ده.</p>';return}
     render(ok);
-    $('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${esc(title)} <button id="shufB" style="background:var(--btn2);font-size:13px;padding:5px 10px">🔀 شغّل عشوائي</button><button onclick="modesPage()" style="background:var(--btn2);font-size:13px;padding:5px 10px">↩ الأقسام</button></div>`);
+    $('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${esc(title)} <button id="shufB" style="background:var(--btn2);font-size:13px;padding:5px 10px">🔀 شغّل عشوائي</button><button onclick="modesPage()" style="background:var(--btn2);font-size:13px;padding:5px 10px">↩ الأقسام</button></div>`+langBar());
     $('shufB').onclick=()=>{const s=ok[Math.floor(Math.random()*ok.length)];playlist=ok;playMedia?playMedia(s):play(s);if(opt.sleep)$('sleep').onchange({target:{value:opt.sleep}})};
   }catch{$('list').innerHTML='<p>تعذر الاتصال.</p>'}
 }
+$('list').addEventListener('click',e=>{const c=e.target.closest('[data-lang]');if(!c)return;e.stopImmediatePropagation();setLang=c.dataset.lang;ls.set('setLang',setLang);
+  if($('list').querySelector('.mdet')||!lastLoad)modesPage();else loadSet(...lastLoad)},true);
 const q=(p)=>'/json/stations/search?hidebroken=true&order=clickcount&reverse=true&limit=60&'+p;
 $('list').addEventListener('click',e=>{
   const t=e.target.closest('[data-mode],[data-gen],[data-cc],[data-act="modes"]');if(!t)return;
