@@ -986,7 +986,12 @@ function arcCats(){
   ['play','pause','playing'].forEach(ev=>au.addEventListener(ev,upd));setInterval(upd,2000);
 })();
 // ===== 2) مواقيت الصلاة في الرئيسية =====
+function prayerNear(){
+  if(!pCfg.on||!pTimes)return null;const now=+new Date();
+  for(const k of Object.keys(PN)){const [h,m]=pTimes.t[k].split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);
+    const a=+t-15*60000,b=+t-pCfg.before*60000+pCfg.dur*60000;if(now>=a&&now<Math.max(b,+t+5*60000))return{k,t,inside:now>=+t}}return null}
 function prayerTile(){
+  const nr=prayerNear();if(!nr)return '';
   if(!pTimes)return `<div class="tile wide2" data-act="prset"><div class="tIc">🕌</div><div><b>مواقيت الصلاة</b><div class="m">اضغط عشان تحدد موقعك</div></div></div>`;
   const now=new Date();let next=null;
   for(const k of Object.keys(PN)){const [h,m]=pTimes.t[k].split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);if(t>now){next={k,t};break}}
@@ -995,7 +1000,7 @@ function prayerTile(){
   return `<div class="tile wide2" data-act="prset"><div class="tIc">🕌</div><div style="flex:1"><b>صلاة ${PN[next.k]} ${pTimes.t[next.k]}</b> <span class="m">· باقي ${left}</span>
    <div class="prTimes" style="margin-top:6px">${Object.keys(PN).map(k=>`<span ${k===next.k?'style="outline:1px solid var(--gold)"':''}>${PN[k]} ${pTimes.t[k]}</span>`).join('')}</div></div></div>`;
 }
-(function(){const _sh=showHome;showHome=function(){_sh();$('list').insertAdjacentHTML('afterbegin',prayerTile());
+(function(){const _sh=showHome;showHome=function(){_sh();$('list').insertAdjacentHTML('afterbegin',prayerTile());setInterval(()=>{if(view==='home'){const k=!!prayerNear();if(window._pk!==k){window._pk=k;showHome()}}},30000);
   const ol=$('list').onclick;$('list').onclick=e=>{if(e.target.closest('[data-act="prset"]')){document.body.classList.add('sideOpen');const d=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#prBox'));if(d){d.open=true;setTimeout(()=>$('prBox').scrollIntoView(),200)}if(!pTimes)$('prGeo').click();return}ol&&ol(e)}};
   if(!pTimes||pTimes.day!==new Date().toDateString())loadPrayer(true).then(()=>{if(view==='home')showHome()});
   setInterval(()=>{if(view==='home'&&document.visibilityState==='visible'&&!document.body.classList.contains('sideOpen')){const t=$('list').querySelector('[data-act="prset"]');if(t)t.outerHTML=prayerTile()}},60000);
@@ -1116,7 +1121,17 @@ $('list').addEventListener('click',e=>{
 },true);
 (function(){TABS.modes='tModes';TT.modes='🎧 أوضاع وأقسام';
   const nav=$('tHome').parentNode;const b=document.createElement('button');b.id='tModes';b.textContent='🎧 أوضاع وأقسام';nav.insertBefore(b,$('tHome').nextSibling);b.onclick=()=>{navPush();modesPage()};
-  const _s=showHome;showHome=function(){_s();$('list').insertAdjacentHTML('afterbegin',`<div class="tile wide" data-act="modes"><div class="tIc">🎧</div><div><b>أوضاع وأقسام</b><div class="m">تركيز، استرخاء، نوم، رياضة، سواقة، روحانيات، أنواع وبلدان</div></div></div>`)}})();
+  const _s=showHome;showHome=function(){_s();const _pt=$('list').firstElementChild&&$('list').firstElementChild.dataset.act==='prset';$('list').firstElementChild&&_pt?0:0;(_pt?$('list').firstElementChild:{insertAdjacentHTML:(w,h)=>$('list').insertAdjacentHTML('afterbegin',h)}).insertAdjacentHTML(_pt?'afterend':'afterbegin',`<div class="tile wide" data-act="modes"><div class="tIc">🎧</div><div><b>أوضاع وأقسام</b><div class="m">تركيز، استرخاء، نوم، رياضة، سواقة، روحانيات، أنواع وبلدان</div></div></div>`)}})();
+
+// تنبيه الصلاة عند فتح التطبيق
+(function(){let shown=false;
+ function banner(){if(shown)return;const n=prayerNear();if(!n)return;shown=true;
+  const d=document.createElement('div');d.id='prAlert';d.style.cssText='position:fixed;top:12px;left:12px;right:12px;z-index:60;background:var(--card);border:2px solid var(--gold);border-radius:14px;padding:14px 16px;display:flex;gap:10px;align-items:center;color:var(--txt);box-shadow:0 6px 24px rgba(0,0,0,.5)';
+  const mins=Math.max(0,Math.round((n.t-new Date())/60000));
+  d.innerHTML=`<div style="font-size:28px">🕌</div><div style="flex:1"><b>${n.inside?'وقت صلاة '+PN[n.k]:'قرب أذان '+PN[n.k]+' — باقي '+mins+' دقيقة'}</b><div class="m" style="font-size:13px;color:var(--mut)">التشغيل هيوقف تلقائي في وقت الصلاة (القرآن مستثنى)</div></div><button style="background:var(--btn2)">تمام</button>`;
+  d.querySelector('button').onclick=()=>d.remove();document.body.appendChild(d);setTimeout(()=>d.remove(),20000)}
+ [1500,4000,8000].forEach(t=>setTimeout(banner,t));
+})();
 </script>
 </body>
 </html>
