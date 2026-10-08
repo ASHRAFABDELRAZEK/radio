@@ -890,7 +890,7 @@ async function gSearch(){
 
 // --- إيقاف الأغاني وقت الصلاة ---
 const PN={Fajr:'الفجر',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
-let pCfg=Object.assign({on:false,scope:'music',before:10,dur:30,resume:true,city:'Riyadh',country:'SA',lat:null,lon:null},ls.get('prayerCfg',{}));
+let pCfg=Object.assign({on:true,scope:'music',before:10,dur:30,resume:true,city:'Riyadh',country:'SA',lat:null,lon:null},ls.get('prayerCfg',{}));
 let pTimes=ls.get('prayerTimes',null),pPaused=false,pWin=null;
 const isQuran=s=>{if(!s)return false;if(s.masp)return s.masp===7;if(s.stationuuid==='quran-cairo')return true;
   return /quran|qur'an|koran|قرآن|القران|القرآن|قران/i.test((s.tags||'')+' '+s.name+' '+(s.country||''))};
