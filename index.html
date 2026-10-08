@@ -193,7 +193,7 @@ body.hasSide>#gBar{margin-right:300px}
 .mdet .mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:8px;padding:0 10px 12px}
 .mdet .mg .tile{padding:10px}
 .mdet .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 14px}
-.chip{background:var(--btn2);border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:var(--btn2);border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:14px}
 .chip.on{background:var(--acc);border-color:var(--gold);color:#fff}.chip:hover{border-color:var(--gold)}
 </style>
 </head>
@@ -890,7 +890,7 @@ async function gSearch(){
 
 // --- إيقاف الأغاني وقت الصلاة ---
 const PN={Fajr:'الفجر',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
-let pCfg=Object.assign({on:true,scope:'music',before:10,dur:30,resume:true,city:'Riyadh',country:'SA',lat:null,lon:null},ls.get('prayerCfg',{}));
+let pCfg=Object.assign({on:true,scope:'music',before:10,dur:30,resume:true,city:'',country:'',lat:null,lon:null},ls.get('prayerCfg',{}));
 let pTimes=ls.get('prayerTimes',null),pPaused=false,pWin=null;
 const isQuran=s=>{if(!s)return false;if(s.masp)return s.masp===7;if(s.stationuuid==='quran-cairo')return true;
   return /quran|qur'an|koran|قرآن|القران|القرآن|قران/i.test((s.tags||'')+' '+s.name+' '+(s.country||''))};
@@ -1143,6 +1143,99 @@ $('list').addEventListener('click',e=>{
    document.body.appendChild(d);setTimeout(()=>d.remove(),4500)})();const st=$('status');if(st)st.textContent=pCfg.on?'🕌 تم تفعيل الصامت وقت الصلاة':'🔕 تم إيقاف الصامت وقت الصلاة';if(view==='home')showHome()};
  upd();const t=$('topBar'),th=$('themeB');t.insertBefore(b,th||null);
  setInterval(()=>{if(b.textContent!==(pCfg.on?'🕌':'🔕'))upd()},2000)})();
+
+// ===== 7) الإعداد الأول + وضع السواقة + المذاكرة + «بعدين» + «مقترح اليوم» =====
+const toast=(m,ms=3500)=>{const o=document.getElementById('gToast');o&&o.remove();const d=document.createElement('div');d.id='gToast';
+  d.style.cssText='position:fixed;bottom:150px;left:50%;transform:translateX(-50%);z-index:75;max-width:90vw;background:var(--card);color:var(--txt);border:1px solid var(--gold);border-radius:12px;padding:10px 16px;box-shadow:0 6px 20px rgba(0,0,0,.5);font-size:14px;text-align:center';
+  d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),ms)};
+const INTERESTS=[['🕌','قرآن وروحانيات','quran',5],['📰','أخبار','news',8],['🎵','موسيقى وطرب','music',[4,7]],['📚','تعليم','edu',11],['💼','أعمال واقتصاد','biz',12],['🔧','علوم وتقنية','sci',13],['🗣','تعلّم لغات','lang',15],['⚽','رياضة','sport',9],['😴','استرخاء ونوم','relax',[1,2]],['🏋️','نشاط وتمارين','fit',3]];
+const dayKey=()=>{const d=new Date(),f=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+f(d.getMonth()+1)+'-'+f(d.getDate())};
+function dailyIdx(){const it=ls.get('interests',[]);if(!it.length)return null;const d=new Date(),seed=d.getFullYear()*372+d.getMonth()*31+d.getDate();
+  const k=it[seed%it.length],x=INTERESTS.find(i=>i[2]===k);if(!x)return null;return Array.isArray(x[3])?x[3][seed%x[3].length]:x[3]}
+// --- الإعداد الأول ---
+function welcome(force){
+  if(!force&&ls.get('welcomeDone',false))return;
+  const o=document.createElement('div');o.id='welcome';o.style.cssText='position:fixed;inset:0;z-index:90;background:var(--bg);overflow:auto;padding:20px;display:flex;justify-content:center';
+  document.body.appendChild(o);let step=0,sel=new Set(ls.get('interests',[]));
+  const finish=()=>{ls.set('welcomeDone',true);ls.set('interests',[...sel]);o.remove();if(view==='home')showHome()};
+  const draw=()=>{
+    const dots=[0,1,2].map(i=>`<span style="width:10px;height:10px;border-radius:50%;display:inline-block;margin:0 4px;background:${i===step?'var(--gold)':'var(--btn2)'}"></span>`).join('');
+    let body='';
+    if(step===0)body=`<h2>🌐 أهلاً بيك في راديو العالم</h2><p class="m">اختار لغة المحطات اللي تحب تسمعها (تقدر تغيّرها بعدين من «أوضاع وأقسام»):</p><div class="chips" style="padding:0">${LANGS.map(l=>`<span class="chip${l[0]===setLang?' on':''}" data-wl="${l[0]}">${l[1]}</span>`).join('')}</div>`;
+    if(step===1)body=`<h2>📍 موقعك</h2><p class="m">عشان أوقات الصلاة والصامت وقت الصلاة. موقعك بيتحفظ على جهازك بس.</p><button id="wGeo" style="width:100%;padding:14px;font-size:16px">📍 حدد موقعي تلقائي</button><p class="m" style="margin:10px 0 4px">أو اكتب مدينتك:</p><div style="display:flex;gap:6px"><input id="wCity" placeholder="المدينة (مثال: Cairo)" style="flex:2;min-width:0"><input id="wCc" placeholder="الدولة (EG)" style="flex:1;min-width:0"></div><button id="wCityGo" style="margin-top:8px">حفظ المدينة</button><div id="wMsg" class="m" style="margin-top:8px;min-height:20px">${pCfg.lat!=null||pCfg.city?'✅ تم تحديد الموقع':''}</div>`;
+    if(step===2)body=`<h2>🎯 اهتماماتك</h2><p class="m">اختار اللي يهمك، وهنقترح لك كل يوم حاجة منها:</p><div class="chips" style="padding:0">${INTERESTS.map(i=>`<span class="chip${sel.has(i[2])?' on':''}" data-wi="${i[2]}">${i[0]} ${i[1]}</span>`).join('')}</div>`;
+    o.innerHTML=`<div style="width:min(520px,100%);padding-top:6vh"><div style="text-align:center;margin-bottom:14px">${dots}</div>${body}<div style="display:flex;gap:8px;margin-top:22px;justify-content:space-between"><button id="wSkip" style="background:var(--btn2)">تخطي</button><button id="wNext" style="padding:10px 26px">${step===2?'ابدأ ✔':'التالي ◀'}</button></div></div>`;
+    o.querySelectorAll('[data-wl]').forEach(c=>c.onclick=()=>{setLang=c.dataset.wl;ls.set('setLang',setLang);draw()});
+    o.querySelectorAll('[data-wi]').forEach(c=>c.onclick=()=>{const k=c.dataset.wi;sel.has(k)?sel.delete(k):sel.add(k);c.classList.toggle('on')});
+    const geo=$('wGeo');if(geo)geo.onclick=()=>{const m=$('wMsg');m.textContent='جاري تحديد الموقع...';navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{pCfg.lat=+p.coords.latitude.toFixed(3);pCfg.lon=+p.coords.longitude.toFixed(3);ls.set('prayerCfg',pCfg);loadPrayer(true);m.textContent='✅ تم تحديد موقعك'},()=>m.textContent='مقدرتش أحدد الموقع، اكتب مدينتك تحت'):m.textContent='الجهاز مش بيدعم تحديد الموقع'};
+    const cg=$('wCityGo');if(cg)cg.onclick=()=>{const c=$('wCity').value.trim();if(!c){$('wMsg').textContent='اكتب اسم المدينة';return}pCfg.city=c;pCfg.country=$('wCc').value.trim()||'';pCfg.lat=pCfg.lon=null;ls.set('prayerCfg',pCfg);loadPrayer(true);$('wMsg').textContent='✅ تم حفظ المدينة'};
+    $('wSkip').onclick=finish;$('wNext').onclick=()=>{if(step<2){step++;draw()}else finish()};
+  };draw()}
+// --- وضع السواقة ---
+function driveMode(){
+  let o=$('driveO');if(o){o.remove()}
+  o=document.createElement('div');o.id='driveO';o.style.cssText='position:fixed;inset:0;z-index:85;background:#000;color:#fff;display:flex;flex-direction:column;padding:16px;gap:12px';
+  const bt=(id,t)=>`<button id="${id}" style="flex:1;font-size:56px;border-radius:20px;background:#1e293b;color:#fff;border:2px solid #334155">${t}</button>`;
+  o.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div id="dvName" style="font-size:22px;font-weight:bold;flex:1">اختار محطة</div><button id="dvX" style="font-size:22px;padding:10px 18px;background:#b91c1c">✕ خروج</button></div>
+   <div style="display:flex;gap:12px;flex:1">${bt('dvPrev','⏮')}${bt('dvNext','⏭')}</div><div style="display:flex;gap:12px;flex:1">${bt('dvPP','▶')}${bt('dvFav','⭐')}</div>`;
+  document.body.appendChild(o);let wl=null;try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(x=>wl=x).catch(()=>{})}catch{}
+  const upd=()=>{if(!$('driveO'))return;$('dvName').textContent=current?current.name:'اختار محطة';$('dvPP').textContent=au.paused?'▶':'⏸'};
+  $('dvPrev').onclick=()=>{$('prevB').click();setTimeout(upd,400)};$('dvNext').onclick=()=>{$('nextB').click();setTimeout(upd,400)};
+  $('dvPP').onclick=()=>{$('pp').click();setTimeout(upd,300)};$('dvFav').onclick=()=>{if(current){toggleFav(current);toast('⭐ اتحفظت في المفضلة')}};
+  const iv=setInterval(()=>{if(!$('driveO')){clearInterval(iv);return}upd()},1000);upd();
+  $('dvX').onclick=()=>{o.remove();try{wl&&wl.release()}catch{}}}
+// --- وضع المذاكرة (بومودورو) ---
+let study=null;
+function studyMode(){
+  let o=$('studyO');if(o){o.remove()}
+  o=document.createElement('div');o.id='studyO';o.style.cssText='position:fixed;inset:0;z-index:85;background:var(--bg);color:var(--txt);display:flex;align-items:center;justify-content:center;padding:16px';
+  const today=()=>ls.get('studyLog',{})[dayKey()]||0;
+  o.innerHTML=`<div style="width:min(420px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;text-align:center">
+   <h2 style="margin:0 0 6px">🎓 وضع التركيز والمذاكرة</h2><div class="m" style="margin-bottom:14px">فترات تركيز بينها راحة، والموسيقى بتقف وتشتغل لوحدها</div>
+   <div style="display:flex;gap:10px;justify-content:center;margin-bottom:10px"><label>تركيز (دقيقة)<br><input id="stF" type="number" value="25" min="5" max="90" style="width:80px;text-align:center"></label><label>راحة (دقيقة)<br><input id="stB" type="number" value="5" min="1" max="30" style="width:80px;text-align:center"></label></div>
+   <label style="display:block;margin-bottom:12px"><input type="checkbox" id="stM" checked> شغّل موسيقى هادية أثناء التركيز</label>
+   <div id="stPh" style="font-size:18px;margin:8px 0">جاهز؟</div><div id="stT" style="font-size:54px;font-weight:bold;font-variant-numeric:tabular-nums">25:00</div>
+   <div class="m" id="stDay" style="margin:6px 0 14px">تركيز النهاردة: ${today()} دقيقة</div>
+   <div style="display:flex;gap:8px;justify-content:center"><button id="stGo" style="padding:12px 26px;font-size:16px">▶ ابدأ</button><button id="stX" style="background:var(--btn2)">إغلاق</button></div></div>`;
+  document.body.appendChild(o);const fmtT=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  const logMin=m=>{const l=ls.get('studyLog',{});l[dayKey()]=(l[dayKey()]||0)+m;ls.set('studyLog',l);$('stDay')&&($('stDay').textContent='تركيز النهاردة: '+l[dayKey()]+' دقيقة')};
+  const phase=(ph)=>{study.ph=ph;study.left=(ph==='focus'?study.f:study.b)*60;
+    $('stPh').textContent=ph==='focus'?'🎯 تركيز':'☕ راحة — قوم اتحرك واشرب ميّه';
+    if(ph==='focus'){if(study.music){if(current)au.play().catch(()=>{});else modeMusic()}}else{au.pause()}
+    toast(ph==='focus'?'🎯 بدأت فترة التركيز':'☕ وقت الراحة')};
+  const modeMusic=()=>{const m=MODES[0];loadSet(m[0]+' '+m[1],m[3].map(x=>q('tag='+encodeURIComponent(x))),{}).then(()=>{$('studyO')&&0;const b=$('shufB');b&&b.click()})};
+  $('stGo').onclick=()=>{
+    if(study&&study.iv){clearInterval(study.iv);study=null;$('stGo').textContent='▶ ابدأ';$('stPh').textContent='متوقف';return}
+    study={f:Math.max(5,+$('stF').value||25),b:Math.max(1,+$('stB').value||5),music:$('stM').checked,iv:null};phase('focus');$('stGo').textContent='⏹ إيقاف';
+    study.iv=setInterval(()=>{if(!$('studyO')){clearInterval(study.iv);study=null;return}study.left--;$('stT').textContent=fmtT(study.left);
+      if(study.left<=0){if(study.ph==='focus')logMin(study.f);phase(study.ph==='focus'?'break':'focus')}},1000);$('stT').textContent=fmtT(study.left)};
+  $('stX').onclick=()=>{if(study&&study.iv)clearInterval(study.iv);study=null;o.remove()}}
+// --- قايمة «بعدين» ---
+let later=ls.get('radioLater',[]);
+(function(){const _r=render;render=function(arr){_r(arr);window._lastArr=arr;
+  $('list').querySelectorAll('.st[data-i]').forEach(el=>{if(el.querySelector('.laterB'))return;el.insertAdjacentHTML('beforeend',`<button class="laterB" data-l="${el.dataset.i}" title="بعدين" style="background:none;font-size:18px;padding:0 4px">🔖</button>`)})}})();
+function laterPage(){setTab('all');$('viewTitle').textContent='🔖 بعدين ('+later.length+')';
+  if(!later.length){$('list').innerHTML='<p>القايمة فاضية. اضغط 🔖 جنب أي محطة عشان تضيفها هنا.</p>';return}
+  render(later);$('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1;display:flex;gap:8px;align-items:center">🔖 بعدين <button id="laterClr" style="background:var(--btn2);font-size:13px;padding:5px 10px">🗑 مسح القايمة</button></div>`);
+  $('laterClr').onclick=()=>{later=[];ls.set('radioLater',later);laterPage()}}
+$('list').addEventListener('click',e=>{
+  const l=e.target.closest('.laterB');if(l){e.stopImmediatePropagation();const s=(window._lastArr||[])[l.dataset.l];if(!s)return;
+    if(later.some(x=>x.stationuuid===s.stationuuid)){later=later.filter(x=>x.stationuuid!==s.stationuuid);ls.set('radioLater',later);toast('اتشالت من «بعدين»')}else{later.push(slim(s));ls.set('radioLater',later);toast('🔖 اتضافت لـ«بعدين»')}return}
+  const t=e.target.closest('[data-act="daily"],[data-act="drive"],[data-act="study"],[data-act="later"],[data-act="welcome"]');if(!t)return;e.stopImmediatePropagation();navPush();const a=t.dataset.act;
+  if(a==='drive')driveMode();else if(a==='study')studyMode();else if(a==='later')laterPage();else if(a==='welcome')welcome(true);
+  else if(a==='daily'){const i=dailyIdx();if(i==null)return;const st=ls.get('streak',{d:'',n:0}),k=dayKey();
+    if(st.d!==k){const y=new Date(Date.now()-864e5),f=n=>String(n).padStart(2,'0'),yk=y.getFullYear()+'-'+f(y.getMonth()+1)+'-'+f(y.getDate());st.n=st.d===yk?st.n+1:1;st.d=k;ls.set('streak',st)}
+    const m=MODES[i];loadSet(m[0]+' '+m[1],m[3].map(x=>q('tag='+encodeURIComponent(x))),{sleep:m[4]}).then(()=>{const b=$('shufB');b&&b.click()})}
+},true);
+(function(){const _s=showHome;showHome=function(){_s();const mt=$('list').querySelector('[data-act="modes"]');if(!mt)return;
+  const di=dailyIdx(),st=ls.get('streak',{d:'',n:0});
+  const tl=(a,ic,t,s)=>`<div class="tile" data-act="${a}"><div class="tIc">${ic}</div><div><b>${t}</b><div class="m">${s}</div></div></div>`;
+  mt.insertAdjacentHTML('afterend',(di!=null?tl('daily','✨','مقترح اليوم',MODES[di][1]+(st.n>1?' · 🔥 '+st.n+' أيام':'')):'')+tl('drive','🚗','وضع السواقة','أزرار كبيرة')+tl('study','🎓','تركيز ومذاكرة','مؤقت + موسيقى هادية')+tl('later','🔖','بعدين',later.length+' عنصر'))}})();
+// أوقات الصلاة: مفيش افتراض لمدينة معيّنة
+{const _lp=loadPrayer;loadPrayer=async function(f){if(pCfg.lat==null&&!pCfg.city)return;return _lp(f)}}
+(function(){const b=document.createElement('button');b.textContent='⚙️ إعادة الإعداد الأول (اللغة والموقع والاهتمامات)';b.style.cssText='background:var(--btn2);margin:10px';
+  const add=()=>{const side=document.querySelector('#side');if(side&&!$('reWel')){b.id='reWel';b.onclick=()=>{document.body.classList.remove('sideOpen');welcome(true)};side.appendChild(b)}};add();setTimeout(add,1500)})();
+setTimeout(()=>welcome(false),800);
 </script>
 </body>
 </html>
