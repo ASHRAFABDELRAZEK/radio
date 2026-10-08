@@ -1072,7 +1072,7 @@ const MODES=[
 const GENRES=[['🎤','بوب','pop'],['🎸','روك','rock'],['🎷','جاز','jazz'],['🎻','كلاسيك','classical'],['🪘','شرقي/طرب','oriental'],['🎧','راب وهيب هوب','hiphop'],['💃','إلكترونيك ودانس','electronic'],['🤠','كانتري','country'],['🌴','ريغي','reggae'],['🎼','بلوز وسول','blues'],['🎙','حوارات وثقافة','talk'],['😂','كوميدي','comedy'],['📻','أوبن/مجتمعي','community'],['🎶','أغاني قديمة','oldies']];
 const CCS=[['🇪🇬','مصر','EG'],['🇸🇦','السعودية','SA'],['🇦🇪','الإمارات','AE'],['🇰🇼','الكويت','KW'],['🇶🇦','قطر','QA'],['🇱🇧','لبنان','LB'],['🇸🇾','سوريا','SY'],['🇯🇴','الأردن','JO'],['🇮🇶','العراق','IQ'],['🇲🇦','المغرب','MA'],['🇩🇿','الجزائر','DZ'],['🇹🇳','تونس','TN'],['🇬🇧','بريطانيا','GB'],['🇺🇸','أمريكا','US'],['🇫🇷','فرنسا','FR'],['🇩🇪','ألمانيا','DE'],['🇹🇷','تركيا','TR'],['🇮🇹','إيطاليا','IT'],['🇪🇸','إسبانيا','ES'],['🇧🇷','البرازيل','BR']];
 function modesPage(){
-  setTab('all');$('viewTitle').textContent='🎧 أوضاع وأقسام';
+  setTab('modes');$('viewTitle').textContent='🎧 أوضاع وأقسام';
   const tl=i=>{const m=MODES[i];return `<div class="tile" data-mode="${i}"><div class="tIc">${m[0]}</div><div><b>${m[1]}</b><div class="m">${m[2]}</div></div></div>`};
   const grp=(t,ids,open)=>`<details class="mdet"${open?' open':''}><summary>${t}</summary><div class="mg">${ids.map(tl).join('')}</div></details>`;
   const chips=(t,arr,k,open)=>`<details class="mdet"${open?' open':''}><summary>${t}</summary><div class="chips">${arr.map((g,i)=>`<span class="chip" data-${k}="${i}">${g[0]} ${g[1]}</span>`).join('')}</div></details>`;
@@ -1102,7 +1102,9 @@ $('list').addEventListener('click',e=>{
   else if(t.dataset.gen!==undefined){const g=GENRES[+t.dataset.gen];loadSet(g[0]+' '+g[1],[q('tag='+g[2])],{n:50})}
   else{const c=CCS[+t.dataset.cc];loadSet(c[0]+' '+c[1],[q('countrycode='+c[2])],{n:60})}
 },true);
-(function(){const _s=showHome;showHome=function(){_s();const f=$('list').querySelector('[data-act="all"]');if(f)f.insertAdjacentHTML('beforebegin',`<div class="tile" data-act="modes"><div class="tIc">🎧</div><div><b>أوضاع وأقسام</b><div class="m">تركيز، استرخاء، نوم، رياضة، أنواع، بلدان</div></div></div>`)}})();
+(function(){TABS.modes='tModes';TT.modes='🎧 أوضاع وأقسام';
+  const nav=$('tHome').parentNode;const b=document.createElement('button');b.id='tModes';b.textContent='🎧 أوضاع وأقسام';nav.insertBefore(b,$('tHome').nextSibling);b.onclick=()=>{navPush();modesPage()};
+  const _s=showHome;showHome=function(){_s();$('list').insertAdjacentHTML('afterbegin',`<div class="tile wide" data-act="modes"><div class="tIc">🎧</div><div><b>أوضاع وأقسام</b><div class="m">تركيز، استرخاء، نوم، رياضة، سواقة، روحانيات، أنواع وبلدان</div></div></div>`)}})();
 </script>
 </body>
 </html>
