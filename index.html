@@ -184,6 +184,17 @@ body.hasSide>#gBar{margin-right:300px}
 .tile.wide2{grid-column:1/-1;border-color:var(--gold)}
 .grpBar{display:flex;gap:6px;flex-wrap:wrap}.grpBar button{background:var(--btn2);padding:6px 12px}.grpBar button.on{background:var(--acc)}
 .grpSet{background:var(--btn2);padding:4px 8px}
+
+.st .n{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.st .m{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mdet{grid-column:1/-1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0}
+.mdet>summary{cursor:pointer;padding:12px 14px;font-weight:bold;color:var(--gold);list-style:none;display:flex;justify-content:space-between}
+.mdet>summary::after{content:"▾"}.mdet[open]>summary::after{content:"▴"}
+.mdet .mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:8px;padding:0 10px 12px}
+.mdet .mg .tile{padding:10px}
+.mdet .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 14px}
+.chip{background:var(--btn2);border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:14px}
+.chip:hover{border-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -1062,10 +1073,11 @@ const GENRES=[['🎤','بوب','pop'],['🎸','روك','rock'],['🎷','جاز',
 const CCS=[['🇪🇬','مصر','EG'],['🇸🇦','السعودية','SA'],['🇦🇪','الإمارات','AE'],['🇰🇼','الكويت','KW'],['🇶🇦','قطر','QA'],['🇱🇧','لبنان','LB'],['🇸🇾','سوريا','SY'],['🇯🇴','الأردن','JO'],['🇮🇶','العراق','IQ'],['🇲🇦','المغرب','MA'],['🇩🇿','الجزائر','DZ'],['🇹🇳','تونس','TN'],['🇬🇧','بريطانيا','GB'],['🇺🇸','أمريكا','US'],['🇫🇷','فرنسا','FR'],['🇩🇪','ألمانيا','DE'],['🇹🇷','تركيا','TR'],['🇮🇹','إيطاليا','IT'],['🇪🇸','إسبانيا','ES'],['🇧🇷','البرازيل','BR']];
 function modesPage(){
   setTab('all');$('viewTitle').textContent='🎧 أوضاع وأقسام';
-  const tl=(a,ic,t,s)=>`<div class="tile" ${a}><div class="tIc">${ic}</div><div><b>${t}</b><div class="m">${s}</div></div></div>`;
-  $('list').innerHTML=`<div class="secT">🎧 أوضاع المزاج</div>`+MODES.map((m,i)=>tl(`data-mode="${i}"`,m[0],m[1],m[2])).join('')
-   +`<div class="secT">🎼 حسب النوع</div>`+GENRES.map((g,i)=>tl(`data-gen="${i}"`,g[0],g[1],'')).join('')
-   +`<div class="secT">🌍 حسب البلد</div>`+CCS.map((c,i)=>tl(`data-cc="${i}"`,c[0],c[1],'')).join('');
+  const tl=i=>{const m=MODES[i];return `<div class="tile" data-mode="${i}"><div class="tIc">${m[0]}</div><div><b>${m[1]}</b><div class="m">${m[2]}</div></div></div>`};
+  const grp=(t,ids,open)=>`<details class="mdet"${open?' open':''}><summary>${t}</summary><div class="mg">${ids.map(tl).join('')}</div></details>`;
+  const chips=(t,arr,k,open)=>`<details class="mdet"${open?' open':''}><summary>${t}</summary><div class="chips">${arr.map((g,i)=>`<span class="chip" data-${k}="${i}">${g[0]} ${g[1]}</span>`).join('')}</div></details>`;
+  $('list').innerHTML=grp('🧘 هدوء وتركيز',[0,1,2,6],true)+grp('🏃 حركة ونشاط',[3,4],true)+grp('🕌 روحانيات وتراث',[5,7],true)+grp('📰 معلومات وترفيه',[8,9,10],false)
+   +chips('🎼 حسب النوع',GENRES,'gen',false)+chips('🌍 حسب البلد',CCS,'cc',false);
 }
 async function loadSet(title,urls,opt={}){
   setTab('all');$('viewTitle').textContent=title;$('list').innerHTML='<p>جاري التحميل...</p>';
