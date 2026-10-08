@@ -1137,7 +1137,10 @@ $('list').addEventListener('click',e=>{
 (function(){const b=document.createElement('button');b.id='prTog';b.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 12px';
  const upd=()=>{b.textContent=pCfg.on?'🕌':'🔕';b.title=pCfg.on?'صامت وقت الصلاة: شغّال':'صامت وقت الصلاة: متوقف';b.style.outline=pCfg.on?'2px solid var(--gold)':'none';b.style.opacity=pCfg.on?1:.7};
  b.onclick=()=>{pCfg.on=!pCfg.on;ls.set('prayerCfg',pCfg);if($('prOn'))$('prOn').checked=pCfg.on;if(!pCfg.on)pWin=null;else{prayerCheck();if(pCfg.lat==null&&$('prGeo')&&0)$('prGeo').click()}
-  upd();const st=$('status');if(st)st.textContent=pCfg.on?'🕌 تم تفعيل الصامت وقت الصلاة':'🔕 تم إيقاف الصامت وقت الصلاة';if(view==='home')showHome()};
+  upd();(function(){const o=document.getElementById('prToast');o&&o.remove();const d=document.createElement('div');d.id='prToast';
+   d.style.cssText='position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:70;width:min(360px,90vw);background:'+(pCfg.on?'#166534':'#7c2d12')+';color:#fff;border:2px solid var(--gold);border-radius:14px;padding:14px 16px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.5);font-size:15px;line-height:1.7';
+   d.innerHTML=pCfg.on?'<b>🕌 تم تفعيل «صامت وقت الصلاة»</b><br><span style="font-size:13px">التشغيل هيوقف تلقائي قبل الصلاة بـ'+pCfg.before+' دقايق ولمدة '+pCfg.dur+' دقيقة (القرآن مستثنى). اضغط الأيقونة تاني لإيقافه.</span>':'<b>🔕 تم إيقاف «صامت وقت الصلاة»</b><br><span style="font-size:13px">الراديو هيفضل شغّال وقت الصلاة. اضغط الأيقونة تاني لتفعيله.</span>';
+   document.body.appendChild(d);setTimeout(()=>d.remove(),4500)})();const st=$('status');if(st)st.textContent=pCfg.on?'🕌 تم تفعيل الصامت وقت الصلاة':'🔕 تم إيقاف الصامت وقت الصلاة';if(view==='home')showHome()};
  upd();const t=$('topBar'),th=$('themeB');t.insertBefore(b,th||null);
  setInterval(()=>{if(b.textContent!==(pCfg.on?'🕌':'🔕'))upd()},2000)})();
 </script>
