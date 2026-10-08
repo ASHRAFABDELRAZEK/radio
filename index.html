@@ -1132,6 +1132,14 @@ $('list').addEventListener('click',e=>{
   d.querySelector('button').onclick=()=>d.remove();document.body.appendChild(d);setTimeout(()=>d.remove(),20000)}
  [1500,4000,8000].forEach(t=>setTimeout(banner,t));
 })();
+
+// زر صامت وقت الصلاة في الشريط العلوي
+(function(){const b=document.createElement('button');b.id='prTog';b.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 12px';
+ const upd=()=>{b.textContent=pCfg.on?'🕌':'🔕';b.title=pCfg.on?'صامت وقت الصلاة: شغّال':'صامت وقت الصلاة: متوقف';b.style.outline=pCfg.on?'2px solid var(--gold)':'none';b.style.opacity=pCfg.on?1:.7};
+ b.onclick=()=>{pCfg.on=!pCfg.on;ls.set('prayerCfg',pCfg);if($('prOn'))$('prOn').checked=pCfg.on;if(!pCfg.on)pWin=null;else{prayerCheck();if(pCfg.lat==null&&$('prGeo')&&0)$('prGeo').click()}
+  upd();const st=$('status');if(st)st.textContent=pCfg.on?'🕌 تم تفعيل الصامت وقت الصلاة':'🔕 تم إيقاف الصامت وقت الصلاة';if(view==='home')showHome()};
+ upd();const t=$('topBar'),th=$('themeB');t.insertBefore(b,th||null);
+ setInterval(()=>{if(b.textContent!==(pCfg.on?'🕌':'🔕'))upd()},2000)})();
 </script>
 </body>
 </html>
