@@ -1043,6 +1043,54 @@ $('list').addEventListener('click',e=>{
 },true);
 
 (async()=>{await pickServer();loadCountries().catch(()=>{});$('lang').value='arabic';showHome()})();
+
+// ===== 6) أوضاع وأقسام =====
+const MODES=[
+ ['🧠','تركيز ودراسة','موسيقى هادية بدون كلام',['focus','study','lofi','piano','instrumental','classical']],
+ ['🌊','استرخاء وموجات ألفا','ambient وتأمل وأصوات طبيعة (يُفضّل بسماعات)',['binaural','alpha','meditation','ambient','relaxation','chillout','nature']],
+ ['😴','نوم','هدوء ومطر وبحر + مؤقت 30 دقيقة',['sleep','rain','ocean','calm','soft','lullaby'],30],
+ ['🏋️','تمارين رياضية','إيقاع حماسي',['workout','fitness','gym','dance','edm','electronic','hiphop','rock']],
+ ['🚗','سواقة وسفر','أغاني خفيفة ومزاج رايق',['pop','hits','top40','oldies','road','80s','90s']],
+ ['🕌','روحانيات','قرآن وأدعية وابتهالات',['quran','islamic','nasheed','dua','tilawat','religion']],
+ ['🌅','صباح رايق','فيروز وطرب هادي',['fairuz','arabic','tarab','jazz','acoustic','coffee']],
+ ['🎻','طرب وكلاسيك عربي','أم كلثوم وعبد الحليم وزمان',['tarab','arabic classic','oum kalthoum','oriental','arabic']],
+ ['📰','أخبار','نشرات وتحليلات',['news','talk','politics']],
+ ['⚽','رياضة','تعليق ومباريات',['sport','football','soccer','sports']],
+ ['👶','أطفال','أغاني وحكايات',['kids','children','childrens']],
+];
+const GENRES=[['🎤','بوب','pop'],['🎸','روك','rock'],['🎷','جاز','jazz'],['🎻','كلاسيك','classical'],['🪘','شرقي/طرب','oriental'],['🎧','راب وهيب هوب','hiphop'],['💃','إلكترونيك ودانس','electronic'],['🤠','كانتري','country'],['🌴','ريغي','reggae'],['🎼','بلوز وسول','blues'],['🎙','حوارات وثقافة','talk'],['😂','كوميدي','comedy'],['📻','أوبن/مجتمعي','community'],['🎶','أغاني قديمة','oldies']];
+const CCS=[['🇪🇬','مصر','EG'],['🇸🇦','السعودية','SA'],['🇦🇪','الإمارات','AE'],['🇰🇼','الكويت','KW'],['🇶🇦','قطر','QA'],['🇱🇧','لبنان','LB'],['🇸🇾','سوريا','SY'],['🇯🇴','الأردن','JO'],['🇮🇶','العراق','IQ'],['🇲🇦','المغرب','MA'],['🇩🇿','الجزائر','DZ'],['🇹🇳','تونس','TN'],['🇬🇧','بريطانيا','GB'],['🇺🇸','أمريكا','US'],['🇫🇷','فرنسا','FR'],['🇩🇪','ألمانيا','DE'],['🇹🇷','تركيا','TR'],['🇮🇹','إيطاليا','IT'],['🇪🇸','إسبانيا','ES'],['🇧🇷','البرازيل','BR']];
+function modesPage(){
+  setTab('all');$('viewTitle').textContent='🎧 أوضاع وأقسام';
+  const tl=(a,ic,t,s)=>`<div class="tile" ${a}><div class="tIc">${ic}</div><div><b>${t}</b><div class="m">${s}</div></div></div>`;
+  $('list').innerHTML=`<div class="secT">🎧 أوضاع المزاج</div>`+MODES.map((m,i)=>tl(`data-mode="${i}"`,m[0],m[1],m[2])).join('')
+   +`<div class="secT">🎼 حسب النوع</div>`+GENRES.map((g,i)=>tl(`data-gen="${i}"`,g[0],g[1],'')).join('')
+   +`<div class="secT">🌍 حسب البلد</div>`+CCS.map((c,i)=>tl(`data-cc="${i}"`,c[0],c[1],'')).join('');
+}
+async function loadSet(title,urls,opt={}){
+  setTab('all');$('viewTitle').textContent=title;$('list').innerHTML='<p>جاري التحميل...</p>';
+  try{
+    const arrs=await Promise.all(urls.map(u=>fetch(API+u).then(r=>r.json()).catch(()=>[])));
+    const seen=new Set();let ok=[];
+    const mx=Math.max(...arrs.map(a=>a.length));
+    for(let i=0;i<mx;i++)arrs.forEach(a=>{const s=a[i];if(s&&s.lastcheckok===1&&/^https:/.test(s.url_resolved||'')&&!seen.has(s.stationuuid)){seen.add(s.stationuuid);ok.push(s)}});
+    ok=ok.slice(0,opt.n||40);results=ok;
+    if(!ok.length){$('list').innerHTML='<p>مفيش محطات شغالة دلوقتي في القسم ده.</p>';return}
+    render(ok);
+    $('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${esc(title)} <button id="shufB" style="background:var(--btn2);font-size:13px;padding:5px 10px">🔀 شغّل عشوائي</button><button onclick="modesPage()" style="background:var(--btn2);font-size:13px;padding:5px 10px">↩ الأقسام</button></div>`);
+    $('shufB').onclick=()=>{const s=ok[Math.floor(Math.random()*ok.length)];playlist=ok;playMedia?playMedia(s):play(s);if(opt.sleep)$('sleep').onchange({target:{value:opt.sleep}})};
+  }catch{$('list').innerHTML='<p>تعذر الاتصال.</p>'}
+}
+const q=(p)=>'/json/stations/search?hidebroken=true&order=clickcount&reverse=true&limit=60&'+p;
+$('list').addEventListener('click',e=>{
+  const t=e.target.closest('[data-mode],[data-gen],[data-cc],[data-act="modes"]');if(!t)return;
+  e.stopImmediatePropagation();navPush();
+  if(t.dataset.act==='modes'){modesPage();return}
+  if(t.dataset.mode!==undefined){const m=MODES[+t.dataset.mode];loadSet(m[0]+' '+m[1],m[3].map(x=>q('tag='+encodeURIComponent(x))),{sleep:m[4]})}
+  else if(t.dataset.gen!==undefined){const g=GENRES[+t.dataset.gen];loadSet(g[0]+' '+g[1],[q('tag='+g[2])],{n:50})}
+  else{const c=CCS[+t.dataset.cc];loadSet(c[0]+' '+c[1],[q('countrycode='+c[2])],{n:60})}
+},true);
+(function(){const _s=showHome;showHome=function(){_s();const f=$('list').querySelector('[data-act="all"]');if(f)f.insertAdjacentHTML('beforebegin',`<div class="tile" data-act="modes"><div class="tIc">🎧</div><div><b>أوضاع وأقسام</b><div class="m">تركيز، استرخاء، نوم، رياضة، أنواع، بلدان</div></div></div>`)}})();
 </script>
 </body>
 </html>
