@@ -1315,6 +1315,118 @@ const EM=[['next','▶ كمّل للتالي','لما الحلقة تخلص يش
   sel.addEventListener('change',upd);upd();setInterval(upd,2000)})();
 // عداد التكرار أوضح
 {const _oe=onEnd;onEnd=function(el){const m=$('endMode').value;if(m==='n'){const tot=Math.max(1,+$('repN').value);const left=repLeft===0?tot:repLeft;_oe(el);if(repLeft>0)$('status').textContent=`🔢 تكرار — المرة ${tot-repLeft+1} من ${tot}`;return}if(m==='inf'){_oe(el);$('status').textContent='♾ تكرار بلا نهاية';return}_oe(el)}}
+
+// ===== 9) أقسامي + ترتيب/إخفاء الأقسام + مناسبات =====
+function hijri(d){try{const p=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'numeric'}).formatToParts(d);return{d:+p.find(x=>x.type==='day').value,m:+p.find(x=>x.type==='month').value}}catch{return null}}
+function occFor(d){const h=hijri(d),o=[],wd=d.getDay();
+  if(h){
+    if(h.m===9)o.push({ic:'🌙',t:'رمضان كريم',s:'تلاوات وأدعية وابتهالات',tags:['ramadan','quran','islamic','dua','tilawat']});
+    if(h.m===10&&h.d<=3)o.push({ic:'🎊',t:'عيد فطر مبارك',s:'تكبيرات وأناشيد ومزاج العيد',tags:['eid','nasheed','islamic','arabic','hits']});
+    if(h.m===12&&h.d<=8)o.push({ic:'🕋',t:'أيام الحج',s:'تلبية وقرآن ودروس',tags:['hajj','quran','islamic','religion']});
+    if(h.m===12&&h.d===9)o.push({ic:'⛰️',t:'يوم عرفة',s:'أدعية وقرآن',tags:['quran','islamic','dua','religion']});
+    if(h.m===12&&h.d>=10&&h.d<=13)o.push({ic:'🐑',t:'عيد أضحى مبارك',s:'تكبيرات وأناشيد',tags:['eid','nasheed','islamic','arabic']});
+    if(h.m===1&&h.d===1)o.push({ic:'🌅',t:'رأس السنة الهجرية',s:'دروس وقرآن',tags:['islamic','quran','religion']});
+  }
+  if(wd===5)o.push({ic:'🕌',t:'جمعة مباركة',s:'قرآن وسورة الكهف وخطب',tags:['quran','kahf','islamic','religion']});
+  if(d.getMonth()===8&&d.getDate()===23)o.push({ic:'🇸🇦',t:'اليوم الوطني السعودي',s:'أغاني وطنية وإذاعات سعودية',tags:['saudi','patriotic','arabic','hits']});
+  if(d.getMonth()===9&&d.getDate()===6)o.push({ic:'🇪🇬',t:'ذكرى نصر أكتوبر',s:'أغاني وطنية وإذاعات مصرية',tags:['egypt','patriotic','arabic','oriental']});
+  if(d.getMonth()===11&&d.getDate()===31||d.getMonth()===0&&d.getDate()===1)o.push({ic:'🎆',t:'رأس السنة الميلادية',s:'موسيقى احتفالية',tags:['party','dance','hits','pop']});
+  return o}
+let mySecs=ls.get('mySecs',[]);
+const SECS=[['occ','🎉 مناسبة اليوم'],['my','⭐ أقسامي'],['calm','🧘 هدوء وتركيز'],['move','🏃 حركة ونشاط'],['spirit','🕌 روحانيات وتراث'],['edu','🎓 تعليم ومهنة'],['info','📰 معلومات وترفيه'],['gen','🎼 حسب النوع'],['cc','🌍 حسب البلد']];
+const secList=()=>{const o=ls.get('secOrder',[]),keys=SECS.map(s=>s[0]);return [...o.filter(k=>keys.includes(k)),...keys.filter(k=>!o.includes(k))]};
+modesPage=function(){
+  setTab('modes');$('viewTitle').textContent='🎧 أوضاع وأقسام';
+  const hid=new Set(ls.get('secHidden',[]));const occs=occFor(new Date());
+  const tl=i=>{const m=MODES[i];return `<div class="tile" data-mode="${i}"><div class="tIc">${m[0]}</div><div><b>${m[1]}</b><div class="m">${m[2]}</div></div></div>`};
+  const grp=(k,t,inner,open)=>`<details class="mdet"${open?' open':''}><summary>${t}</summary>${inner}</details>`;
+  const mg=ids=>`<div class="mg">${ids.map(tl).join('')}</div>`;
+  const chips=(arr,kk)=>`<div class="chips">${arr.map((g,i)=>`<span class="chip" data-${kk}="${i}">${g[0]} ${g[1]}</span>`).join('')}</div>`;
+  const B={
+   occ:()=>occs.length?grp('occ','🎉 مناسبة اليوم',`<div class="mg">${occs.map((o,i)=>`<div class="tile" data-occ="${i}"><div class="tIc">${o.ic}</div><div><b>${o.t}</b><div class="m">${o.s}</div></div></div>`).join('')}</div>`,true):'',
+   my:()=>grp('my','⭐ أقسامي',`<div class="mg">${mySecs.map((s,i)=>`<div class="tile" data-mysec="${i}"><div class="tIc">${s.ic||'⭐'}</div><div><b>${esc(s.name)}</b><div class="m">${esc(s.kw.join('، '))}</div></div></div>`).join('')}<div class="tile" data-act="mysecMgr"><div class="tIc">➕</div><div><b>${mySecs.length?'إدارة أقسامي':'اعمل قسمك الخاص'}</b><div class="m">سمّي القسم واكتب كلمات البحث</div></div></div></div>`,true),
+   calm:()=>grp('calm','🧘 هدوء وتركيز',mg([0,1,2,6]),true),move:()=>grp('move','🏃 حركة ونشاط',mg([3,4]),true),spirit:()=>grp('spirit','🕌 روحانيات وتراث',mg([5,7]),true),
+   edu:()=>grp('edu','🎓 تعليم ومهنة',mg([11,12,13,14,15,16]),false),info:()=>grp('info','📰 معلومات وترفيه',mg([8,9,10]),false),
+   gen:()=>grp('gen','🎼 حسب النوع',chips(GENRES,'gen'),false),cc:()=>grp('cc','🌍 حسب البلد',chips(CCS,'cc'),false)};
+  $('list').innerHTML=`<div class="secT" style="grid-column:1/-1;margin:0;display:flex;justify-content:space-between;align-items:center">🗣 اللغة (بتتطبق على كل الأقسام) <button data-act="secOrd" style="background:var(--btn2);font-size:13px;padding:5px 10px">↕ ترتيب وإخفاء</button></div>`+langBar()+secList().filter(k=>!hid.has(k)||k==='my').map(k=>B[k]()).join('');
+};
+const encq=k=>encodeURIComponent(k);
+function openMySec(i){const s=mySecs[i];if(!s)return;loadSet((s.ic||'⭐')+' '+s.name,s.kw.flatMap(k=>[q('tag='+encq(k)),q('name='+encq(k))]),{})}
+function mysecMgr(){let d=$('mysecDlg');if(d)d.remove();d=document.createElement('div');d.id='mysecDlg';d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;display:flex;align-items:center;justify-content:center;padding:14px';
+  const draw=()=>{d.innerHTML=`<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(420px,100%);max-height:88vh;overflow:auto;color:var(--txt)"><b>⭐ أقسامي</b><div class="m" style="margin:4px 0 10px">كل قسم ليه اسم وكلمات بحث (افصل بينها بفاصلة). بيدوّر عليها في أنواع وأسماء المحطات.</div>
+   ${mySecs.map((s,i)=>`<div style="border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:8px"><div style="display:flex;gap:6px;margin-bottom:6px"><input data-ms="ic" data-i="${i}" value="${esc(s.ic||'')}" placeholder="😀" style="width:52px;text-align:center"><input data-ms="name" data-i="${i}" value="${esc(s.name)}" placeholder="اسم القسم" style="flex:1;min-width:0"><button data-msd="${i}" style="background:#7c2d12;padding:6px 10px">🗑</button></div><input data-ms="kw" data-i="${i}" value="${esc(s.kw.join(', '))}" placeholder="كلمات البحث: jazz, piano" style="width:100%"></div>`).join('')}
+   <div style="border:1px dashed var(--line);border-radius:12px;padding:8px"><div style="display:flex;gap:6px;margin-bottom:6px"><input id="msIc" placeholder="😀" style="width:52px;text-align:center"><input id="msName" placeholder="اسم قسم جديد" style="flex:1;min-width:0"></div><input id="msKw" placeholder="كلمات البحث: jazz, piano" style="width:100%;margin-bottom:6px"><button id="msAdd" style="width:100%">➕ إضافة القسم</button></div>
+   <div style="text-align:center;margin-top:12px"><button id="msX" style="background:var(--btn2);padding:8px 24px">تم</button></div></div>`;
+   d.querySelectorAll('[data-ms]').forEach(e=>e.onchange=()=>{const s=mySecs[+e.dataset.i];if(!s)return;const k=e.dataset.ms;if(k==='kw')s.kw=e.value.split(/[,،]/).map(x=>x.trim()).filter(Boolean);else s[k]=e.value.trim();if(!s.name)s.name='قسم';if(!s.kw.length)s.kw=[s.name];ls.set('mySecs',mySecs)});
+   d.querySelectorAll('[data-msd]').forEach(b=>b.onclick=()=>{if(!confirm('حذف القسم؟'))return;mySecs.splice(+b.dataset.msd,1);ls.set('mySecs',mySecs);draw()});
+   $('msAdd').onclick=()=>{const n=$('msName').value.trim(),kw=$('msKw').value.split(/[,،]/).map(x=>x.trim()).filter(Boolean);if(!n){toast('اكتب اسم القسم');return}mySecs.push({name:n,ic:$('msIc').value.trim(),kw:kw.length?kw:[n]});ls.set('mySecs',mySecs);draw()};
+   $('msX').onclick=()=>{d.remove();if($('list').querySelector('.mdet'))modesPage()}};
+  document.body.appendChild(d);draw()}
+function secOrd(){let d=$('secOrdDlg');if(d)d.remove();d=document.createElement('div');d.id='secOrdDlg';d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;display:flex;align-items:center;justify-content:center;padding:14px';
+  const draw=()=>{const ord=secList(),hid=new Set(ls.get('secHidden',[]));d.innerHTML=`<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(380px,100%);color:var(--txt)"><b>↕ ترتيب الأقسام وإخفاؤها</b><div class="m" style="margin:4px 0 10px">استخدم الأسهم للترتيب، وشيل العلامة لإخفاء القسم.</div>
+   ${ord.map((k,i)=>`<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px"><input type="checkbox" data-sv="${k}" ${hid.has(k)?'':'checked'} style="width:20px;height:20px"><span style="flex:1">${SECS.find(s=>s[0]===k)[1]}</span><button data-su="${i}" style="padding:4px 10px;background:var(--btn2)">▲</button><button data-sd="${i}" style="padding:4px 10px;background:var(--btn2)">▼</button></div>`).join('')}
+   <div style="display:flex;gap:8px;justify-content:space-between;margin-top:12px"><button id="soReset" style="background:var(--btn2)">↺ الافتراضي</button><button id="soX" style="padding:8px 24px">تم</button></div></div>`;
+   const mv=(i,j)=>{const o=secList();if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];ls.set('secOrder',o);draw()};
+   d.querySelectorAll('[data-su]').forEach(b=>b.onclick=()=>mv(+b.dataset.su,+b.dataset.su-1));d.querySelectorAll('[data-sd]').forEach(b=>b.onclick=()=>mv(+b.dataset.sd,+b.dataset.sd+1));
+   d.querySelectorAll('[data-sv]').forEach(c=>c.onchange=()=>{const h=new Set(ls.get('secHidden',[]));c.checked?h.delete(c.dataset.sv):h.add(c.dataset.sv);ls.set('secHidden',[...h])});
+   $('soReset').onclick=()=>{ls.set('secOrder',[]);ls.set('secHidden',[]);draw()};$('soX').onclick=()=>{d.remove();modesPage()}};
+  document.body.appendChild(d);draw()}
+$('list').addEventListener('click',e=>{
+  const t=e.target.closest('[data-occ],[data-mysec],[data-act="mysecMgr"],[data-act="secOrd"],[data-act="homeOcc"]');if(!t)return;e.stopImmediatePropagation();navPush();
+  if(t.dataset.act==='mysecMgr')mysecMgr();else if(t.dataset.act==='secOrd')secOrd();
+  else if(t.dataset.mysec!==undefined)openMySec(+t.dataset.mysec);
+  else{const o=occFor(new Date())[+(t.dataset.occ||0)];if(o)loadSet(o.ic+' '+o.t,o.tags.map(x=>q('tag='+encq(x))),{})}
+},true);
+(function(){const _s=showHome;showHome=function(){_s();const mt=$('list').querySelector('[data-act="modes"]');if(!mt)return;const o=occFor(new Date());if(!o.length)return;
+  mt.insertAdjacentHTML('afterend',`<div class="tile" data-occ="0"><div class="tIc">${o[0].ic}</div><div><b>${o[0].t}</b><div class="m">${o[0].s}</div></div></div>`)}})();
+
+// ===== 10) إحصائيات السماع + اكتشف محطة + اختصارات + تلاشي صوت النوم =====
+setInterval(()=>{try{
+  const playing=(!au.paused&&!au.ended&&au.readyState>2)||($('vid')&&!$('vid').paused&&!$('vid').ended);
+  if(!playing||!current)return;const k=dayKey(),S=ls.get('listenStats',{});const d=S[k]||(S[k]={t:0,st:{}});d.t+=5;
+  const u=current.stationuuid,e=d.st[u]||(d.st[u]={n:current.name,s:0});e.s+=5;
+  const keys=Object.keys(S).sort();while(keys.length>60)delete S[keys.shift()];ls.set('listenStats',S)}catch{}},5000);
+const fmtDur=s=>{const h=Math.floor(s/3600),m=Math.round(s%3600/60);return h?`${h} س ${m} د`:`${m} دقيقة`};
+function statsPage(){setTab('all');$('viewTitle').textContent='📊 إحصائياتي';
+  const S=ls.get('listenStats',{}),days=[];for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*864e5),f=n=>String(n).padStart(2,'0');const k=d.getFullYear()+'-'+f(d.getMonth()+1)+'-'+f(d.getDate());days.push([k,(S[k]||{t:0}).t,['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'][d.getDay()]])}
+  const wk=days.reduce((a,x)=>a+x[1],0),mx=Math.max(1,...days.map(x=>x[1]));
+  const all=Object.values(S).reduce((a,x)=>a+x.t,0);
+  const top={};days.forEach(([k])=>{const d=S[k];d&&Object.values(d.st).forEach(e=>{top[e.n]=(top[e.n]||0)+e.s})});
+  const tops=Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const sl=ls.get('studyLog',{});const study=days.reduce((a,x)=>a+(sl[x[0]]||0),0);
+  $('list').innerHTML=`<div class="mdet" style="grid-column:1/-1;padding:16px">
+   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px"><div class="tbtn" style="cursor:default"><b>${fmtDur((S[days[6][0]]||{t:0}).t)}</b><br>النهاردة</div><div class="tbtn" style="cursor:default"><b>${fmtDur(wk)}</b><br>آخر 7 أيام</div><div class="tbtn" style="cursor:default"><b>${study} د</b><br>تركيز (7 أيام)</div></div>
+   <div style="font-weight:bold;margin-bottom:8px">آخر 7 أيام</div>
+   <div style="display:flex;gap:6px;align-items:flex-end;height:120px;margin-bottom:6px">${days.map(x=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%"><div style="font-size:11px;color:var(--mut)">${x[1]?Math.round(x[1]/60):''}</div><div style="width:100%;background:var(--acc);border-radius:6px 6px 0 0;height:${Math.max(2,Math.round(x[1]/mx*90))}px"></div></div>`).join('')}</div>
+   <div style="display:flex;gap:6px">${days.map(x=>`<div style="flex:1;text-align:center;font-size:11px;color:var(--mut)">${x[2]}</div>`).join('')}</div>
+   <div style="font-weight:bold;margin:16px 0 8px">أكتر المحطات سماعًا (7 أيام)</div>${tops.length?tops.map((t,i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span>${i+1}. ${esc(t[0])}</span><span class="m">${fmtDur(t[1])}</span></div>`).join(''):'<div class="m">لسه مفيش بيانات. اسمع شوية وارجع هنا.</div>'}
+   <div class="m" style="margin-top:12px">إجمالي المسجّل: ${fmtDur(all)} — الإحصائيات محفوظة على جهازك بس.</div>
+   <button id="stReset" style="margin-top:10px;background:var(--btn2)">🗑 مسح الإحصائيات</button></div>`;
+  $('stReset').onclick=()=>{if(confirm('مسح كل الإحصائيات؟')){ls.set('listenStats',{});statsPage()}}}
+async function discover(){toast('🎲 بدوّر لك على محطة جديدة...');
+  const tags=[...GENRES.map(g=>g[2]),...MODES.flatMap(m=>m[3])];const seen=new Set([...favs,...recent].map(x=>x.stationuuid));
+  for(let t=0;t<4;t++){const tag=tags[Math.floor(Math.random()*tags.length)],off=Math.floor(Math.random()*40);
+    try{const a=await (await fetch(API+q('tag='+encodeURIComponent(tag)+'&offset='+off+(setLang?'&language='+setLang:'')))).json();
+      const ok=a.filter(s=>s.lastcheckok===1&&/^https:/.test(s.url_resolved||'')&&!seen.has(s.stationuuid));
+      if(ok.length){const s=ok[Math.floor(Math.random()*ok.length)];playlist=ok;toast('🎲 '+s.name+' — '+(s.country||'')+' ('+tag+')',5000);play(s);return}}catch{}}
+  toast('مالقيتش محطة جديدة دلوقتي، جرّب تاني')}
+$('list').addEventListener('click',e=>{const t=e.target.closest('[data-act="stats"],[data-act="discover"]');if(!t)return;e.stopImmediatePropagation();navPush();t.dataset.act==='stats'?statsPage():discover()},true);
+(function(){const _s=showHome;showHome=function(){_s();const tr=$('list').querySelector('.toolrow');if(tr)tr.insertAdjacentHTML('beforeend','<div class="tbtn" data-act="discover"><span class="tIc">🎲</span>اكتشف</div><div class="tbtn" data-act="stats"><span class="tIc">📊</span>إحصائياتي</div>')}})();
+{const st=document.createElement('style');st.textContent='.toolrow{flex-wrap:wrap}.tbtn{min-width:calc(33% - 8px)}';document.head.appendChild(st)}
+// اختصارات الكيبورد
+document.addEventListener('keydown',e=>{const t=e.target;if(t&&/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)||e.ctrlKey||e.metaKey||e.altKey)return;
+  const k=e.key;
+  if(k===' '){e.preventDefault();$('pp').click()}
+  else if(k==='n'||k==='N'){$('nextB').click()}else if(k==='p'||k==='P'){$('prevB').click()}
+  else if(k==='m'||k==='M'){au.muted=!au.muted;toast(au.muted?'🔇 كتم الصوت':'🔊 رجوع الصوت',1500)}
+  else if(k==='ArrowUp'){e.preventDefault();au.volume=Math.min(1,au.volume+.05);$('vol').value=au.volume}
+  else if(k==='ArrowDown'){e.preventDefault();au.volume=Math.max(0,au.volume-.05);$('vol').value=au.volume}
+  else if(k==='f'||k==='F'){if(current){toggleFav(current);toast('⭐ تم',1200)}}
+  else if(k==='/'){const s=$('gq')||$('q');if(s){e.preventDefault();s.focus()}}});
+// تلاشي الصوت في آخر 30 ثانية من مؤقت النوم
+(function(){let v0=null;setInterval(()=>{try{const left=sleepAt?sleepAt-Date.now():0;
+  if(sleepAt&&left>0&&left<30000){if(v0==null)v0=au.volume;au.volume=Math.max(.03,v0*left/30000)}
+  else if(v0!=null){au.volume=v0;$('vol')&&($('vol').value=v0);v0=null}}catch{}},1000)})();
 </script>
 </body>
 </html>
