@@ -301,6 +301,10 @@ body.guest #menuB{display:none!important}
 .hs-circle.hv-g4 .hgrid.hlist .strip .si{width:50px;height:50px;font-size:24px}
 .hd-s .hgrid.hlist .strip{padding:4px 10px;font-size:12px}.hd-s .hgrp{margin:8px 4px 4px}.hd-s .hgrid.hlist{gap:4px}
 .hd-l .hgrid.hlist .strip{padding:14px 14px;font-size:16px}.hd-l .hgrid.hlist{gap:12px}.hd-l .hgrp{margin:24px 4px 12px;font-size:17px}
+
+.hdragging{opacity:.92;transform:scale(1.02);position:relative;z-index:5;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5));transition:none}
+.hgrp.hdragging{background:rgba(201,162,39,.18);border-radius:10px;padding:6px 8px}
+body.hdrg{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -2289,6 +2293,42 @@ HX.hviewset=function(el){const k=el.dataset.k||'hview';let v=el.dataset.v;if(v==
 const allG=()=>[...HGRP];
 HX.foldall2=function(){hxSet('hfold',[...HGRP]);toast('اتطوّت — افتح الرئيسية')};
 HX.unfoldall2=function(){hxSet('hfold',[]);toast('اتفردت كل الأقسام')};
+})();
+
+/* HX23: سحب الأقسام لإعادة الترتيب (ضغطة مطوّلة على العنوان) */
+(function(){
+const L=()=>$('list');
+const hdrs=()=>[...L().querySelectorAll('.hgrp')];
+const blockOf=g=>{const o=[g];let e=g.nextElementSibling;while(e&&!e.classList.contains('hgrp')&&e.id!=='hsBox'){o.push(e);e=e.nextElementSibling}return o};
+const gname=g=>(g.dataset.k||g.textContent.replace('▾','').trim());
+let tm=null,drag=null,sx=0,sy=0,lastClick=0,raf=0;
+const scroller=()=>{let e=L();while(e&&e!==document.body){const o=getComputedStyle(e).overflowY;if((o==='auto'||o==='scroll')&&e.scrollHeight>e.clientHeight)return e;e=e.parentElement}return null};
+function start(g,x,y){drag={g,b:blockOf(g),y};drag.b.forEach(n=>n.classList.add('hdragging'));document.body.classList.add('hdrg');try{navigator.vibrate&&navigator.vibrate(25)}catch{}}
+function move(y){if(!drag)return;drag.y=y;
+ const others=hdrs().filter(h=>h!==drag.g);
+ for(const h of others){const bl=blockOf(h),vb=bl.filter(n=>n.offsetParent!==null),r1=bl[0].getBoundingClientRect(),r2=(vb[vb.length-1]||bl[0]).getBoundingClientRect(),top=r1.top,bot=r2.bottom;
+  if(y>top&&y<bot){const before=!!(h.compareDocumentPosition(drag.g)&Node.DOCUMENT_POSITION_FOLLOWING===0)||(h.compareDocumentPosition(drag.g)&Node.DOCUMENT_POSITION_PRECEDING)===0;
+   const draggedAfter=!!(h.compareDocumentPosition(drag.g)&Node.DOCUMENT_POSITION_FOLLOWING);
+   if(draggedAfter){if(y<top+(bot-top)/2)drag.b.forEach(n=>h.parentNode.insertBefore(n,h))}
+   else{if(y>top+(bot-top)/2){const ref=bl[bl.length-1].nextSibling;drag.b.forEach(n=>h.parentNode.insertBefore(n,ref))}}
+   break}}
+ cancelAnimationFrame(raf);const edge=70,s=scroller(),vh=innerHeight;let d=0;if(y<edge+60)d=-14;else if(y>vh-edge-90)d=14;
+ if(d){const tick=()=>{if(!drag)return;(s||window).scrollBy?(s?s.scrollBy(0,d):window.scrollBy(0,d)):0;move(drag.y);};raf=requestAnimationFrame(()=>{tick()})}}
+function end(){clearTimeout(tm);cancelAnimationFrame(raf);if(!drag)return;
+ drag.b.forEach(n=>n.classList.remove('hdragging'));document.body.classList.remove('hdrg');lastClick=Date.now();
+ const vis=hdrs().map(gname);const cur=hxGet('hord',HGRP);const all=[...cur.filter(x=>HGRP.includes(x)),...HGRP.filter(x=>!cur.includes(x))];
+ let i=0;const out=all.map(x=>vis.includes(x)?vis[i++]:x);for(;i<vis.length;i++)out.push(vis[i]);
+ hxSet('hord',out);drag=null;toast('اتغيّر الترتيب ✔')}
+document.addEventListener('click',e=>{if(Date.now()-lastClick<500){e.stopImmediatePropagation();e.preventDefault()}},true);
+window.addEventListener('click',e=>{if(Date.now()-lastClick<500){e.stopImmediatePropagation();e.preventDefault()}},true);
+const press=(e,x,y)=>{const g=e.target.closest&&e.target.closest('.hgrp');if(!g||!L()||!L().contains(g))return;sx=x;sy=y;clearTimeout(tm);tm=setTimeout(()=>start(g,x,y),450)};
+document.addEventListener('touchstart',e=>{const t=e.touches[0];press(e,t.clientX,t.clientY)},{passive:true});
+document.addEventListener('touchmove',e=>{const t=e.touches[0];if(drag){e.preventDefault();move(t.clientY)}else if(Math.abs(t.clientY-sy)>10||Math.abs(t.clientX-sx)>10)clearTimeout(tm)},{passive:false});
+document.addEventListener('touchend',end);document.addEventListener('touchcancel',()=>{clearTimeout(tm);if(drag){drag.b.forEach(n=>n.classList.remove('hdragging'));document.body.classList.remove('hdrg');drag=null}});
+document.addEventListener('mousedown',e=>{if(e.button===0)press(e,e.clientX,e.clientY)});
+document.addEventListener('mousemove',e=>{if(drag)move(e.clientY);else if(tm&&(Math.abs(e.clientY-sy)>6||Math.abs(e.clientX-sx)>6))clearTimeout(tm)});
+document.addEventListener('mouseup',end);
+document.addEventListener('contextmenu',e=>{if(drag||e.target.closest&&e.target.closest('.hgrp'))e.preventDefault()});
 })();
 </script>
 </body>
