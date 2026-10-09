@@ -2159,6 +2159,31 @@ HX.zxgo=async function(el){const q=((el&&el.dataset&&el.dataset.q)||($('zxq')||{
 const g='🕰 زمن الفن الجميل',_t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
  return h.replace(/(<div class="strip one" data-hx="zmfree">)/,`<div class="strip one gold" data-hx="zx"><span class="si">🔎</span><div class="st2"><b>بحث موسّع في مصادر نادرة</b> <span class="m">· بودكاست + ويكيميديا</span></div></div>$1`)};
 })();
+
+/* HX17: اكتشافات تلقائية في زمن الفن الجميل */
+(function(){
+const Q=['مسرحية إذاعية','سهرة إذاعية','تمثيلية إذاعية','ألف ليلة وليلة','أم كلثوم','فوازير رمضان','إذاعة زمان','عبد الحليم حافظ','محمد عبد الوهاب','مصطفى إسماعيل','محمد رفعت','نجيب الريحاني','إسماعيل ياسين','يوسف وهبي','ساعة لقلبك','مسلسل إذاعي','تراث إذاعي','الأرشيف الإذاعي','حكايات زمان','حلقات إذاعية قديمة','دراما إذاعية','كنوز الإذاعة'];
+const J=async u=>{try{return await (await fetch(u)).json()}catch{return null}};
+const doy=()=>Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5);
+let ITEMS=[];
+const html=it=>it.length?it.map((x,i)=>`<div class="strip one" data-hx="zaplay" data-i="${i}"><span class="si">${x.tags==='wiki'?'📚':'🎙'}</span><div class="st2"><b>${esc(x.name)}</b> <span class="m">· ${esc((x.country||'').replace(/^[^ ]+ /,''))}</span></div></div>`).join('')+`<div class="strip one" data-hx="zarefresh"><span class="si">🔄</span><div class="st2"><b>اكتشافات جديدة</b></div></div>`:'<div class="m" style="padding:6px">جاري البحث التلقائي عن تسجيلات نادرة…</div>';
+async function fetchSet(qs){const rs=await Promise.all(qs.map(async q=>{const [a,c]=await Promise.all([
+ J('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=podcast&entity=podcastEpisode&limit=15&country=EG'),
+ J('https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(q)+'&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|mime&format=json&origin=*')]);
+ const o=[];((a&&a.results)||[]).forEach(r=>{if(r.episodeUrl)o.push({stationuuid:'ext:'+(r.trackId||r.episodeUrl),name:r.trackName||'حلقة',country:'🎙 '+(r.collectionName||'بودكاست'),tags:'podcast',favicon:r.artworkUrl100||'',url_resolved:r.episodeUrl,url:r.episodeUrl})});
+ Object.values((c&&c.query&&c.query.pages)||{}).forEach(p=>{const ii=p.imageinfo&&p.imageinfo[0];if(ii&&/^audio\//.test(ii.mime||''))o.push({stationuuid:'ext:'+p.pageid,name:p.title.replace(/^File:/,'').replace(/\.[^.]+$/,'').replace(/_/g,' '),country:'📚 ويكيميديا كومنز',tags:'wiki',favicon:'',url_resolved:ii.url,url:ii.url})});return o}));
+ const seen=new Set(),out=[];const mx=Math.max(...rs.map(r=>r.length));for(let i=0;i<mx;i++)rs.forEach(r=>{const x=r[i];if(x&&!seen.has(x.url)&&/[؀-ۿ]/.test(x.name)){seen.add(x.url);out.push(x)}});return out.slice(0,8)}
+async function fill(force){const d=new Date().toDateString();let c=hxGet('zauto',null);
+ if(!force&&c&&c.d===d&&c.items&&c.items.length){ITEMS=c.items;paint();return}
+ const k=force?Math.floor(Math.random()*Q.length):doy();const qs=[0,5,10].map(j=>Q[(k+j)%Q.length]);
+ const it=await fetchSet(qs);if(it.length){ITEMS=it;hxSet('zauto',{d,items:it})}else if(c&&c.items)ITEMS=c.items;paint()}
+function paint(){const e=document.getElementById('zAuto');if(e)e.innerHTML=html(ITEMS)}
+HX.zaplay=function(el){if(ITEMS.length)hxPlayAll(ITEMS,+el.dataset.i)};
+HX.zarefresh=function(){const e=document.getElementById('zAuto');if(e)e.innerHTML=html([]);fill(true)};
+const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
+ const c=hxGet('zauto',null);if(c&&c.items&&!ITEMS.length)ITEMS=c.items;setTimeout(()=>fill(false),50);
+ return h.replace('<div class="strip one" data-hx="zm0">',`<div class="m" style="margin:2px 6px">🆕 اكتشافات اليوم (تلقائي)</div><div id="zAuto" class="hgrid hlist" style="grid-column:1/-1">${html(ITEMS)}</div><div class="strip one" data-hx="zm0">`)};
+})();
 </script>
 </body>
 </html>
