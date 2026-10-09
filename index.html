@@ -415,6 +415,17 @@ body.nodel .st .rmx{display:none!important}
 .hs-square .hgrid.hlist:not(#zAuto) .strip .st2{white-space:normal!important}.hs-square .hgrid.hlist:not(#zAuto) .strip b{font-size:11.5px;line-height:1.25}
 .hs-square .hgrid.hlist:not(#zAuto) .strip .m{display:none!important}
 .hs-square .hgrid.hlist:not(#zAuto) .strip.gold .si{border-color:var(--gold,#C9A227)}
+/* HX39: تمييز المستويات (حجم/لون/شكل) */
+.hs-circle #list#list>.hgrp,.hs-square #list#list>.hgrp,.hs-dot #list#list>.hgrp{background:linear-gradient(150deg,rgba(100,140,255,.30),rgba(100,140,255,.10))!important;border:3px solid rgba(130,160,255,.75)!important;font-size:14px!important;font-weight:800}
+.hs-circle #list#list>.hgrp:not(.fold),.hs-square #list#list>.hgrp:not(.fold),.hs-dot #list#list>.hgrp:not(.fold){background:linear-gradient(150deg,rgba(201,162,39,.38),rgba(201,162,39,.12))!important;border-color:var(--gold,#C9A227)!important;box-shadow:0 0 0 4px rgba(201,162,39,.25),0 4px 12px rgba(0,0,0,.3)}
+.hs-circle #list#list>.hsub,.hs-square #list#list>.hsub,.hs-dot #list#list>.hsub{grid-column:span 3!important;margin:3px!important;padding:4px!important;font-size:11px!important;font-weight:700;background:linear-gradient(150deg,rgba(20,184,166,.32),rgba(20,184,166,.10))!important;border:2px dashed rgba(45,212,191,.8)!important}
+.hs-circle #list#list>.hsub:not(.fold),.hs-square #list#list>.hsub:not(.fold),.hs-dot #list#list>.hsub:not(.fold){background:linear-gradient(150deg,rgba(20,184,166,.55),rgba(20,184,166,.2))!important;border:2px solid #2dd4bf!important;box-shadow:0 0 0 3px rgba(45,212,191,.28)}
+.hs-circle #list#list>.hsub,.hs-dot #list#list>.hsub{border-radius:30%!important}
+.hs-square #list#list>.hsub{border-radius:50%!important}
+.hs-dot #list#list>.hgrp{grid-column:span 3!important;font-size:10.5px!important}
+.hs-dot #list#list>.hsub{grid-column:span 2!important;font-size:9px!important}
+.hcrumb{grid-column:1/-1;font-size:12px;font-weight:700;padding:5px 12px;margin:2px 0 0;border-radius:10px;background:rgba(100,140,255,.16);border-inline-start:5px solid rgba(130,160,255,.9);color:#cfd8ff}
+.hcrumb.c2{background:rgba(20,184,166,.16);border-inline-start-color:#2dd4bf;color:#99f6e4;margin-inline-start:12px}
 </style>
 </head>
 <body>
@@ -2667,6 +2678,22 @@ window.addEventListener('click',e=>{
  const d=document.createElement('div');d.className='hpn';d.innerHTML=p;s.after(d);s.classList.add('hopen');
  d.scrollIntoView({block:'nearest',behavior:'smooth'})
 },true);
+})();
+
+/* HX39: مسار المجموعة (يتبع مين) */
+(function(){
+const nm=g=>g.textContent.replace('▾','').trim();
+function crumbs(){const L=$('list');if(!L)return;L.querySelectorAll(':scope>.hcrumb').forEach(x=>x.remove());if(!(window.hxGeo&&hxGeo()))return;
+ let top=null;[...L.children].forEach(n=>{
+  if(n.classList.contains('hgrp')){top=n;if(!n.classList.contains('fold')){let f=n.nextElementSibling;while(f&&!f.classList.contains('hgrp')&&!f.classList.contains('hsub')&&f.classList.contains('hfh'))f=f.nextElementSibling;
+    let h=n.nextElementSibling;while(h&&!h.classList.contains('hgrp')&&!h.classList.contains('hsub'))h=h.nextElementSibling;
+    if(h&&h.classList.contains('hsub')){const c=document.createElement('div');c.className='hcrumb';c.textContent='◂ داخل «'+nm(n)+'» — اختار قسم فرعي';h.before(c)}}}
+  else if(n.classList.contains('hsub')&&top&&!n.classList.contains('fold')&&!n.classList.contains('hfh')){let g=n.nextElementSibling;while(g&&!g.classList.contains('hgrid')&&!g.classList.contains('hsub')&&!g.classList.contains('hgrp'))g=g.nextElementSibling;
+    if(g&&g.classList.contains('hgrid')){const c=document.createElement('div');c.className='hcrumb c2';c.textContent='↳ '+nm(top)+'  ›  '+nm(n);g.before(c)}}
+ })}
+const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(crumbs,120);setTimeout(crumbs,800)};
+document.addEventListener('click',()=>{setTimeout(crumbs,60);setTimeout(crumbs,250)},false);
+window.hxCrumbs=crumbs;setTimeout(crumbs,1000);
 })();
 </script>
 </body>
