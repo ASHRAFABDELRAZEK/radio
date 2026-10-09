@@ -2337,6 +2337,14 @@ document.addEventListener('contextmenu',e=>{if(drag||e.target.closest&&e.target.
 /* HX24: حذف/إخفاء المحطات + إضافة محطة برابط */
 (function(){
 const isList=a=>a===favs||a===recent||a===later;
+const LN={fav:'المفضلة',rec:'آخر ما سمعته',later:'بعدين'};
+const HXT=window.HXT={get:()=>hxGet('trash',[]),
+ snack(m,fn){const o=document.getElementById('hxSnack');o&&o.remove();const d=document.createElement('div');d.id='hxSnack';d.style.cssText='position:fixed;bottom:130px;left:50%;transform:translateX(-50%);background:#0b1730;color:#fff;border:2px solid var(--gold,#C9A227);border-radius:14px;padding:10px 14px;z-index:99999;display:flex;gap:12px;align-items:center;box-shadow:0 6px 18px rgba(0,0,0,.5);max-width:92vw';d.innerHTML=`<span>${m}</span><button style="background:var(--gold,#C9A227);color:#000;border:0;border-radius:8px;padding:6px 12px;font-weight:700">↩ تراجع</button>`;d.querySelector('button').onclick=()=>{fn();d.remove()};document.body.appendChild(d);setTimeout(()=>d.remove(),8000)},
+ add(l,s,i){const t=[{l,s,i,d:Date.now()},...HXT.get()].slice(0,60);hxSet('trash',t);HXT.snack('اتحذفت «'+esc(s.name).slice(0,28)+'»',()=>HXT.restore(0,true))},
+ restore(k,silent){const t=[...HXT.get()],x=t[k];if(!x)return;t.splice(k,1);hxSet('trash',t);
+  const arr=x.l==='fav'?favs:x.l==='rec'?recent:later,key=x.l==='fav'?'radioFavs':x.l==='rec'?'radioRecent':'radioLater';
+  if(!arr.some(y=>y.stationuuid===x.s.stationuuid))arr.splice(Math.min(x.i,arr.length),0,x.s);ls.set(key,arr);
+  if(silent){const cur=window._rxArr;if(cur===arr)render(arr);toast('اترجّعت ✔')}else{toast('اترجّعت إلى '+LN[x.l]);HX.trash()}}};
 const hid=()=>hxGet('stHide',[]);
 const _r=render;render=function(arr){if(!isList(arr)){const h=hid();if(h.length)arr=arr.filter(s=>!h.includes(s.stationuuid))}
  _r(arr);window._rxArr=arr;
@@ -2344,10 +2352,10 @@ const _r=render;render=function(arr){if(!isList(arr)){const h=hid();if(h.length)
   el.insertAdjacentHTML('beforeend',`<button class="rmx" data-rx="${el.dataset.i}" title="${isList(arr)?'حذف':'إخفاء'}">✕</button>`)})};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.rmx');if(!b)return;e.stopImmediatePropagation();e.preventDefault();
  const arr=window._rxArr||[],i=+b.dataset.rx,s=arr[i];if(!s)return;
- if(arr===favs){if(!confirm('حذف «'+s.name+'» من المفضلة؟'))return;favs.splice(i,1);ls.set('radioFavs',favs);render(favs);toast('اتحذفت من المفضلة');return}
- if(arr===recent){recent.splice(i,1);ls.set('radioRecent',recent);render(recent);toast('اتشالت من آخر ما سمعته');return}
- if(arr===later){later.splice(i,1);ls.set('radioLater',later);render(later);toast('اتشالت من بعدين');return}
- const h=hid();hxSet('stHide',[...h,s.stationuuid]);render(arr.filter(x=>x.stationuuid!==s.stationuuid));toast('اتخفت «'+s.name+'» — ترجّعها من «المحطات المخفية»')},true);
+ if(arr===favs){if(!confirm('حذف «'+s.name+'» من المفضلة؟'))return;favs.splice(i,1);ls.set('radioFavs',favs);render(favs);HXT.add('fav',s,i);return}
+ if(arr===recent){recent.splice(i,1);ls.set('radioRecent',recent);render(recent);HXT.add('rec',s,i);return}
+ if(arr===later){later.splice(i,1);ls.set('radioLater',later);render(later);HXT.add('later',s,i);return}
+ const h=hid();hxSet('stHide',[...h,s.stationuuid]);render(arr.filter(x=>x.stationuuid!==s.stationuuid));HXT.snack('اتخفت «'+esc(s.name).slice(0,28)+'»',()=>{hxSet('stHide',hid().filter(x=>x!==s.stationuuid));toast('اترجّعت — افتح القايمة تاني')})},true);
 HX.addst=function(){hxPage('➕ إضافة محطة برابط',`<div class="hxc"><div class="m">اكتب اسم المحطة ورابط البث المباشر (mp3 / aac / m3u8). بتتحفظ في المفضلة وتقدر تحذفها بزرار ✕.</div>
  <input id="asN" placeholder="اسم المحطة" style="width:100%;margin:6px 0"><input id="asU" placeholder="https://… رابط البث" dir="ltr" style="width:100%;margin:6px 0"><button class="hxb" data-hx="addstgo">💾 حفظ في المفضلة</button></div>
  <div class="hxc"><div class="m">ملحوظة: الروابط اللي بتبدأ بـ http (من غير s) ممكن المتصفح يمنعها في التطبيق.</div></div>`)};
@@ -2355,11 +2363,14 @@ HX.addstgo=function(){const n=($('asN').value||'').trim(),u=($('asU').value||'')
  const s={stationuuid:'my:'+Date.now(),name:n,country:'محطتي',tags:'مضافة',favicon:'',url_resolved:u,url:u};favs.unshift(s);ls.set('radioFavs',favs);toast('اتضافت للمفضلة ✔');setTab('fav');render(favs)};
 HX.sthide=function(){const h=hid();const names=ls.get('hxStN',{});
  hxPage('🙈 المحطات المخفية',h.length?`<div class="hxc"><button class="hxb" data-hx="stshowall">↩ رجّع الكل</button></div>`+h.map((id,i)=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><b style="flex:1">${esc(names[id]||id)}</b><button class="hxb" data-hx="stshow" data-i="${i}">↩ رجّعها</button></div>`).join(''):'<div class="hxc">مفيش محطات مخفية.</div>')};
+HX.trash=function(){const t=HXT.get();hxPage('🗑 سلة المحذوفات',t.length?`<div class="hxc"><div class="m">آخر المحطات اللي حذفتها. اضغط «رجّعها» وهترجع مكانها.</div><button class="hxb" data-hx="trashclr">🧹 فضّي السلة</button></div>`+t.map((x,i)=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>${esc(x.s.name)}</b><div class="m">من ${LN[x.l]}</div></div><button class="hxb" data-hx="trashre" data-i="${i}">↩ رجّعها</button></div>`).join(''):'<div class="hxc">السلة فاضية.</div>')};
+HX.trashre=function(el){HXT.restore(+el.dataset.i,false)};
+HX.trashclr=function(){if(!confirm('تفضية السلة نهائيًا؟'))return;hxSet('trash',[]);HX.trash()};
 HX.stshow=function(el){const h=[...hid()];h.splice(+el.dataset.i,1);hxSet('stHide',h);HX.sthide()};
 HX.stshowall=function(){hxSet('stHide',[]);HX.sthide()};
 const _x=render;render=function(arr){try{const n=ls.get('hxStN',{});(arr||[]).forEach(s=>{if(s&&s.name)n[s.stationuuid]=s.name});const k=Object.keys(n);if(k.length>400)k.slice(0,k.length-400).forEach(x=>delete n[x]);ls.set('hxStN',n)}catch{}_x(arr)};
 const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
- return h.replace(/(<div class="strip one" data-hx="favcheck">)/,`<div class="strip one" data-hx="addst"><span class="si">➕</span><div class="st2"><b>إضافة محطة برابط</b></div></div><div class="strip one" data-hx="sthide"><span class="si">🙈</span><div class="st2"><b>المحطات المخفية</b></div></div>$1`)};
+ return h.replace(/(<div class="strip one" data-hx="favcheck">)/,`<div class="strip one" data-hx="addst"><span class="si">➕</span><div class="st2"><b>إضافة محطة برابط</b></div></div><div class="strip one" data-hx="sthide"><span class="si">🙈</span><div class="st2"><b>المحطات المخفية</b></div></div><div class="strip one" data-hx="trash"><span class="si">🗑</span><div class="st2"><b>سلة المحذوفات</b></div></div>$1`)};
 })();
 </script>
 </body>
