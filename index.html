@@ -2454,7 +2454,7 @@ function menu(arr,i){const s=arr[i];if(!s)return;const inFav=favs.some(f=>f.stat
  <button data-a="arch">🗄 أرشفة</button>
  <button data-a="share">🔗 مشاركة</button>
  <button data-a="copy">📋 نسخ الرابط</button>
- ${nd?'':`<button class="dg" data-a="del" style="grid-column:1/-1">${isL?'🗑 حذف من القايمة':'🙈 إخفاء المحطة'}</button>`}</div>`,'⋯ '+esc(s.name));
+ ${(nd||arr===(arcState&&arcState.items))?'':`<button class="dg" data-a="del" style="grid-column:1/-1">${isL?'🗑 حذف من القايمة':'🙈 إخفاء المحطة'}</button>`}</div>`,'⋯ '+esc(s.name));
  sh.onclick=e=>{const a=e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;
   if(k==='fav'){toggleFav(s);close();return}
   if(k==='later'){if(!later.some(x=>x.stationuuid===s.stationuuid)){later.unshift(slim(s));ls.set('radioLater',later)}close();toast('اتضافت لـ «بعدين»');return}
@@ -2491,6 +2491,21 @@ au.addEventListener('pause',savePos);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')savePos()});
 au.addEventListener('ended',()=>{if(!current)return;const m=P();delete m[current.stationuuid];try{localStorage.setItem(key,JSON.stringify(m))}catch{}});
 au.addEventListener('loadedmetadata',()=>{if(!fin())return;const p=P()[current.stationuuid];if(p>5&&p<au.duration-10&&au.currentTime<3){au.currentTime=p;toast('كمّلت من '+fmt(p))}});
+})();
+
+/* HX30: خيارات ⋯ في حلقات الأرشيف ومجموعاته */
+(function(){
+const _o=arcOpen;arcOpen=async function(id,title){await _o(id,title);try{const items=arcState&&arcState.items;if(!items||!items.length)return;window._rxArr=items;
+ $('list').querySelectorAll('.st[data-i][data-u]').forEach(el=>{if(el.querySelector('.mnx'))return;el.insertAdjacentHTML('beforeend',`<button class="mnx" data-mn="${el.dataset.i}" title="خيارات">⋯</button>`)})}catch{}};
+const _s=arcSearch;arcSearch=async function(){await _s.apply(this,arguments);try{(arcState.docs||[]);$('list').querySelectorAll('.st[data-id]').forEach(el=>{if(el.querySelector('.mnd'))return;el.insertAdjacentHTML('beforeend',`<button class="mnx mnd" data-id2="${esc(el.dataset.id)}" title="خيارات">⋯</button>`)})}catch{}};
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.mnd');if(!b)return;e.stopImmediatePropagation();e.preventDefault();
+ const id=b.dataset.id2,url='https://archive.org/details/'+id,nm=(b.closest('.st').querySelector('.n')||{}).textContent||id;
+ const bk=document.createElement('div');bk.id='mnBack';const sh=document.createElement('div');sh.id='mnSheet';const close=()=>{bk.remove();sh.remove()};bk.onclick=close;
+ sh.innerHTML=`<div class="mh">⋯ ${esc(nm)}</div><div class="mg"><button data-a="open">📂 افتح الحلقات</button><button data-a="copy">📋 نسخ الرابط</button><button data-a="share" style="grid-column:1/-1">🔗 مشاركة</button></div>`;
+ sh.onclick=ev=>{const a=ev.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;close();
+  if(k==='open')arcOpen(id,nm);else if(k==='copy')(navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast('اتنسخ الرابط')).catch(()=>prompt('انسخ الرابط:',url));
+  else{try{navigator.share?navigator.share({title:nm,url}):prompt('انسخ الرابط:',url)}catch{}}};
+ document.body.appendChild(bk);document.body.appendChild(sh)},true);
 })();
 </script>
 </body>
