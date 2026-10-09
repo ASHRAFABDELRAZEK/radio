@@ -283,6 +283,24 @@ body.guest #menuB{display:none!important}
 .hgrp .hfa{margin-inline-start:auto;order:3;font-size:14px;opacity:.7;transition:transform .2s}
 .hgrp.fold .hfa{transform:rotate(90deg)}
 .hfh{display:none!important}
+
+/* HX22: أشكال وكثافات وتجميع */
+.hv-g4 .hgrid.hlist{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.hv-g4 .hgrid.hlist .strip{grid-column:auto;flex-direction:column;text-align:center;padding:8px 2px;gap:3px}
+.hv-g4 .hgrid.hlist .strip .m{display:none}.hv-g4 .hgrid.hlist .strip b{font-size:11px;line-height:1.25}
+.hv-g4 .hgrid.hlist .strip .si{width:40px;height:40px;font-size:21px}.hv-g4 .hgrid.hlist .strip .st2{white-space:normal}
+.hv-big .hgrid.hlist{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hv-big .hgrid.hlist .strip{grid-column:auto;flex-direction:column;justify-content:center;text-align:center;min-height:130px;border-radius:22px;gap:10px;background:linear-gradient(160deg,rgba(100,140,255,.28),rgba(15,118,110,.18))}
+.hv-big .hgrid.hlist .strip .si{width:60px;height:60px;font-size:32px}.hv-big .hgrid.hlist .strip b{font-size:15px}.hv-big .hgrid.hlist .strip .m{display:none}.hv-big .hgrid.hlist .strip .st2{white-space:normal}
+.hs-pill .hgrid.hlist .strip{border-radius:999px}
+.hs-square .hgrid.hlist .strip,.hs-square .hgrid.hlist .strip .si{border-radius:6px}
+.hs-square.hv-grid .hgrid.hlist .strip,.hs-square.hv-g4 .hgrid.hlist .strip,.hs-square.hv-card .hgrid.hlist .strip,.hs-square.hv-big .hgrid.hlist .strip{aspect-ratio:1}
+.hs-circle .hgrid.hlist .strip .si{border-radius:50%}
+.hs-circle.hv-grid .hgrid.hlist .strip,.hs-circle.hv-g4 .hgrid.hlist .strip,.hs-circle.hv-scroll .hgrid.hlist .strip,.hs-circle.hv-card .hgrid.hlist .strip,.hs-circle.hv-big .hgrid.hlist .strip{background:none;border:none;box-shadow:none;backdrop-filter:none}
+.hs-circle.hv-grid .hgrid.hlist .strip .si,.hs-circle.hv-g4 .hgrid.hlist .strip .si,.hs-circle.hv-scroll .hgrid.hlist .strip .si,.hs-circle.hv-card .hgrid.hlist .strip .si,.hs-circle.hv-big .hgrid.hlist .strip .si{width:58px;height:58px;font-size:28px;background:linear-gradient(145deg,rgba(100,140,255,.35),rgba(255,255,255,.07));border:2px solid var(--line);box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.hs-circle.hv-g4 .hgrid.hlist .strip .si{width:50px;height:50px;font-size:24px}
+.hd-s .hgrid.hlist .strip{padding:4px 10px;font-size:12px}.hd-s .hgrp{margin:8px 4px 4px}.hd-s .hgrid.hlist{gap:4px}
+.hd-l .hgrid.hlist .strip{padding:14px 14px;font-size:16px}.hd-l .hgrid.hlist{gap:12px}.hd-l .hgrp{margin:24px 4px 12px;font-size:17px}
 </style>
 </head>
 <body>
@@ -2246,11 +2264,31 @@ function sibs(g){const o=[];let e=g.nextElementSibling;while(e&&!e.classList.con
 function apply(){const L=$('list');if(!L)return;const f=hxGet('hfold',[]);L.querySelectorAll('.hgrp').forEach(g=>{if(!g.querySelector('.hfa')){const a=document.createElement('span');a.className='hfa';a.textContent='▾';g.appendChild(a)}
  const fo=f.includes(key(g));g.classList.toggle('fold',fo);sibs(g).forEach(s=>s.classList.toggle('hfh',fo))})}
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.hgrp');if(!g||!$('list').contains(g))return;
- const k=key(g);let f=hxGet('hfold',[]);f=f.includes(k)?f.filter(x=>x!==k):[...f,k];hxSet('hfold',f);apply()},true);
+ const k=key(g);let f=hxGet('hfold',[]);if(f.includes(k)){f=f.filter(x=>x!==k);if(hxGet('hacc',false))f=[...$('list').querySelectorAll('.hgrp')].map(key).filter(x=>x!==k)}else f=[...f,k];hxSet('hfold',f);apply();if(hxGet('hacc',false))g.scrollIntoView({block:'start',behavior:'smooth'})},true);
 const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(apply,0);setTimeout(apply,400)};
 HX.foldall=function(){const g=[...$('list').querySelectorAll('.hgrp')].map(key);hxSet('hfold',g);apply()};
 HX.unfoldall=function(){hxSet('hfold',[]);apply()};
 setTimeout(apply,600);
+})();
+
+/* HX22 */
+(function(){
+const MODES=['hv-grid','hv-comp','hv-scroll','hv-card','hv-g4','hv-big'],SH=['hs-pill','hs-square','hs-circle'],DN=['hd-s','hd-l'];
+const A=()=>{const b=document.body.classList;[...MODES,...SH,...DN].forEach(c=>b.remove(c));
+ const v=hxGet('hview','list');if(v!=='list')b.add('hv-'+v);const s=hxGet('hshape','rect');if(s!=='rect')b.add('hs-'+s);const d=hxGet('hdens','m');if(d!=='m')b.add('hd-'+d)};
+A();window.hxApplyView=A;
+const chips=(k,def,arr)=>{const v=hxGet(k,def);return `<div class="chips" style="display:flex;flex-wrap:wrap;gap:8px;margin:6px 0">${arr.map(x=>`<span class="chip" data-hx="hviewset" data-k="${k}" data-v="${x[0]}" style="${x[0]===v?'outline:2px solid var(--gold)':''}">${x[1]}</span>`).join('')}</div>`};
+HX.hview=function(){hxPage('🖼 شكل الشاشة الرئيسية',
+ `<div class="hxc"><b>طريقة العرض</b>${chips('hview','list',[['list','☰ قائمة'],['comp','▦ مدمج'],['grid','⊞ شبكة 3'],['g4','⁞⁞ شبكة 4'],['card','🃏 بطاقات'],['big','🔲 بطاقات كبيرة'],['scroll','⇄ شرائط أفقية']])}</div>
+ <div class="hxc"><b>الشكل الهندسي</b>${chips('hshape','rect',[['rect','▭ مستطيل'],['pill','💊 كبسولة'],['square','◼ مربع'],['circle','⚪ دوائر']])}</div>
+ <div class="hxc"><b>الكثافة (حجم العناصر)</b>${chips('hdens','m',[['s','🔹 مضغوط'],['m','◽ عادي'],['l','🔷 مريح']])}</div>
+ <div class="hxc"><b>التجميع والطي</b>${chips('hacc',false,[[false,'📂 فتح أكتر من قسم'],[true,'🗂 قسم واحد مفتوح (أكورديون)']])}
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="hxb" data-hx="foldall2">⏫ اطوِ كل الأقسام</button><button class="hxb" data-hx="unfoldall2">⏬ افرد كل الأقسام</button></div>
+ <p class="m">اضغط على عنوان أي قسم في الرئيسية عشان تطويه أو تفرده، ومن «ترتيب الرئيسية» تغيّر الترتيب أو تخفي أقسام.</p></div>`)};
+HX.hviewset=function(el){const k=el.dataset.k||'hview';let v=el.dataset.v;if(v==='true')v=true;if(v==='false')v=false;hxSet(k,v);A();if(k==='hacc'&&v){const f=hxGet('hfold',[]);}HX.hview()};
+const allG=()=>[...HGRP];
+HX.foldall2=function(){hxSet('hfold',[...HGRP]);toast('اتطوّت — افتح الرئيسية')};
+HX.unfoldall2=function(){hxSet('hfold',[]);toast('اتفردت كل الأقسام')};
 })();
 </script>
 </body>
