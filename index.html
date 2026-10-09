@@ -275,6 +275,9 @@ body.guest #menuB{display:none!important}
 
 #seekBox{gap:5px!important}#seekBox select{max-width:58px!important;font-size:12px!important;padding:2px!important}
 #seekBox button{min-width:46px!important;padding:6px 8px!important}#seekBox #tCur,#seekBox #tDur{min-width:34px!important;font-size:13px!important}
+
+#seekTip{position:fixed;z-index:9999;pointer-events:none;background:#0b1730;color:#fff;border:2px solid var(--gold,#C9A227);border-radius:12px;padding:6px 12px;font-size:20px;font-weight:700;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.5);display:none;transform:translateX(-50%);direction:ltr;line-height:1.2}
+#seekTip small{display:block;font-size:12px;font-weight:400;opacity:.85}
 </style>
 </head>
 <body>
@@ -2218,6 +2221,17 @@ sel.onchange=()=>{st=+sel.value;ls.set('skStep',st);lab()};
 $('fwd30').after(sel);lab();
 $('back30').onclick=()=>go(-st);$('fwd30').onclick=()=>go(st);
 try{navigator.mediaSession.setActionHandler('seekforward',()=>go(st));navigator.mediaSession.setActionHandler('seekbackward',()=>go(-st))}catch{}
+})();
+
+/* HX20: معاينة الوقت أثناء السحب */
+(function(){const s=$('seek');if(!s)return;const tip=document.createElement('div');tip.id='seekTip';document.body.appendChild(tip);let base=0,tmr;
+const fm=x=>{x=Math.max(0,Math.round(x));const h=Math.floor(x/3600),m=Math.floor(x%3600/60),sc=x%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(sc).padStart(2,'0')};
+const show=()=>{clearTimeout(tmr);const r=s.getBoundingClientRect(),max=+s.max||1,v=+s.value,pad=15,x=r.left+pad+(r.width-2*pad)*(v/max),d=Math.round(v-base);
+ tip.innerHTML=fm(v)+'<small>'+(d===0?'من '+fm(max):(d>0?'+':'−')+fm(Math.abs(d))+' · من '+fm(max))+'</small>';tip.style.display='block';
+ tip.style.left=Math.min(innerWidth-50,Math.max(50,x))+'px';tip.style.top=Math.max(4,r.top-tip.offsetHeight-14)+'px'};
+const hide=()=>{tmr=setTimeout(()=>tip.style.display='none',700)};
+s.addEventListener('pointerdown',()=>{base=au.currentTime;show()});s.addEventListener('touchstart',()=>{base=au.currentTime},{passive:true});
+s.addEventListener('input',show);['pointerup','pointercancel','change','touchend'].forEach(e=>s.addEventListener(e,hide));
 })();
 </script>
 </body>
