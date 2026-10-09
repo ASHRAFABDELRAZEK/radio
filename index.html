@@ -2875,6 +2875,77 @@ HX.hdefault=function(){if(!confirm('ترجّع الشكل والترتيب لل�
  window.hxApplyView&&hxApplyView();showHome();toast('اتظبط على الافتراضي: مربعات ✔');try{HX.hview()}catch{}};
 const _h=HX.hview;HX.hview=function(){_h.apply(this,arguments);setTimeout(()=>{const p=document.querySelector('.hxp');if(p&&!p.querySelector('[data-hx=hdefault]')){const b=document.createElement('button');b.className='hxb';b.dataset.hx='hdefault';b.style.cssText='margin:12px 0;width:100%';b.textContent='↩ الرجوع للافتراضي (مربعات)';p.appendChild(b)}},30)};
 })();
+
+/* HX46: عدّاد الصلاة الجاية + محطة اليوم + Cast + مخرج الصوت */
+(function(){
+const bar=document.getElementById('topBar');if(!bar)return;
+const th=document.getElementById('themeB')||null;
+// 1) عدّاد الصلاة الجاية
+const pc=document.createElement('button');pc.id='prNext';pc.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 10px;font-size:13px;display:none';
+pc.title='الصلاة الجاية';pc.onclick=()=>{try{loadPrayer(true)}catch{}};
+bar.insertBefore(pc,document.getElementById('prTog')||th);
+function nextP(){try{if(typeof pTimes==='undefined'||!pTimes)return null;const now=new Date();let best=null;
+ for(const k of Object.keys(PN)){const [h,m]=pTimes.t[k].split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);if(t>now&&(!best||t<best.t))best={k,t}}
+ return best}catch{return null}}
+function tick(){const n=nextP();if(!n){pc.style.display='none';return}
+ const d=Math.max(0,Math.round((n.t-new Date())/60000)),h=Math.floor(d/60),m=d%60;
+ pc.textContent='🕌 '+PN[n.k]+' '+(h?h+'س ':'')+m+'د';pc.style.display=''}
+tick();setInterval(tick,30000);
+// 2) محطة اليوم: دولة جديدة كل يوم
+const C=[['EG','مصر'],['SA','السعودية'],['AE','الإمارات'],['MA','المغرب'],['DZ','الجزائر'],['TN','تونس'],['LB','لبنان'],['JO','الأردن'],['KW','الكويت'],['QA','قطر'],['OM','عُمان'],['IQ','العراق'],['SY','سوريا'],['PS','فلسطين'],['SD','السودان'],['TR','تركيا'],['FR','فرنسا'],['IT','إيطاليا'],['ES','إسبانيا'],['BR','البرازيل'],['JP','اليابان'],['IN','الهند'],['DE','ألمانيا'],['GB','بريطانيا'],['US','أمريكا'],['MY','ماليزيا'],['ID','إندونيسيا'],['PK','باكستان']];
+window.HX=window.HX||{};
+HX.daily=function(){const d=Math.floor(Date.now()/864e5)+(hxGet('dailyN',0));const c=C[d%C.length];
+ const t=document.getElementById('status');if(t)t.textContent='🎲 محطة اليوم من '+c[1];
+ loadSet('🎲 محطة اليوم — '+c[1],[q('countrycode='+c[0])],{}).then(()=>{const b=document.getElementById('shufB');b&&b.click()}).catch(()=>{})};
+HX.dailyNext=function(){hxSet('dailyN',hxGet('dailyN',0)+1);HX.daily()};
+const db=document.createElement('button');db.id='dailyB';db.textContent='🎲';db.title='محطة اليوم (دولة جديدة كل يوم) — اضغط مرتين لدولة تانية';
+db.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 12px';
+let last=0;db.onclick=()=>{const n=Date.now();if(n-last<1500)HX.dailyNext();else HX.daily();last=n};
+bar.insertBefore(db,document.getElementById('prTog')||th);
+// 3) Cast + مخرج الصوت (لو المتصفح يدعم)
+const au=document.getElementById('au');
+if(au&&au.remote&&au.remote.prompt){const cb=document.createElement('button');cb.textContent='📺';cb.title='إرسال لسماعة/تلفزيون';
+ cb.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 12px';cb.onclick=()=>au.remote.prompt().catch(()=>{const s=document.getElementById('status');if(s)s.textContent='مفيش أجهزة قريبة'});bar.insertBefore(cb,db)}
+if(au&&au.setSinkId&&navigator.mediaDevices&&navigator.mediaDevices.selectAudioOutput){const ob=document.createElement('button');ob.textContent='🔊';ob.title='اختيار مخرج الصوت';
+ ob.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 12px';ob.onclick=async()=>{try{const d=await navigator.mediaDevices.selectAudioOutput();await au.setSinkId(d.deviceId);const s=document.getElementById('status');if(s)s.textContent='المخرج: '+d.label}catch{}};bar.insertBefore(ob,db)}
+if(new URLSearchParams(location.search).get('go')==='daily')setTimeout(()=>HX.daily(),1500);
+})();
+
+/* HX47: إيكوالايزر وتضخيم + آخر 3 محطات + خمّن الدولة + إعلانات عن بُعد */
+(function(){
+const bar=document.getElementById('topBar'),au=document.getElementById('au');if(!bar||!au)return;
+const ref=document.getElementById('dailyB');
+function panel(html){let d=document.getElementById('hx47p');if(!d){d=document.createElement('div');d.id='hx47p';d.style.cssText='position:fixed;bottom:70px;right:12px;left:12px;max-width:420px;margin:auto;background:var(--card);padding:14px;border-radius:12px;border:1px solid var(--gold);z-index:60;font-size:14px;max-height:70vh;overflow:auto';document.body.appendChild(d)}
+ d.innerHTML=html+'<div style="margin-top:10px"><button onclick="this.closest(\'#hx47p\').remove()">إغلاق</button></div>';return d}
+// آخر 3 محطات
+au.addEventListener('playing',()=>{try{if(!current||!current.url_resolved)return;let L=hxGet('last3',[]).filter(x=>x.url_resolved!==current.url_resolved);L.unshift(slim(current));hxSet('last3',L.slice(0,3))}catch{}});
+HX.last3=function(){const L=hxGet('last3',[]);const d=panel('<b>🕘 آخر ما سمعت</b>'+(L.length?L.map((s,i)=>`<div><button data-i="${i}" style="width:100%;margin-top:6px;text-align:right">▶ ${esc(s.name)}</button></div>`).join(''):'<p>لسه ما سمعتش حاجة</p>'));
+ d.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const s=L[+b.dataset.i];playlist=[s];play(s);d.remove()})};
+// إيكوالايزر وتضخيم (اختياري)
+let ac,src,gain,lo,hi,on=hxGet('eqon',false);
+function eqInit(){if(ac)return true;try{ac=new (window.AudioContext||window.webkitAudioContext)();src=ac.createMediaElementSource(au);lo=ac.createBiquadFilter();lo.type='lowshelf';lo.frequency.value=200;hi=ac.createBiquadFilter();hi.type='highshelf';hi.frequency.value=3000;gain=ac.createGain();src.connect(lo);lo.connect(hi);hi.connect(gain);gain.connect(ac.destination);return true}catch{return false}}
+HX.eq=function(){const e=hxGet('eq',{b:0,t:0,g:1});
+ const d=panel(`<b>🎚 الصوت</b><div class="m" style="font-size:12px;color:var(--mut)">تنبيه: مع بعض المحطات ممكن الصوت يتكتم لما تفعّله — لو حصل اقفله وأعد التشغيل.</div>
+ <label style="display:block;margin-top:8px"><input type="checkbox" id="eqOn" ${on?'checked':''}> تفعيل</label>
+ <label>جهير <input type="range" id="eqB" min="-10" max="10" value="${e.b}"></label><br><label>رفيع <input type="range" id="eqT" min="-10" max="10" value="${e.t}"></label><br><label>تضخيم <input type="range" id="eqG" min="1" max="3" step="0.1" value="${e.g}"></label>`);
+ const ap=()=>{const v={b:+d.querySelector('#eqB').value,t:+d.querySelector('#eqT').value,g:+d.querySelector('#eqG').value};hxSet('eq',v);if(!d.querySelector('#eqOn').checked){if(gain){lo.gain.value=hi.gain.value=0;gain.gain.value=1}on=false;hxSet('eqon',false);return}
+  if(!eqInit()){d.querySelector('#eqOn').checked=false;return}if(ac.state==='suspended')ac.resume();lo.gain.value=v.b;hi.gain.value=v.t;gain.gain.value=v.g;on=true;hxSet('eqon',true)};
+ d.querySelectorAll('input').forEach(i=>i.oninput=ap)};
+// خمّن الدولة
+const GC=[['EG','مصر'],['SA','السعودية'],['MA','المغرب'],['LB','لبنان'],['TR','تركيا'],['FR','فرنسا'],['IT','إيطاليا'],['BR','البرازيل'],['JP','اليابان'],['IN','الهند'],['DE','ألمانيا'],['ES','إسبانيا']];
+HX.guess=async function(){const c=GC[Math.floor(Math.random()*GC.length)];const d=panel('<b>🎮 خمّن الدولة</b><p>بدوّر على محطة…</p>');
+ try{const r=await fetch(API+q('countrycode='+c[0]));const L=(await r.json()).filter(x=>x.lastcheckok===1&&/^https:/.test(x.url_resolved||''));if(!L.length)throw 0;const s=L[Math.floor(Math.random()*L.length)];playlist=[s];play(s);
+  const o=[c,...GC.filter(x=>x!==c).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
+  d.innerHTML='<b>🎮 اسمع وخمّن: دي محطة من أنهي دولة؟</b>'+o.map(x=>`<button data-c="${x[0]}" style="display:block;width:100%;margin-top:6px">${x[1]}</button>`).join('')+'<div id="gr" style="margin-top:8px"></div><div style="margin-top:10px"><button id="gn">جولة تانية</button> <button onclick="this.closest(\'#hx47p\').remove()">إغلاق</button></div>';
+  d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{d.querySelector('#gr').textContent=b.dataset.c===c[0]?'✅ صح! '+c[1]:'❌ غلط، الصح: '+c[1]});d.querySelector('#gn').onclick=HX.guess}
+ catch{d.innerHTML='<p>ما قدرتش أجيب محطة، جرّب تاني</p><button onclick="this.closest(\'#hx47p\').remove()">إغلاق</button>'}};
+// قائمة أدوات
+const tb=document.createElement('button');tb.textContent='🧰';tb.title='أدوات: آخر ما سمعت / الصوت / خمّن الدولة';tb.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 12px';
+tb.onclick=()=>{panel('<b>🧰 أدوات</b><button style="display:block;width:100%;margin-top:8px" onclick="HX.last3()">🕘 آخر ما سمعت</button><button style="display:block;width:100%;margin-top:8px" onclick="HX.eq()">🎚 جهير ورفيع وتضخيم</button><button style="display:block;width:100%;margin-top:8px" onclick="HX.guess()">🎮 خمّن الدولة</button>')};
+bar.insertBefore(tb,ref||null);
+// إعلان/تحديث عن بُعد: ملف config.json اختياري بجانب التطبيق
+fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(c=>{if(c&&c.msg&&hxGet('cfgmsg','')!==c.msg){hxSet('cfgmsg',c.msg);toast(c.msg)}}).catch(()=>{});
+})();
 </script>
 </body>
 </html>
