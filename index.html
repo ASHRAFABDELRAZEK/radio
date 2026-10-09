@@ -2184,6 +2184,20 @@ const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false)
  const c=hxGet('zauto',null);if(c&&c.items&&!ITEMS.length)ITEMS=c.items;setTimeout(()=>fill(false),50);
  return h.replace('<div class="strip one" data-hx="zm0">',`<div class="m" style="margin:2px 6px">🆕 اكتشافات اليوم (تلقائي)</div><div id="zAuto" class="hgrid hlist" style="grid-column:1/-1">${html(ITEMS)}</div><div class="strip one" data-hx="zm0">`)};
 })();
+
+/* HX18: خطوة التقديم/التأخير قابلة للاختيار */
+(function(){
+const S=[[10,'10 ث'],[30,'30 ث'],[60,'دقيقة'],[300,'5 د'],[600,'10 د'],[1800,'30 د']];
+let st=+ls.get('skStep',30)||30;
+const lab=()=>{const o=S.find(x=>x[0]===st)||S[1];$('back30').textContent='−'+o[1];$('fwd30').textContent='+'+o[1]};
+const go=d=>{if(!isFinite(au.duration))return;au.currentTime=Math.max(0,Math.min(au.duration-1,au.currentTime+d))};
+const sel=document.createElement('select');sel.id='skStep';sel.title='مقدار القفزة';sel.style.cssText='background:var(--btn2);color:inherit;border-radius:8px;padding:4px 2px;max-width:64px';
+sel.innerHTML=S.map(x=>`<option value="${x[0]}" ${x[0]===st?'selected':''}>${x[1]}</option>`).join('');
+sel.onchange=()=>{st=+sel.value;ls.set('skStep',st);lab()};
+$('fwd30').after(sel);lab();
+$('back30').onclick=()=>go(-st);$('fwd30').onclick=()=>go(st);
+try{navigator.mediaSession.setActionHandler('seekforward',()=>go(st));navigator.mediaSession.setActionHandler('seekbackward',()=>go(-st))}catch{}
+})();
 </script>
 </body>
 </html>
