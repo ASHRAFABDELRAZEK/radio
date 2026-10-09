@@ -1293,6 +1293,28 @@ au.addEventListener('error',()=>{const s=current;if(!s||String(s.stationuuid).st
   $('hsQ').value=($('q')||{}).value||'';$('hsC').value=($('country')||{}).value||'';$('hsL').value=($('lang')||{}).value||'';$('hsT').value=($('tag')||{}).value||'';
   const go=()=>{set('q',$('hsQ').value);set('country',$('hsC').value);set('lang',$('hsL').value);set('tag',$('hsT').value);navPush();setTab('all');search()};
   $('hsGo').onclick=go;$('hsQ').onkeydown=e=>{if(e.key==='Enter')go()}}})();
+
+// ===== أوضاع نهاية الحلقة بتسميات ووصف واضح =====
+const EM=[['next','▶ كمّل للتالي','لما الحلقة تخلص يشغّل اللي بعدها في القايمة تلقائي.'],
+ ['stop','⏹ وقّف بعد النهاية','لما الحلقة تخلص يوقف ومايشغّلش حاجة تانية.'],
+ ['n','🔢 كرّر عدد مرات','يعيد نفس الحلقة العدد اللي تحدده، وبعدها يوقف.'],
+ ['inf','♾ كرّر للأبد','يعيد نفس الحلقة بلا نهاية لحد ما توقفه بنفسك.'],
+ ['all','🔁 كرّر القايمة','يشغّل القايمة كلها واحدة ورا التانية، ولما تخلص يرجع من الأول.']];
+(function(){const sel=$('endMode');if(!sel)return;
+  [...sel.options].forEach(o=>{const e=EM.find(x=>x[0]===o.value);if(e)o.textContent=e[1]});
+  sel.title='بعد ما الحلقة تخلص: '+EM.map(e=>e[1]+' = '+e[2]).join(' | ');
+  const par=$('npFav')&&$('npFav').parentNode;if(!par||$('emBox'))return;
+  par.insertAdjacentHTML('beforebegin',`<div id="emBox" style="margin:10px 0;text-align:right"><div style="font-weight:bold;margin-bottom:6px">🔁 بعد ما الحلقة تخلص</div><div class="chips" id="emChips">${EM.map(e=>`<span class="chip" data-em="${e[0]}">${e[1]}</span>`).join('')}</div>
+   <div id="emN" style="display:none;margin-top:8px">عدد المرات: <input id="npRepN" type="number" min="1" max="99" style="width:70px;text-align:center"> <span class="m">(بيعيد الحلقة العدد ده من المرات)</span></div>
+   <div class="m" id="emDesc" style="margin-top:8px;line-height:1.6"></div></div>`);
+  const upd=()=>{const m=sel.value;document.querySelectorAll('#emChips .chip').forEach(c=>c.classList.toggle('on',c.dataset.em===m));
+    const e=EM.find(x=>x[0]===m);$('emDesc').textContent=(e?e[2]:'')+(current&&!String(current.stationuuid).startsWith('ia:')&&!current.file?' — ملحوظة: البث المباشر ملوش نهاية، والخيارات دي للحلقات والتسجيلات.':'');
+    $('emN').style.display=m==='n'?'block':'none';$('npRepN').value=$('repN').value};
+  document.querySelectorAll('#emChips .chip').forEach(c=>c.onclick=()=>{sel.value=c.dataset.em;sel.onchange();upd()});
+  $('npRepN').onchange=()=>{$('repN').value=Math.max(1,+$('npRepN').value||1);$('repN').onchange();upd()};
+  sel.addEventListener('change',upd);upd();setInterval(upd,2000)})();
+// عداد التكرار أوضح
+{const _oe=onEnd;onEnd=function(el){const m=$('endMode').value;if(m==='n'){const tot=Math.max(1,+$('repN').value);const left=repLeft===0?tot:repLeft;_oe(el);if(repLeft>0)$('status').textContent=`🔢 تكرار — المرة ${tot-repLeft+1} من ${tot}`;return}if(m==='inf'){_oe(el);$('status').textContent='♾ تكرار بلا نهاية';return}_oe(el)}}
 </script>
 </body>
 </html>
