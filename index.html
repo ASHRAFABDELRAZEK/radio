@@ -1858,6 +1858,33 @@ setInterval(()=>{const A=ls.get('appt',[]),n=Date.now();let ch=false;A.forEach(x
  if(x.radio){const l=ls.get('radioLast',null);if(l&&l.item)hxPlayAll([l.item])}}});if(ch)ls.set('appt',A)},20000);
 // استقبال قائمة مشتريات
 setTimeout(()=>{const d=new URLSearchParams(location.search).get('sl');if(!d)return;try{const L=JSON.parse(decodeURIComponent(escape(atob(d))));if(!Array.isArray(L)||!L.length)return;if(confirm('وصلتك قائمة مشتريات فيها '+L.length+' صنف. تضيفها لقائمتك؟')){const S=ls.get('shop',[]);L.forEach(t=>S.push({t:String(t).slice(0,80),ok:false}));ls.set('shop',S);navPush();HX.shop()}}catch{}},1600);
+
+// ===== HX5: دقّة الساعة كل ساعة =====
+let hxAC=null;
+function hxCtx(){try{hxAC=hxAC||new (window.AudioContext||window.webkitAudioContext)();if(hxAC.state==='suspended')hxAC.resume();return hxAC}catch{return null}}
+function hxBell(f,t0,dur,vol){const c=hxAC;[[1,1],[2.01,.5],[2.76,.25],[4.1,.12]].forEach(([m,a])=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f*m;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol*a,t0+.01);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.start(t0);o.stop(t0+dur+.05)})}
+function hxChime(hour,style,quarter){const c=hxCtx();if(!c)return;const t=c.currentTime+.1;let end=t;const v0=au.volume;
+ const duck=()=>{au.volume=Math.min(v0,.25)},unduck=()=>{au.volume=v0};
+ if(quarter){hxBell(659.25,t,2.2,.25);end=t+2.2}
+ else if(style==='west'){const N=[415.3,369.99,329.63,246.94,329.63,369.99,415.3,329.63,415.3,329.63,369.99,246.94,246.94,369.99,415.3,329.63];N.forEach((f,i)=>hxBell(f,t+i*.9,2.6,.3));end=t+N.length*.9+1.5;const n=((hour+11)%12)+1;for(let i=0;i<n;i++)hxBell(164.81,end+i*1.4,3,.45);end+=n*1.4+2}
+ else{for(let i=0;i<3;i++)hxBell(523.25,t+i*.8,2.4,.3);end=t+4}
+ duck();setTimeout(unduck,(end-c.currentTime)*1000+300)}
+const hxCh=()=>hxGet('chime',{mode:'off',half:false,night:true,idle:false});
+Object.assign(HX,{
+chimeP(){const o=hxCh();hxPage('🔔 دقّة الساعة',`<div class="hxc"><div class="m">زي زمان: جرس كل ساعة وإنت بتسمع الراديو. الأصوات متولّدة من التطبيق نفسه (مش تسجيل ساعة جامعة القاهرة الأصلية).</div>
+ <label>النوع <select id="chM"><option value="off" ${o.mode==='off'?'selected':''}>مقفول</option><option value="bell" ${o.mode==='bell'?'selected':''}>جرس بسيط (3 دقّات)</option><option value="west" ${o.mode==='west'?'selected':''}>ساعة كبيرة (لحن + عدد الساعة)</option></select></label>
+ <label><input type="checkbox" id="chH" ${o.half?'checked':''}> نغمة خفيفة كل نص ساعة</label>
+ <label><input type="checkbox" id="chN" ${o.night?'checked':''}> صامت بين 11 م و6 ص</label>
+ <label><input type="checkbox" id="chI" ${o.idle?'checked':''}> حتى لو الراديو مش شغّال</label>
+ ${hxBtn('chtest','▶ جرّب الصوت')}<div class="m">بيشتغل والتطبيق مفتوح. وقت الصلاة (لو الصامت مفعّل) الجرس بيسكت.</div></div>`);
+ const sv=()=>{hxSet('chime',{mode:$('chM').value,half:$('chH').checked,night:$('chN').checked,idle:$('chI').checked});hxCtx()};['chM','chH','chN','chI'].forEach(i=>$(i).onchange=sv)},
+chtest(){const m=$('chM').value==='west'?'west':'bell';hxChime(new Date().getHours(),m,false)}});
+setInterval(()=>{const o=hxCh();if(o.mode==='off')return;const d=new Date(),mi=d.getMinutes();if(d.getSeconds()>3||(mi!==0&&!(mi===30&&o.half)))return;
+ const k=d.getHours()+':'+mi+':'+dayKey();if(window.hxLastCh===k)return;window.hxLastCh=k;
+ if(o.night&&(d.getHours()>=23||d.getHours()<6))return;if(!o.idle&&(typeof playing==='undefined'||!playing))return;
+ if(typeof pWin!=='undefined'&&pWin&&hxGet('x',0)===0&&typeof pCfg!=='undefined'&&pCfg.on)return;
+ hxChime(d.getHours(),o.mode,mi===30)},1000);
+{const _h=HX.hub;HX.hub=function(){_h();const g=[...$('list').firstElementChild.querySelectorAll('.hgrp')].find(x=>/ذكي/.test(x.textContent));if(g&&g.nextElementSibling)g.nextElementSibling.insertAdjacentHTML('beforeend',hxCell('chimeP','🔔','دقّة الساعة'))}}
 </script>
 </body>
 </html>
