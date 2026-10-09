@@ -1955,6 +1955,53 @@ function mysecMgr(){let d=$('mysecDlg');if(d)d.remove();d=document.createElement
   $('msAdd').onclick=()=>{const n=$('msName').value.trim(),own=$('msKw').value.split(/[,،]/).map(x=>x.trim()).filter(Boolean),kw=[...new Set([...(picked?picked.kw:[]),...own])];if(!n){toast('اكتب اسم القسم');return}mySecs.push({name:n,ic:$('msIc').value.trim()||(picked?picked.ic:''),kw:kw.length?kw:[n],pin:$('msPin').checked});save();picked=null;if($('msPin').checked)toast('📌 اتثبّت على الرئيسية');draw()};
   $('msX').onclick=()=>{d.remove();if($('hsBox'))showHome();else if($('list').querySelector('.mdet'))modesPage();else showHome()}};
  document.body.appendChild(d);draw()}
+
+// ===== HX8: منبّه الصلاة (قبل/بعد + صوت من الموبايل + صوت لكل صلاة) =====
+const PAL0={pre:{on:false,mins:15},post:{on:false,mins:30},pr:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},snd:{def:'bell'}};
+const hxPal=()=>{const o=ls.get('pal',{});return {pre:Object.assign({},PAL0.pre,o.pre),post:Object.assign({},PAL0.post,o.post),pr:Object.assign({},PAL0.pr,o.pr),snd:Object.assign({},PAL0.snd,o.snd),names:o.names||{}}};
+const hxPalSave=o=>ls.set('pal',o);
+const SNDS=[['bell','🔔 جرس'],['soft','🎶 نغمة هادئة'],['beep','⏰ تنبيه (منبّه)'],['file','📱 ملف من الموبايل']];
+function hxSdb(){return new Promise((res,rej)=>{const r=indexedDB.open('hxsnd',1);r.onupgradeneeded=()=>r.result.createObjectStore('s',{keyPath:'k'});r.onsuccess=()=>res(r.result);r.onerror=rej})}
+async function hxSget(k){try{const db=await hxSdb();return await new Promise(r=>{const q=db.transaction('s').objectStore('s').get(k);q.onsuccess=()=>r(q.result)})}catch{return null}}
+async function hxSput(k,f){const db=await hxSdb();return new Promise(r=>{const t=db.transaction('s','readwrite');t.objectStore('s').put({k,b:f,name:f.name});t.oncomplete=r})}
+let hxSnd={a:null,iv:null,url:null};
+function hxSndStop(){clearInterval(hxSnd.iv);hxSnd.iv=null;if(hxSnd.a){hxSnd.a.pause();hxSnd.a=null}if(hxSnd.url){URL.revokeObjectURL(hxSnd.url);hxSnd.url=null}}
+async function hxSndPlay(prayer){hxSndStop();const p=hxPal();let kind=p.snd[prayer]||'def';if(kind==='def')kind=p.snd.def||'bell';
+ if(kind==='file'){let rec=await hxSget(prayer);if(!rec||(p.snd[prayer]||'def')==='def')rec=await hxSget('def');
+  if(rec){hxSnd.url=URL.createObjectURL(rec.b);const a=new Audio(hxSnd.url);a.loop=true;a.volume=1;hxSnd.a=a;a.play().catch(()=>toast('اضغط على الشاشة عشان يشتغل الصوت'));setTimeout(hxSndStop,90000);return}kind='bell'}
+ const tick=()=>{const c=hxCtx();if(!c)return;const t=c.currentTime+.05;if(kind==='bell'){hxBell(659.25,t,2.4,.5);hxBell(523.25,t+.7,2.4,.5)}
+  else if(kind==='soft'){[392,494,587].forEach((f,i)=>hxBell(f,t+i*.6,2,.35))}
+  else{for(let i=0;i<4;i++)hxBell(880,t+i*.25,.2,.6)}};
+ tick();hxSnd.iv=setInterval(tick,kind==='beep'?2500:4500);setTimeout(hxSndStop,90000)}
+function hxPalAlert(prayer,kind,mins,snz){const old=$('hxPalOv');if(old)old.remove();
+ const msg=kind==='pre'?`باقي ${mins} دقيقة على صلاة ${PN[prayer]}`:kind==='post'?`عدّى ${mins} دقيقة على أذان ${PN[prayer]} — صلّيت؟`:`🔔 تجربة منبّه الصلاة`;
+ const d=document.createElement('div');d.id='hxPalOv';d.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(8,17,32,.96);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center';
+ d.innerHTML=`<div style="font-size:60px">🕌</div><div style="font-size:24px;font-weight:bold;line-height:1.6">${msg}</div><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><button id="hxPalOk" style="padding:14px 26px;font-size:18px">⏹ إيقاف</button><button id="hxPalSn" style="padding:14px 26px;font-size:18px;background:var(--btn2)">😴 غفوة 5 دقايق</button></div>`;
+ document.body.appendChild(d);hxSndPlay(prayer);navigator.vibrate&&navigator.vibrate([400,200,400,200,400]);
+ try{if(window.Notification&&Notification.permission==='granted')new Notification(msg)}catch{}
+ $('hxPalOk').onclick=()=>{hxSndStop();d.remove()};
+ $('hxPalSn').onclick=()=>{hxSndStop();d.remove();setTimeout(()=>hxPalAlert(prayer,kind,mins,1),5*60000);toast('هنفكّرك كمان 5 دقايق')}}
+Object.assign(HX,{
+pal(){const p=hxPal(),mk=(id,v)=>`<select data-pa="${id}">${SNDS.map(s=>`<option value="${s[0]}" ${s[0]===v?'selected':''}>${s[1]}</option>`).join('')}</select>`;
+ const row=(k,label,v,isDef)=>`<div class="hxc"><b>${label}</b><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${isDef?mk('snd:def',v):`<select data-pa="snd:${k}"><option value="def" ${v==='def'?'selected':''}>↩ الصوت الافتراضي</option>${SNDS.map(s=>`<option value="${s[0]}" ${s[0]===v?'selected':''}>${s[1]}</option>`).join('')}</select>`}${(v==='file')?`<label class="hxb" style="background:var(--btn2);cursor:pointer">📂 اختار ملف<input type="file" accept="audio/*" data-pf="${isDef?'def':k}" style="display:none"></label><span class="m">${esc(p.names[isDef?'def':k]||'لسه ما اخترتش')}</span>`:''}<button class="hxb" data-hx="paltest" data-k="${isDef?'':k}">▶ جرّب</button></div></div>`;
+ hxPage('🔔 منبّه الصلاة',`${pTimes?'':`<div class="hxc" style="border-color:#f59e0b">لازم تحدد موقعك الأول عشان نعرف مواقيت الصلاة. <div class="strip one" data-act="prset" style="margin-top:6px"><span class="si">🕌</span><div class="st2"><b>اضبط مواقيت الصلاة</b></div></div></div>`}
+ <div class="hxc"><b>⏱ إمتى ينبّهك؟</b><label><input type="checkbox" data-pa="pre.on" ${p.pre.on?'checked':''}> قبل الصلاة بـ <select data-pa="pre.mins">${[5,10,15,20,30,45,60].map(n=>`<option ${n==p.pre.mins?'selected':''}>${n}</option>`).join('')}</select> دقيقة (تجهّز)</label>
+ <label><input type="checkbox" data-pa="post.on" ${p.post.on?'checked':''}> بعد الأذان بـ <select data-pa="post.mins">${[10,15,20,30,45,60,90].map(n=>`<option ${n==p.post.mins?'selected':''}>${n}</option>`).join('')}</select> دقيقة («صلّيت؟» لو فاتتك)</label><div class="m">تقدر تشغّل واحد أو الاتنين، وبيشتغلوا على كل الصلوات المختارة تحت.</div></div>
+ <div class="hxc"><b>🕌 الصلوات</b>${Object.keys(PN).map(k=>`<label><input type="checkbox" data-pa="pr.${k}" ${p.pr[k]?'checked':''}> ${PN[k]}${pTimes&&pTimes.t[k]?` <span class="m">(${pTimes.t[k]})</span>`:''}</label>`).join('')}</div>
+ ${row('def','🔊 الصوت الافتراضي',p.snd.def||'bell',true)}
+ <div class="hxc"><b>🎚 صوت خاص لكل صلاة (اختياري)</b><div class="m">مثلًا صوت أقوى للفجر.</div></div>${Object.keys(PN).map(k=>row(k,PN[k],p.snd[k]||'def',false)).join('')}
+ <div class="hxc">${hxBtn('palnow','🔔 جرّب التنبيه كامل')}${hxBtn('palperm','🔔 اسمح بالإشعارات')}<div class="m">⚠ التنبيه بيشتغل والتطبيق مفتوح على الشاشة. لو الشاشة اتقفلت أو التطبيق في الخلفية ممكن ما يرنّش؛ ده بيتحل في تطبيق الأندرويد الحقيقي (جدول ميعاده الجمعة 16/10/2026). لحد وقتها خلّي التطبيق مفتوح أو استخدم منبّه الموبايل نفسه كاحتياطي للفجر.</div></div>`);
+ $('list').querySelectorAll('[data-pa]').forEach(e=>e.onchange=()=>{const o=hxPal();const k=e.dataset.pa,v=e.type==='checkbox'?e.checked:(isNaN(+e.value)||e.value===''?e.value:+e.value);
+  if(k.startsWith('snd:'))o.snd[k.slice(4)]=v;else{const [a,b]=k.split('.');o[a][b]=v}hxPalSave({pre:o.pre,post:o.post,pr:o.pr,snd:o.snd,names:o.names});HX.pal()});
+ $('list').querySelectorAll('[data-pf]').forEach(e=>e.onchange=async()=>{const f=e.files[0];if(!f)return;if(f.size>15e6)return toast('الملف كبير — اختار ملف أقل من 15 ميجا');await hxSput(e.dataset.pf,f);const o=hxPal();o.names[e.dataset.pf]=f.name;hxPalSave(o);toast('اتحفظ: '+f.name);HX.pal()})},
+paltest(el){const k=el.dataset.k||'Fajr';hxPalAlert(k,'pre',hxPal().pre.mins)},
+palnow(){hxPalAlert('Fajr','test',0)},
+palperm(){window.Notification?Notification.requestPermission().then(r=>toast(r==='granted'?'اتفعّلت الإشعارات':'الإشعارات مقفولة')):toast('الإشعارات مش مدعومة')}});
+setInterval(()=>{const p=hxPal();if((!p.pre.on&&!p.post.on)||!pTimes||!pTimes.t)return;const now=Date.now(),day=dayKey();let F=ls.get('palFired',{d:day,k:[]});if(F.d!==day)F={d:day,k:[]};
+ Object.keys(PN).forEach(k=>{if(!p.pr[k]||!pTimes.t[k])return;const [h,m]=pTimes.t[k].split(':').map(Number),T=new Date();T.setHours(h,m,0,0);const t=+T;
+  const chk=(kind,off,mins)=>{const at=t+off,id=k+kind;if(now>=at&&now<at+4*60000&&!F.k.includes(id)){F.k.push(id);ls.set('palFired',F);hxPalAlert(k,kind,mins)}};
+  if(p.pre.on)chk('pre',-p.pre.mins*60000,p.pre.mins);if(p.post.on)chk('post',p.post.mins*60000,p.post.mins)})},15000);
+{const _h=HX.hub;HX.hub=function(){_h();const g=[...$('list').firstElementChild.querySelectorAll('.hgrp')].find(x=>/عبادة/.test(x.textContent));if(g&&g.nextElementSibling)g.nextElementSibling.insertAdjacentHTML('beforeend',hxCell('pal','🔔','منبّه الصلاة'))}}
 </script>
 </body>
 </html>
