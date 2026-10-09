@@ -278,6 +278,11 @@ body.guest #menuB{display:none!important}
 
 #seekTip{position:fixed;z-index:9999;pointer-events:none;background:#0b1730;color:#fff;border:2px solid var(--gold,#C9A227);border-radius:12px;padding:6px 12px;font-size:20px;font-weight:700;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.5);display:none;transform:translateX(-50%);direction:ltr;line-height:1.2}
 #seekTip small{display:block;font-size:12px;font-weight:400;opacity:.85}
+
+.hgrp{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.hgrp .hfa{margin-inline-start:auto;order:3;font-size:14px;opacity:.7;transition:transform .2s}
+.hgrp.fold .hfa{transform:rotate(90deg)}
+.hfh{display:none!important}
 </style>
 </head>
 <body>
@@ -2232,6 +2237,20 @@ const show=()=>{clearTimeout(tmr);const r=s.getBoundingClientRect(),max=+s.max||
 const hide=()=>{tmr=setTimeout(()=>tip.style.display='none',700)};
 s.addEventListener('pointerdown',()=>{base=au.currentTime;show()});s.addEventListener('touchstart',()=>{base=au.currentTime},{passive:true});
 s.addEventListener('input',show);['pointerup','pointercancel','change','touchend'].forEach(e=>s.addEventListener(e,hide));
+})();
+
+/* HX21: أقسام الرئيسية قابلة للطي */
+(function(){
+const key=g=>g.dataset.k||(g.dataset.k=g.textContent.replace('▾','').trim());
+function sibs(g){const o=[];let e=g.nextElementSibling;while(e&&!e.classList.contains('hgrp')&&e.id!=='hsBox'){o.push(e);e=e.nextElementSibling}return o}
+function apply(){const L=$('list');if(!L)return;const f=hxGet('hfold',[]);L.querySelectorAll('.hgrp').forEach(g=>{if(!g.querySelector('.hfa')){const a=document.createElement('span');a.className='hfa';a.textContent='▾';g.appendChild(a)}
+ const fo=f.includes(key(g));g.classList.toggle('fold',fo);sibs(g).forEach(s=>s.classList.toggle('hfh',fo))})}
+document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.hgrp');if(!g||!$('list').contains(g))return;
+ const k=key(g);let f=hxGet('hfold',[]);f=f.includes(k)?f.filter(x=>x!==k):[...f,k];hxSet('hfold',f);apply()},true);
+const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(apply,0);setTimeout(apply,400)};
+HX.foldall=function(){const g=[...$('list').querySelectorAll('.hgrp')].map(key);hxSet('hfold',g);apply()};
+HX.unfoldall=function(){hxSet('hfold',[]);apply()};
+setTimeout(apply,600);
 })();
 </script>
 </body>
