@@ -394,10 +394,27 @@ body.nodel .st .rmx{display:none!important}
 .hs-circle #list#list>.hsub,.hs-square #list#list>.hsub,.hs-dot #list#list>.hsub{background:rgba(255,255,255,.06);font-size:12px!important;border-style:dashed!important}
 .hs-circle #list#list>:is(.hgrp,.hsub):not(.fold),.hs-square #list#list>:is(.hgrp,.hsub):not(.fold),.hs-dot #list#list>:is(.hgrp,.hsub):not(.fold){border-color:var(--gold,#C9A227)!important;background:rgba(201,162,39,.16)}
 .hs-circle #list>:is(.hgrp,.hsub) .hfa,.hs-square #list>:is(.hgrp,.hsub) .hfa,.hs-dot #list>:is(.hgrp,.hsub) .hfa{display:none!important}
-.hs-circle #list#list>.hgrp,.hs-square #list#list>.hgrp,.hs-dot #list#list>.hgrp{order:0}
-.hs-circle #list#list>.hsub,.hs-square #list#list>.hsub,.hs-dot #list#list>.hsub{order:1}
-.hs-circle #list#list>.hgrid,.hs-square #list#list>.hgrid,.hs-dot #list#list>.hgrid{order:2;grid-column:1/-1!important}
-.hs-circle #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid),.hs-square #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid),.hs-dot #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid){order:3;grid-column:1/-1!important}
+.hs-circle #list#list>.hgrid,.hs-square #list#list>.hgrid,.hs-dot #list#list>.hgrid{grid-column:1/-1!important}
+.hs-circle #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid),.hs-square #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid),.hs-dot #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid){grid-column:1/-1!important}
+/* HX37 */
+#list>.hpn{grid-column:1/-1!important;background:rgba(255,255,255,.05);border:1px solid var(--gold,#C9A227);border-radius:16px;padding:10px;margin:2px 0 6px}
+.hpn .hpn-t{font-weight:700;margin:2px 6px 8px}.hpn .hpn-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:8px}
+.hpn .tile{margin:0}
+.hs-circle #list>.strip.hopen .si,.hs-square #list>.strip.hopen .si,.hs-dot #list>.strip.hopen .si{border-color:var(--gold,#C9A227)!important;box-shadow:0 0 0 3px rgba(201,162,39,.35)}
+/* HX38: شرائط الأعلى في المربعات */
+.hs-square #list#list>.strip{flex-direction:column!important;text-align:center;background:none!important;border:none!important;box-shadow:none!important;padding:8px 2px!important;gap:6px;color:inherit;align-self:start;aspect-ratio:auto}
+.hs-square #list#list>.strip .si{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;font-size:27px;background:linear-gradient(145deg,rgba(100,140,255,.35),rgba(255,255,255,.07));border:2px solid var(--line);box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.hs-square #list#list>.strip.gold .si{border-color:var(--gold,#C9A227)}
+.hs-square #list#list>.strip .st2{white-space:normal!important}.hs-square #list#list>.strip .m{display:none}
+.hs-square #list#list>.strip b{font-size:12px;line-height:1.3}
+.hs-square #list#list>.strip.hero{background:none!important}
+/* HX38b */
+.hs-square .hgrid.hlist:not(#zAuto){display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px 4px!important}
+.hs-square .hgrid.hlist:not(#zAuto) .strip{grid-column:auto!important;flex-direction:column!important;text-align:center;background:none!important;border:none!important;box-shadow:none!important;padding:4px 2px!important;gap:5px;align-items:center}
+.hs-square .hgrid.hlist:not(#zAuto) .strip .si{width:54px!important;height:54px!important;border-radius:16px!important;font-size:26px!important;background:linear-gradient(145deg,rgba(100,140,255,.35),rgba(255,255,255,.07));border:2px solid var(--line)}
+.hs-square .hgrid.hlist:not(#zAuto) .strip .st2{white-space:normal!important}.hs-square .hgrid.hlist:not(#zAuto) .strip b{font-size:11.5px;line-height:1.25}
+.hs-square .hgrid.hlist:not(#zAuto) .strip .m{display:none!important}
+.hs-square .hgrid.hlist:not(#zAuto) .strip.gold .si{border-color:var(--gold,#C9A227)}
 </style>
 </head>
 <body>
@@ -2627,6 +2644,29 @@ function norm(){if(!geo())return;const L=$('list');if(!L)return;
  const so=hxGet('hsubopen',[]);if(so.length>1){const o=[...L.querySelectorAll(':scope>.hsub')].find(g=>!g.classList.contains('fold')&&!g.classList.contains('hfh'));hxSet('hsubopen',o?['sub:'+k(o)]:[]);window.hxSubApply&&hxSubApply()}}
 const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(norm,30);setTimeout(norm,700)};
 window.hxGeo=geo;setTimeout(norm,900);
+})();
+
+/* HX37: شرائط الأعلى تفتح خياراتها تحتها (في الأشكال الهندسية) */
+(function(){
+function panelFor(s){
+ if(s.dataset.act==='modes')return '<div class="hpn-t">اختار جو أو قسم</div><div class="hpn-g">'+MODES.map((m,i)=>`<div class="tile" data-mode="${i}"><div class="tIc">${m[0]}</div><div><b>${m[1]}</b></div></div>`).join('')+'</div><div class="hpn-g"><div class="tile" data-act="modes"><div class="tIc">🗂</div><div><b>كل الأقسام والأنواع والبلدان</b></div></div></div>';
+ if(s.dataset.occ!==undefined){const o=occFor(new Date())[+s.dataset.occ]||{};return `<div class="hpn-t">${o.ic||''} ${o.t||''}</div><div class="m" style="margin:2px 6px 8px">${o.s||''}</div><div class="hpn-g"><div class="tile" data-occ="${s.dataset.occ}"><div class="tIc">▶</div><div><b>افتح ${o.t==='جمعة مباركة'?'سورة الكهف والخطب':o.t}</b></div></div><div class="tile" data-hxq="1"><div class="tIc">📻</div><div><b>محطات القرآن الكريم</b></div></div></div>`}
+ if(s.dataset.act==='daily')return `<div class="hpn-t">✨ مقترح اليوم</div><div class="hpn-g"><div class="tile" data-act="daily"><div class="tIc">▶</div><div><b>${(s.querySelector('.st2 .m,.m')||{}).textContent||'شغّل الاقتراح'}</b><div class="m">اضغط للتشغيل</div></div></div></div>`;
+ if(s.dataset.act==='resume')return `<div class="hpn-t">▶ آخر حاجة سمعتها</div><div class="hpn-g"><div class="tile" data-act="resume"><div class="tIc">▶</div><div><b>${((s.querySelector('.st2 b')||{}).textContent||'كمّل')}</b><div class="m">${(s.querySelector('.st2 .m')||{}).textContent||''}</div></div></div></div>`;
+ return null}
+window.addEventListener('click',e=>{
+ if(!(window.hxGeo&&hxGeo()))return;
+ const s=e.target.closest&&e.target.closest('#list>.strip');
+ const hq=e.target.closest&&e.target.closest('[data-hxq]');
+ if(hq){e.stopImmediatePropagation();e.preventDefault();const o=occFor(new Date())[0]||{tags:['quran','islamic']};loadSet('🕌 محطات القرآن الكريم',o.tags.map(x=>q('tag='+encq(x))),{});return}
+ if(!s)return;const p=panelFor(s);if(!p)return;
+ e.stopImmediatePropagation();e.preventDefault();
+ const nx=s.nextElementSibling,was=nx&&nx.classList.contains('hpn')&&nx.previousElementSibling===s;
+ document.querySelectorAll('#list>.hpn').forEach(x=>x.remove());document.querySelectorAll('#list>.strip.hopen').forEach(x=>x.classList.remove('hopen'));
+ if(was)return;
+ const d=document.createElement('div');d.className='hpn';d.innerHTML=p;s.after(d);s.classList.add('hopen');
+ d.scrollIntoView({block:'nearest',behavior:'smooth'})
+},true);
 })();
 </script>
 </body>
