@@ -308,6 +308,12 @@ body.hdrg{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 
 .st .rmx{background:transparent;border:1px solid rgba(255,80,80,.45);color:#ff8a8a;border-radius:10px;min-width:34px;height:34px;font-size:15px;margin-inline-start:4px;cursor:pointer}
 .st .rmx:active{background:rgba(255,80,80,.25)}
+
+body.mvmode .st{outline:2px dashed rgba(201,162,39,.45)}
+body.mvmode .st.mvsel{outline:3px solid var(--gold,#C9A227);background:rgba(201,162,39,.18)}
+#mvBar{position:fixed;left:8px;right:8px;bottom:128px;z-index:9998;background:#0b1730;border:2px solid var(--gold,#C9A227);border-radius:16px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.55);color:#fff}
+#mvBar .mvc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#mvBar button{background:var(--btn2);color:#fff;border:0;border-radius:10px;padding:8px 12px}
 </style>
 </head>
 <body>
@@ -2371,6 +2377,30 @@ HX.stshowall=function(){hxSet('stHide',[]);HX.sthide()};
 const _x=render;render=function(arr){try{const n=ls.get('hxStN',{});(arr||[]).forEach(s=>{if(s&&s.name)n[s.stationuuid]=s.name});const k=Object.keys(n);if(k.length>400)k.slice(0,k.length-400).forEach(x=>delete n[x]);ls.set('hxStN',n)}catch{}_x(arr)};
 const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
  return h.replace(/(<div class="strip one" data-hx="favcheck">)/,`<div class="strip one" data-hx="addst"><span class="si">➕</span><div class="st2"><b>إضافة محطة برابط</b></div></div><div class="strip one" data-hx="sthide"><span class="si">🙈</span><div class="st2"><b>المحطات المخفية</b></div></div><div class="strip one" data-hx="trash"><span class="si">🗑</span><div class="st2"><b>سلة المحذوفات</b></div></div>$1`)};
+})();
+
+/* HX25: نقل عدّة محطات بين مجموعات المفضلة */
+(function(){
+let on=false,sel=new Set();
+const bar=()=>{let b=$('mvBar');if(!on){b&&b.remove();return}
+ if(!b){b=document.createElement('div');b.id='mvBar';document.body.appendChild(b)}
+ const G=grps();b.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><b style="flex:1">اختار المحطات (${sel.size}) ثم انقلها إلى:</b><button data-mv="all">☑ الكل</button><button data-mv="x">✕ إلغاء</button></div><div class="mvc">${G.map(g=>`<button data-mvg="${esc(g)}">📁 ${esc(g)}</button>`).join('')}<button data-mvg="">📂 من غير مجموعة</button><button data-mvg="__new">➕ مجموعة جديدة</button></div>`};
+const refresh=()=>{$('list').querySelectorAll('.st[data-u]').forEach(el=>el.classList.toggle('mvsel',sel.has(el.dataset.u)));bar()};
+const stop=()=>{on=false;sel.clear();document.body.classList.remove('mvmode');bar()};
+function addBtn(){if(view!=='fav'||on)return;const gb=$('list').querySelector('.grpBar');if(gb&&!gb.querySelector('[data-mvon]'))gb.insertAdjacentHTML('beforeend','<button data-mvon="1" style="background:#0e7490">☑ تحديد ونقل</button>')}
+const _r=render;render=function(arr){_r(arr);if(view!=='fav'&&on)stop();addBtn();if(on)refresh()};
+document.addEventListener('click',e=>{
+ const t=e.target;if(!t.closest)return;
+ const mo=t.closest('[data-mvon]');if(mo){e.stopImmediatePropagation();e.preventDefault();on=true;document.body.classList.add('mvmode');toast('اضغط على المحطات اللي عايز تنقلها');refresh();return}
+ const mb=t.closest('#mvBar');
+ if(mb){e.stopImmediatePropagation();e.preventDefault();const x=t.closest('[data-mv]'),g=t.closest('[data-mvg]');
+  if(x){if(x.dataset.mv==='x')stop();else{$('list').querySelectorAll('.st[data-u]').forEach(el=>sel.add(el.dataset.u));refresh()}return}
+  if(g){if(!sel.size){toast('اختار محطة واحدة على الأقل');return}let v=g.dataset.mvg;if(v==='__new'){v=(prompt('اسم المجموعة الجديدة:')||'').trim();if(!v)return;ls.set('grpBase',[...new Set([...ls.get('grpBase',['قرآن','أخبار','موسيقى','أرشيف']),v])])}
+   let n=0;favs.forEach(f=>{if(sel.has(f.stationuuid)){if(v)f.grp=v;else delete f.grp;n++}});ls.set('radioFavs',favs);const nm=v||'من غير مجموعة';stop();render(favs);toast('اتنقلت '+n+' محطة إلى «'+nm+'»');return}
+  return}
+ if(on&&t.closest('#list')){const st=t.closest('.st[data-u]');if(st&&!t.closest('.rmx')){e.stopImmediatePropagation();e.preventDefault();const u=st.dataset.u;sel.has(u)?sel.delete(u):sel.add(u);refresh();return}}
+},true);
+setTimeout(addBtn,800);
 })();
 </script>
 </body>
