@@ -221,6 +221,8 @@ body.big{zoom:1.2}
 .bigg{display:grid;grid-template-columns:1fr 1fr;gap:12px}.bigg .gcell{min-height:110px}.bigg .gi{font-size:40px}.bigg .gl{font-size:20px;font-weight:bold}
 .hxbar{height:10px;background:var(--btn2);border-radius:6px;overflow:hidden}.hxbar i{display:block;height:100%;background:var(--gold,#fbbf24)}
 body.guest #menuB{display:none!important}
+:root[data-theme=green]{--bg:#06231c;--card:#0b3a2e;--card2:#082d24;--acc:#16a34a;--gold:#e5c158;--bar:#04180f;--btn2:#14584a;--line:#1c6150;--side:#04180f}
+:root[data-theme=gold]{--bg:#1a1409;--card:#2b210f;--card2:#221a0c;--acc:#b8860b;--gold:#f0c84a;--bar:#120d05;--btn2:#4a3a18;--line:#5b4a22;--side:#120d05}
 </style>
 </head>
 <body>
@@ -1682,6 +1684,88 @@ HX.remStart();
 (function(){const _s=showHome;showHome=function(){_s();if(hxGet('guest',false)){document.body.classList.add('guest');$('list').innerHTML=`<div class="bigg" style="grid-column:1/-1">${ls.get('radioLast',null)?`<div class="gcell" data-act="resume"><span class="gi">▶</span><span class="gl">كمّل</span></div>`:''}<div class="gcell" data-act="fav"><span class="gi">⭐</span><span class="gl">المفضلة</span></div><div class="gcell" data-hx="bigq"><span class="gi">📖</span><span class="gl">القرآن</span></div><div class="gcell" data-hx="kids"><span class="gi">🧒</span><span class="gl">أطفال</span></div><div class="gcell" data-hx="gexit"><span class="gi">🔓</span><span class="gl">خروج</span></div></div>`}}})();
 if(hxGet('guest',false))document.body.classList.add('guest');
 (function(){const o=ls.get('listenStats',{});})();
+
+// ===== HX3: فحص المفضلة، أوفلاين، نسخة احتياطية، قفل، ذاكرة الدراسة، ثيمات، ترتيب الرئيسية، اختصارات، سورة/آية اليوم، مناسبات =====
+const HGRP=['🎵 استمع','🧭 تصفّح','🛠 أدوات','🕘 سمعتهم مؤخرًا'];
+const VERSES=[['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','البقرة 201'],['فَإِنَّ مَعَ الْعُسْرِ يُسْرًا إِنَّ مَعَ الْعُسْرِ يُسْرًا','الشرح 5-6'],['وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ','الطلاق 3'],['أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ','الرعد 28'],['رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي','طه 25-26'],['وَقُل رَّبِّ زِدْنِي عِلْمًا','طه 114'],['لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا','البقرة 286'],['فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ','البقرة 152'],['وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ','هود 115'],['رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا','البقرة 286'],['رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ','القصص 24'],['حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ','آل عمران 173'],['رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا','الفرقان 74'],['رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً إِنَّكَ أَنتَ الْوَهَّابُ','آل عمران 8'],['لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ','الأنبياء 87']];
+const DAYSUR=[[55,'الرحمن'],[56,'الواقعة'],[19,'مريم'],[67,'الملك'],[44,'الدخان'],[18,'الكهف'],[36,'يس']];// الأحد..السبت (للتدبّر)
+const dayOfYear=()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)};
+const EVENTS=[[1,1,'رأس السنة الهجرية','🌙'],[10,1,'يوم عاشوراء','🤲'],[1,9,'شهر رمضان','🌙'],[1,10,'عيد الفطر','🎉'],[9,12,'يوم عرفة','🕋'],[10,12,'عيد الأضحى','🐑']];
+function nextEvent(){const t0=new Date();t0.setHours(12,0,0,0);for(let i=0;i<400;i++){const d=new Date(+t0+i*864e5),h=hijri(d);if(!h)return null;const e=EVENTS.find(x=>x[0]===h.d&&x[1]===h.m);if(e)return{e,i}}return null}
+Object.assign(HX,{
+// فحص المفضلة
+async favcheck(quiet){const ids=favs.filter(s=>s&&s.stationuuid&&!String(s.stationuuid).startsWith('ia:')&&!s.masp).map(s=>s.stationuuid);
+ if(!ids.length)return quiet?0:hxPage('🩺 فحص المفضلة','<div class="hxc">مفيش محطات راديو في المفضلة.</div>');
+ if(!quiet)hxPage('🩺 فحص المفضلة','<div class="hxc">جاري الفحص...</div>');
+ try{const a=[];for(let i=0;i<ids.length;i+=40)a.push(...await fetch(API+'/json/stations/byuuid?uuids='+ids.slice(i,i+40).join(',')).then(r=>r.json()));
+  const ok=new Set(a.filter(s=>s.lastcheckok===1).map(s=>s.stationuuid)),dead=favs.filter(s=>ids.includes(s.stationuuid)&&!ok.has(s.stationuuid));hxSet('fchk',dayKey());window.hxDead=dead;
+  if(quiet){if(dead.length)toast('🩺 '+dead.length+' محطة من مفضلتك واقفة — افتح «مفيد كل يوم ← فحص المفضلة»',6000);return}
+  hxPage('🩺 فحص المفضلة',`<div class="hxc"><b>${ids.length-dead.length} شغالة · ${dead.length} واقفة</b></div>`+dead.map((s,i)=>`<div class="hxc"><b>${esc(s.name)}</b><div style="display:flex;gap:6px"><button class="hxb" data-hx="fcdel" data-u="${esc(s.stationuuid)}">🗑 احذفها</button></div></div>`).join('')+(dead.length?hxBtn('fcall','🗑 احذف كل الواقفة'):'<div class="hxc">كله تمام ✅</div>'))}catch{quiet||toast('تعذر الفحص دلوقتي')}},
+fcdel(el){const u=el.dataset.u;favs=favs.filter(s=>s.stationuuid!==u);ls.set('radioFavs',favs);window.hxDead=(window.hxDead||[]).filter(s=>s.stationuuid!==u);HX.favcheck()},
+fcall(){const d=new Set((window.hxDead||[]).map(s=>s.stationuuid));if(!confirm('حذف '+d.size+' محطة؟'))return;favs=favs.filter(s=>!d.has(s.stationuuid));ls.set('radioFavs',favs);HX.favcheck()},
+// أوفلاين
+async offline(){let est='';try{const e=await navigator.storage.estimate();est=' · مستخدم '+(e.usage/1048576).toFixed(0)+' MB'}catch{}
+ let keys=[];try{keys=await (await caches.open('hxoff')).keys()}catch{}
+ const L=[];for(const r of keys){const m=await (await caches.open('hxoff')).match(r);L.push([r.url,m?+(m.headers.get('content-length')||0):0])}
+ hxPage('📥 بدون إنترنت',`<div class="hxc"><div class="m">حمّل سور لتسمعها من غير نت${est}. كل سورة ما بين 1 و100 ميجا حسب الطول.</div><label>القارئ <select id="oR">${RECS.map((r,i)=>`<option value="${i}">${r[0]}</option>`).join('')}</select></label><label>السورة <select id="oS">${SURAHS.map((s,i)=>`<option value="${i+1}">${i+1}. ${s}</option>`).join('')}</select></label>${hxBtn('offget','⬇ حمّل')}<div id="oP" class="m"></div></div>`+L.map(x=>{const n=+x[0].match(/(\d{3})\.mp3/)[1];return `<div class="hxc"><b>${SURAHS[n-1]}</b><div class="m">${x[0].split('/')[3]} · ${(x[1]/1048576).toFixed(1)} MB</div><button class="hxb" data-hx="offdel" data-u="${esc(x[0])}">🗑 احذف</button></div>`}).join(''))},
+async offget(){const r=+$('oR').value,n=+$('oS').value,u=RECS[r][1]+pad3(n)+'.mp3';$('oP').textContent='جاري التحميل...';try{const res=await fetch(u,{mode:'cors'});if(!res.ok)throw 0;const c=await caches.open('hxoff');await c.put(u,res);toast('اتحمّلت سورة '+SURAHS[n-1]+' ✅');HX.offline()}catch{$('oP').textContent='';toast('تعذر التحميل — جرّب قارئ تاني أو تأكد من الاتصال')}},
+async offdel(el){const c=await caches.open('hxoff');await c.delete(el.dataset.u);HX.offline()},
+// نسخة احتياطية
+backup(){hxPage('💾 نسخة احتياطية',`<div class="hxc"><div class="m">كل إعداداتك (مفضلة، ورد، ختمة، لحظات، أقسام...) في ملف واحد.</div>${hxBtn('bkout','⬇ احفظ نسخة')}<label>استرجاع من ملف <input type="file" id="bkIn" accept=".json"></label></div>`);
+ $('bkIn').onchange=async e=>{try{const o=JSON.parse(await e.target.files[0].text());if(o.app!=='radio')throw 0;if(!confirm('هيتم استبدال بياناتك الحالية. تكمّل؟'))return;Object.entries(o.data).forEach(([k,v])=>localStorage.setItem(k,v));toast('اتسترجعت ✅ — هيعيد التحميل');setTimeout(()=>location.reload(),1200)}catch{toast('الملف مش نسخة صالحة')}}},
+bkout(){const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);d[k]=localStorage.getItem(k)}const b=new Blob([JSON.stringify({app:'radio',v:1,date:dayKey(),data:d})],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='radio-backup-'+dayKey()+'.json';a.click();toast('اتحفظت النسخة')},
+// قفل التطبيق
+lock(){const on=!!hxGet('lock','');hxPage('🔐 قفل التطبيق',`<div class="hxc"><div class="m">رقم سري يُطلب عند فتح التطبيق. حماية بسيطة من الفضول وليست تشفيرًا.</div>${on?hxBtn('lockoff','🔓 إلغاء القفل'):`<input id="lkP" type="password" inputmode="numeric" maxlength="4" placeholder="4 أرقام">${hxBtn('lockon','🔐 فعّل')}`}</div>`)},
+lockon(){const p=$('lkP').value;if(!/^\d{4}$/.test(p))return toast('4 أرقام');hxSet('lock',p);toast('اتفعّل القفل');HX.lock()},
+lockoff(){const p=prompt('الرقم السري:');if(p===hxGet('lock',''))(hxSet('lock',''),HX.lock());else toast('غلط')},
+// ثيمات
+theme(){const t=hxGet('themeX','');hxPage('🎨 المظهر',`<div class="hxc"><div class="chips" style="display:flex;flex-wrap:wrap;gap:8px">${[['','🌙 الافتراضي'],['green','🌿 أخضر'],['gold','✨ ذهبي'],['light','☀️ فاتح'],['auto','🔄 تلقائي (نهار/ليل)']].map(x=>`<span class="chip" data-hx="themeset" data-t="${x[0]}" style="${x[0]===t?'outline:2px solid var(--gold)':''}">${x[1]}</span>`).join('')}</div></div>`)},
+themeset(el){hxSet('themeX',el.dataset.t);HX.applyTheme();HX.theme()},
+applyTheme(){let t=hxGet('themeX','');if(t==='auto'){const h=new Date().getHours();t=h>=6&&h<18?'light':''}if(t==='')t=ls.get('radioTheme','dark');document.documentElement.dataset.theme=t},
+// ترتيب الرئيسية
+order(){const o=hxGet('hord',HGRP),hid=hxGet('hhid',[]);const all=[...o.filter(x=>HGRP.includes(x)),...HGRP.filter(x=>!o.includes(x))];
+ hxPage('↕ ترتيب الرئيسية',`<div class="hxc"><div class="m">رتّب المجموعات أو أخفِ اللي مش محتاجها.</div></div>`+all.map((g,i)=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><b style="flex:1">${g}</b><button class="hxb" data-hx="ordup" data-i="${i}">⬆</button><button class="hxb" data-hx="orddn" data-i="${i}">⬇</button><button class="hxb" data-hx="ordhid" data-g="${g}">${hid.includes(g)?'👁 أظهر':'🙈 أخفِ'}</button></div>`).join('')+hxBtn('ordreset','↩ الترتيب الأصلي'))},
+ordup(el){const i=+el.dataset.i,o=[...hxGet('hord',HGRP)];if(i>0){[o[i-1],o[i]]=[o[i],o[i-1]];hxSet('hord',o)}HX.order()},
+orddn(el){const i=+el.dataset.i,o=[...hxGet('hord',HGRP)];if(i<o.length-1){[o[i+1],o[i]]=[o[i],o[i+1]];hxSet('hord',o)}HX.order()},
+ordhid(el){const g=el.dataset.g,h=hxGet('hhid',[]);hxSet('hhid',h.includes(g)?h.filter(x=>x!==g):[...h,g]);HX.order()},
+ordreset(){hxSet('hord',HGRP);hxSet('hhid',[]);HX.order()},
+// آية/دعاء اليوم + سورة اليوم
+today(){const v=VERSES[dayOfYear()%VERSES.length],wd=new Date().getDay(),s=DAYSUR[wd],ne=nextEvent();
+ hxPage('📜 اليوم',`<div class="hxc" style="text-align:center"><div style="font-size:22px;line-height:2.2;font-family:serif">﴿ ${v[0]} ﴾</div><div class="m">${v[1]}</div>${hxBtn('vshare','🖼 شارك كصورة')}</div><div class="hxc"><div class="m">سورة مقترحة للتدبّر اليوم</div><b style="font-size:19px">سورة ${s[1]}</b>${hxBtn('daysur','▶ اسمعها')}</div>${ne?`<div class="hxc"><div class="m">المناسبة الجاية</div><b>${ne.e[3]} ${ne.e[2]}</b> بعد حوالي ${ne.i} يوم<div class="m">التواريخ الهجرية بالحساب الفلكي وممكن تختلف يوم عن الرؤية.</div></div>`:''}`)},
+daysur(){const s=DAYSUR[new Date().getDay()],n=s[0],r=ls.get('wird',{r:0}).r||0,it={stationuuid:'ia:day'+r+'_'+n,name:'القرآن الكريم — سورة '+s[1]+' — '+RECS[r][0],country:'سورة اليوم',tags:'quran',url_resolved:RECS[r][1]+pad3(n)+'.mp3',url:RECS[r][1]+pad3(n)+'.mp3',file:pad3(n)+'.mp3',id:'day'+n};hxPlayAll([it])},
+async vshare(){const v=VERSES[dayOfYear()%VERSES.length],c=document.createElement('canvas');c.width=c.height=1080;const x=c.getContext('2d');
+ const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#0a1628');g.addColorStop(1,'#0F766E');x.fillStyle=g;x.fillRect(0,0,1080,1080);x.strokeStyle='#C9A227';x.lineWidth=6;x.strokeRect(50,50,980,980);
+ x.direction='rtl';x.textAlign='center';x.fillStyle='#fff';x.font='bold 58px serif';const w=('﴿ '+v[0]+' ﴾').split(' ');let line='',y=380;const L=[];w.forEach(t=>{const tst=line?line+' '+t:t;if(x.measureText(tst).width>860){L.push(line);line=t}else line=tst});L.push(line);y=540-(L.length*90)/2;L.forEach(l=>{x.fillText(l,540,y);y+=90});
+ x.fillStyle='#C9A227';x.font='38px sans-serif';x.fillText(v[1],540,y+30);x.font='30px sans-serif';x.fillStyle='#cbd5e1';x.fillText('راديو العالم — ASHRAF FATHY',540,990);
+ c.toBlob(async b=>{const f=new File([b],'ayah.png',{type:'image/png'});try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ayah.png';a.click()}}catch{}})}
+});
+// hub: أضف مجموعات جديدة
+{const _h=HX.hub;HX.hub=function(){_h();const g=hxGet('guest',false);
+ $('list').firstElementChild.insertAdjacentHTML('beforeend',`<div class="hgrp">🧰 أدوات النظام</div><div class="hgrid">${hxCell('today','📜','آية وسورة اليوم')}${hxCell('favcheck','🩺','فحص المفضلة')}${hxCell('offline','📥','بدون إنترنت')}${hxCell('backup','💾','نسخة احتياطية')}${hxCell('lock','🔐','قفل التطبيق')}${hxCell('theme','🎨','المظهر')}${hxCell('order','↕','ترتيب الرئيسية')}</div>`)}}
+// وضع الضيف المتقدم (مدة + نوع)
+HX.guest=function(){if(hxGet('guest',false))return;hxPage('🔒 وضع الضيف / المذاكرة',`<div class="hxc"><label>النوع <select id="gT"><option value="kid">أطفال (قرآن، قصص، أناشيد)</option><option value="study">مذاكرة (قرآن، تعلّم، تركيز)</option></select></label><label>المدة <select id="gM"><option value="0">لحد ما أفتح بالرقم</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="120">ساعتين</option></select></label><input id="gP" type="password" inputmode="numeric" maxlength="4" placeholder="رقم سري (4 أرقام)">${hxBtn('gstart','🔒 ابدأ')}</div>`)};
+HX.gstart=function(){const p=$('gP').value;if(!/^\d{4}$/.test(p))return toast('لازم 4 أرقام');const m=+$('gM').value;hxSet('pin',p);hxSet('gtype',$('gT').value);hxSet('guestUntil',m?Date.now()+m*60000:0);hxSet('guest',true);document.body.classList.add('guest');toast('🔒 وضع الضيف اشتغل');history.pushState({},'');showHome()};
+// تطبيق ترتيب الرئيسية + شريط المناسبة + نوع الضيف + قفل
+(function(){const _s=showHome;showHome=function(){
+ const gu=hxGet('guestUntil',0);if(hxGet('guest',false)&&gu&&Date.now()>gu){hxSet('guest',false);document.body.classList.remove('guest');toast('انتهت مدة وضع الضيف')}
+ _s();
+ if(hxGet('guest',false)&&hxGet('gtype','kid')==='study'){const k=$('list').querySelector('[data-hx="kids"]');if(k){k.dataset.hx='lang';k.querySelector('.gi').textContent='🗣';k.querySelector('.gl').textContent='لغات'}}
+ if(hxGet('guest',false))return;
+ const ne=nextEvent(),mt=$('list').querySelector('[data-act="modes"]');if(ne&&ne.i<=30&&mt&&ne.i>0)mt.insertAdjacentHTML('afterend',`<div class="strip one" data-hx="today"><span class="si">${ne.e[3]}</span><div class="st2"><b>باقي ${ne.i} يوم على ${ne.e[2]}</b></div></div>`);
+ const hid=hxGet('hhid',[]),ord=hxGet('hord',HGRP),L=$('list'),kids=[...L.children],blocks=[];let cur=null;
+ kids.forEach(n=>{if(n.classList&&n.classList.contains('hgrp')){cur={g:n.textContent.replace(/\s*🗑.*$/,'').trim(),nodes:[n]};blocks.push(cur)}else if(cur&&(n.classList.contains('hgrid')||n.classList.contains('rrow')))cur.nodes.push(n);else cur=null});
+ const gk=g=>g.replace(/^\S+\s*/,'').slice(0,4);blocks.forEach(b=>{if(hid.some(h=>gk(h)===gk(b.g)))b.nodes.forEach(n=>n.remove())});
+ const anchor=L.querySelector('#hsBox');const live=blocks.filter(b=>b.nodes[0].isConnected).sort((a,b)=>{const ia=ord.findIndex(o=>gk(o)===gk(a.g)),ib=ord.findIndex(o=>gk(o)===gk(b.g));return (ia<0?9:ia)-(ib<0?9:ib)});
+ live.forEach(b=>b.nodes.forEach(n=>anchor?L.insertBefore(n,anchor):L.appendChild(n)))}})();
+// تحميل أوفلاين: لو السورة محفوظة نشغّلها من الجهاز
+(function(){const _p=play;play=function(s){const u=s&&s.url_resolved;if(!u||!/mp3quran\.net/.test(u)||!window.caches)return _p(s);
+ caches.open('hxoff').then(c=>c.match(u)).then(async r=>{if(!r)return _p(s);const b=await r.blob(),bu=URL.createObjectURL(b);_p(Object.assign({},s,{url_resolved:bu,url:bu}))}).catch(()=>_p(s))}})();
+// قفل عند الفتح
+(function(){const p=hxGet('lock','');if(!p)return;const d=document.createElement('div');d.id='lockOv';d.style.cssText='position:fixed;inset:0;z-index:9999;background:#0a1628;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff';d.innerHTML='<div style="font-size:48px">🔐</div><div>اكتب الرقم السري</div><input id="lockI" type="password" inputmode="numeric" maxlength="4" style="font-size:28px;text-align:center;width:160px">';document.body.appendChild(d);$('lockI').oninput=e=>{if(e.target.value===p)d.remove();else if(e.target.value.length>=4)e.target.value=''}})();
+// ثيم + اختصارات + فحص يومي
+HX.applyTheme();
+setTimeout(()=>{const g=new URLSearchParams(location.search).get('go');if(g&&HX[g]&&!hxGet('lock','')){navPush&&navPush();HX[g]()}},1200);
+setTimeout(()=>{if(hxGet('fchk','')!==dayKey()&&navigator.onLine)HX.favcheck(true)},6000);
 </script>
 </body>
 </html>
