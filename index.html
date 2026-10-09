@@ -434,6 +434,11 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 /* HX41: أيقونات الأعلى (إجراءات سريعة) بلون بنفسجي مميّز */
 .hs-circle #list#list>.strip:not(.gold) .si,.hs-square #list#list>.strip:not(.gold) .si,.hs-dot #list#list>.strip:not(.gold) .si{border:3px solid #c084fc!important;background:linear-gradient(145deg,rgba(192,132,252,.35),rgba(255,255,255,.06))!important}
 .hs-circle #list#list>.strip.gold .si,.hs-square #list#list>.strip.gold .si,.hs-dot #list#list>.strip.gold .si{border-width:3px!important}
+/* HX42: ⋯ للمجموعات */
+.hmn{position:absolute;top:4px;inset-inline-start:4px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.35);color:#fff;font-size:15px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;z-index:3;cursor:pointer}
+#list>.hgrp,#list>.hsub{position:relative}
+.hsx{display:none!important}
+.hmn::before{content:'⋯'}
 </style>
 </head>
 <body>
@@ -2771,7 +2776,37 @@ function applyOrders(){const l=L();if(!l||D)return;
  l.querySelectorAll('.hgrid.hlist').forEach(g=>{if(g.id==='zAuto')return;const t=titleOf(g);const o=t&&io[t];if(!o)return;const ch=[...g.children].filter(c=>c.matches('.strip,.gcell'));if(ch.length<2)return;
   const idx=c=>{const i=o.indexOf(nm(c));return i<0?999:i};const sorted=[...ch].sort((a,b)=>idx(a)-idx(b));if(sorted.every((c,i)=>c===ch[i]))return;sorted.forEach(c=>g.appendChild(c))})}
 const _s=showHome;showHome=function(){_s.apply(this,arguments);[40,200,700].forEach(t=>setTimeout(applyOrders,t))};
-setTimeout(applyOrders,900);window.hxApplyOrders=applyOrders;
+setTimeout(applyOrders,900);window.hxMove=function(el,dir){const p=typeOf(el);if(!p)return false;const d={el:p.el,type:p.type};d.b=blockOf(d);const sibs=sibsOf(d);const i=sibs.indexOf(d.el),t=sibs[i+dir];if(!t)return false;
+ const tb=blockOf({el:t,type:d.type});const par=t.parentNode;if(dir>0){const ref=tb[tb.length-1].nextSibling;d.b.forEach(n=>par.insertBefore(n,ref))}else d.b.forEach(n=>par.insertBefore(n,t));
+ D=d;try{persist()}finally{D=null}setTimeout(()=>{window.hxCrumbs&&hxCrumbs()},30);el.scrollIntoView({block:'center',behavior:'smooth'});return true};
+window.hxApplyOrders=applyOrders;
+})();
+
+/* HX42: قائمة ⋯ للمجموعات الرئيسية والفرعية */
+(function(){
+const nm=e=>e.textContent.replace('▾','').replace('⋯','').trim();
+const close=()=>{['mnSheet','mnBack'].forEach(i=>{const e=document.getElementById(i);e&&e.remove()})};
+const open=(h,t)=>{close();const b=document.createElement('div');b.id='mnBack';b.onclick=close;document.body.appendChild(b);const s=document.createElement('div');s.id='mnSheet';s.innerHTML=`<div class="mh">${t}</div>${h}`;document.body.appendChild(s);return s};
+function addBtns(){const l=$('list');if(!l)return;l.querySelectorAll(':scope>.hgrp,:scope>.hsub').forEach(g=>{if(g.querySelector('.hmn'))return;const b=document.createElement('button');b.className='hmn';b.title='خيارات';g.appendChild(b)})}
+function applyHidden(){const l=$('list');if(!l)return;const hs=hxGet('hsh',[]);l.querySelectorAll('.hsx').forEach(x=>x.classList.remove('hsx'));if(!hs.length)return;
+ let cur=null;[...l.children].forEach(n=>{if(n.classList.contains('hsub')){cur=hs.includes(nm(n))?[n]:null;if(cur)n.classList.add('hsx')}else if(n.classList.contains('hgrp')||n.id==='hsBox'||n.classList.contains('mdet'))cur=null;else if(cur){n.classList.add('hsx')}})}
+function names(g){const l=$('list');const o=[];let e=g.nextElementSibling;while(e&&!e.classList.contains('hgrp')&&e.id!=='hsBox'&&!e.classList.contains('mdet')){if(e.classList.contains('hsub'))o.push(nm(e));else if(e.matches&&e.matches('.hgrid')){e.querySelectorAll('.strip').forEach(s=>{const b=s.querySelector('.st2 b')||s;o.push('  • '+b.textContent.trim().slice(0,30))})}e=e.nextElementSibling}return o}
+function share(g){const t='«'+nm(g)+'» — راديو العالم ASHRAF FATHY\n'+names(g).join('\n')+'\nhttps://ashrafabdelrazek.github.io/radio/';
+ if(navigator.share){navigator.share({text:t}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast('اتنسخت القايمة')).catch(()=>prompt('انسخ:',t))}else prompt('انسخ:',t)}
+function menu(g){const isSub=g.classList.contains('hsub');const hs=hxGet('hsh',[]),hh=hxGet('hhid',[]);
+ let hid=0;if(!isSub){hid=hs.length}
+ const sh=open(`<div class="mg"><button data-a="up">⬆ لفوق</button><button data-a="down">⬇ لتحت</button><button data-a="fold">${g.classList.contains('fold')?'📂 فتح':'📁 طي'}</button><button data-a="share">🔗 مشاركة</button>${(!isSub&&hs.length)?`<button data-a="restore" style="grid-column:1/-1">↩ إظهار الأقسام الفرعية المخفية (${hs.length})</button>`:''}${(isSub&&0)?'':''}<button class="dg" data-a="hide" style="grid-column:1/-1">🙈 إخفاء ${isSub?'القسم الفرعي':'المجموعة'}</button></div>`,'⋯ '+nm(g));
+ sh.onclick=e=>{const a=e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;
+  if(k==='up'||k==='down'){close();if(!(window.hxMove&&hxMove(g,k==='up'?-1:1)))toast(k==='up'?'دي أول واحدة':'دي آخر واحدة');return}
+  if(k==='fold'){close();g.click();return}
+  if(k==='share'){close();share(g);return}
+  if(k==='restore'){close();hxSet('hsh',[]);applyHidden();toast('اتظهرت الأقسام الفرعية');return}
+  if(k==='hide'){close();const n=nm(g);
+   if(isSub){hxSet('hsh',[...hxGet('hsh',[]),n]);applyHidden();try{HXT.snack('اتخفى «'+n.slice(0,24)+'»',()=>{hxSet('hsh',hxGet('hsh',[]).filter(x=>x!==n));applyHidden()})}catch{toast('اتخفى — من ⋯ المجموعة ترجّعه')}}
+   else{hxSet('hhid',[...hxGet('hhid',[]),n]);showHome();try{HXT.snack('اتخفت «'+n.slice(0,24)+'»',()=>{hxSet('hhid',hxGet('hhid',[]).filter(x=>x!==n));showHome()})}catch{toast('اتخفت — ترجّعها من التخصيص والنظام')}}}}}
+window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.hmn');if(!b)return;e.stopImmediatePropagation();e.preventDefault();menu(b.parentElement)},true);
+const _s=showHome;showHome=function(){_s.apply(this,arguments);[60,230,900].forEach(t=>setTimeout(()=>{addBtns();applyHidden()},t))};
+setTimeout(()=>{addBtns();applyHidden()},1100);
 })();
 </script>
 </body>
