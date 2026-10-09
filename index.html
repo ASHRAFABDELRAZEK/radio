@@ -2055,7 +2055,7 @@ setInterval(()=>{const p=hxPal();if((!p.pre.on&&!p.post.on)||!pTimes||!pTimes.t)
 
 // ===== HX11: شرائط الأدوات على الرئيسية =====
 function hxToolStrips(){if(hxGet('guest',false))return '';const ds=hxGet('dsave',false),bg=hxGet('big',false);
- const t=(a,ic,l,act)=>`<div class="gcell" ${act?'data-act':'data-hx'}="${a}"><span class="gi">${ic}</span><span class="gl">${l}</span></div>`;
+ const t=(a,ic,l,act)=>`<div class="strip one" ${act?'data-act':'data-hx'}="${a}"><span class="si">${ic}</span><div class="st2"><b>${l}</b></div></div>`;
  const G=[['🕌 الروحانيات',[['wird','📖','الورد اليومي'],['khatma','🏁','ختمتي'],['adh','🤲','الأذكار'],['tasbeeh','📿','المسبحة'],['qibla','🧭','القبلة'],['pal','🔔','منبّه الصلاة'],['today','📜','آية اليوم']]],
  ['👨‍👩‍👧 الأسرة',[['kids','🧒','ركن الصغار'],['bed','🌙','هدوء المساء'],['guest','🔒','الوضع المقيّد']]],
  ['🎓 التعلّم والإنتاجية',[['lang','🗣','تعلّم لغة'],['pro','💼','محتوى مهني'],['pomo','🍅','جلسة تركيز'],['moments','🔖','علامات الاستماع'],['week','🏆','هدف الأسبوع'],['forme','✨','مقترحات لك']]],
@@ -2063,7 +2063,7 @@ function hxToolStrips(){if(hxGet('guest',false))return '';const ds=hxGet('dsave'
  ['💼 الأعمال والحياة اليومية',[['exp','💰','المصروفات'],['appt','📅','المواعيد'],['shop','🛒','المشتريات'],['vn','🎙','مذكرات صوتية'],['time','⏱','تتبّع الوقت'],['calc','🧮','الحاسبات'],['prices','💱','الذهب والعملات'],['weather','🌤','الطقس'],['trans','🌐','الترجمة'],['qr','🔳','قارئ الفواتير']]],
  ['🎧 أدوات الاستماع',[['drive','🚗','وضع السواقة',1],['study','🎓','وضع المذاكرة',1],['discover','🎲','اكتشف محطة',1],['stats','📊','إحصائياتي',1],['chimeP','🔔','دقّات الساعة']]],
  ['⚙ التخصيص والنظام',[['dsave',ds?'✅':'📶','الوضع الموفّر'],['big',bg?'✅':'👴','العرض المريح'],['remind','⏰','التذكيرات'],['theme','🎨','المظهر'],['order','↕','ترتيب الرئيسية'],['share','🔗','مشاركة المفضلة'],['favcheck','🩺','فحص المفضلة'],['offline','📥','بدون إنترنت'],['backup','💾','نسخة احتياطية'],['lock','🔐','قفل التطبيق']]]];
- return G.map(([n,L])=>`<div class="hgrp">${n}</div><div class="rrow tstrip">${L.map(x=>t(x[0],x[1],x[2],x[3])).join('')}</div>`).join('')}
+ return G.map(([n,L])=>`<div class="hgrp">${n}</div><div class="hgrid hlist">${L.map(x=>t(x[0],x[1],x[2],x[3])).join('')}</div>`).join('')}
 
 // ===== HX10: تسميات جديدة + ترحيل ترتيب الرئيسية القديم =====
 (function(){const M={'🎵 استمع':'🎵 مكتبتي','🧭 تصفّح':'🧭 استكشاف المحطات','🕘 سمعتهم مؤخرًا':'🕘 تابع الاستماع'};const o=ls.get('hx',{});let ch=false;
