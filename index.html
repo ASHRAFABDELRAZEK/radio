@@ -254,6 +254,27 @@ body.guest #menuB{display:none!important}
 
 .hv-card .hgrid.hlist .strip{min-height:0;height:auto;align-items:center;text-align:center;padding:12px 6px;gap:6px}
 .hv-card .hgrid.hlist .strip .st2{white-space:normal}
+
+/* HX19: شريط تقديم أكبر وأسهل */
+#seekBox{flex:1 1 100%!important;order:-1;gap:8px!important;padding:6px 0}
+#seekBox #seek{-webkit-appearance:none;appearance:none;height:40px;background:transparent;margin:0;padding:0;touch-action:pan-y;cursor:pointer;flex:1;min-width:0}
+#seek::-webkit-slider-runnable-track{height:12px;border-radius:8px;background:linear-gradient(90deg,var(--gold,#C9A227),rgba(255,255,255,.18))}
+#seek::-moz-range-track{height:12px;border-radius:8px;background:rgba(255,255,255,.18)}
+#seek::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;margin-top:-9px;border-radius:50%;background:#fff;border:4px solid var(--gold,#C9A227);box-shadow:0 2px 8px rgba(0,0,0,.45)}
+#seek::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid var(--gold,#C9A227)}
+#seek:active::-webkit-slider-thumb{transform:scale(1.25)}
+#seekBox #tCur,#seekBox #tDur{font-size:14px!important;min-width:42px;text-align:center}
+#seekBox button{min-width:56px;min-height:40px}
+
+#seekBox{flex-wrap:wrap!important;justify-content:center}
+#seekBox #tCur{order:1}#seekBox #seek{order:2;flex:1 1 55%}#seekBox #tDur{order:3}
+#seekBox button,#seekBox select{order:4;white-space:nowrap}
+
+#seekBox #seek{order:0!important;flex:1 1 100%!important;width:100%}
+#seekBox #tCur{order:1}#seekBox #back30{order:2}#seekBox #fwd30{order:3}#seekBox select{order:4}#seekBox #tDur{order:5}
+
+#seekBox{gap:5px!important}#seekBox select{max-width:58px!important;font-size:12px!important;padding:2px!important}
+#seekBox button{min-width:46px!important;padding:6px 8px!important}#seekBox #tCur,#seekBox #tDur{min-width:34px!important;font-size:13px!important}
 </style>
 </head>
 <body>
