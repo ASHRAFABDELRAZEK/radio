@@ -210,6 +210,15 @@ body.hasSide>#gBar{margin-right:300px}
 .rc{flex:0 0 130px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;cursor:pointer;position:relative;font-size:12px;line-height:1.4}
 .rc b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px}
 .rc .rmHome{position:absolute;top:2px;left:2px;background:none;font-size:12px;padding:2px 6px;opacity:.7}
+.hxc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0;display:grid;gap:8px}
+.hxb{padding:11px 14px;border-radius:12px;font-size:15px}
+.adt{font-size:19px;line-height:2;margin:6px 0}
+.adn{padding:12px;border-radius:12px;font-size:16px;background:var(--btn2)}
+.adc.ok{border-color:#22c55e;opacity:.7}
+.chip{background:var(--btn2);padding:8px 14px;border-radius:20px;cursor:pointer}
+body.dsave img{display:none!important}
+body.big{zoom:1.2}
+.bigg{display:grid;grid-template-columns:1fr 1fr;gap:12px}.bigg .gcell{min-height:110px}.bigg .gi{font-size:40px}.bigg .gl{font-size:20px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -1470,6 +1479,119 @@ function kahfItems(){return KAHF.map((k,i)=>({stationuuid:'ia:kahf'+i,name:'ال
 function fridayPage(){setTab('all');$('viewTitle').textContent='🕌 جمعة مباركة';const items=kahfItems();results=items;playlist=items;render(items);
   $('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center">📖 سورة الكهف (ملف صوتي) — اختار القارئ <button id="frQ" style="background:var(--btn2);font-size:13px;padding:5px 10px">📻 محطات القرآن الكريم</button></div>`);
   $('frQ').onclick=()=>{const o=occFor(new Date()).find(x=>x.t==='جمعة مباركة')||{tags:['quran','islamic']};loadSet('🕌 محطات القرآن الكريم',o.tags.map(x=>q('tag='+encq(x))),{})}}
+
+// ===== مفيد كل يوم (HX): ورد، أذكار، مسبحة، قبلة، تركيز، لغات، مقترحات، مشاركة، توفير بيانات، وضع مريح =====
+const SURAHS='الفاتحة,البقرة,آل عمران,النساء,المائدة,الأنعام,الأعراف,الأنفال,التوبة,يونس,هود,يوسف,الرعد,إبراهيم,الحجر,النحل,الإسراء,الكهف,مريم,طه,الأنبياء,الحج,المؤمنون,النور,الفرقان,الشعراء,النمل,القصص,العنكبوت,الروم,لقمان,السجدة,الأحزاب,سبأ,فاطر,يس,الصافات,ص,الزمر,غافر,فصلت,الشورى,الزخرف,الدخان,الجاثية,الأحقاف,محمد,الفتح,الحجرات,ق,الذاريات,الطور,النجم,القمر,الرحمن,الواقعة,الحديد,المجادلة,الحشر,الممتحنة,الصف,الجمعة,المنافقون,التغابن,الطلاق,التحريم,الملك,القلم,الحاقة,المعارج,نوح,الجن,المزمل,المدثر,القيامة,الإنسان,المرسلات,النبأ,النازعات,عبس,التكوير,الانفطار,المطففين,الانشقاق,البروج,الطارق,الأعلى,الغاشية,الفجر,البلد,الشمس,الليل,الضحى,الشرح,التين,العلق,القدر,البينة,الزلزلة,العاديات,القارعة,التكاثر,العصر,الهمزة,الفيل,قريش,الماعون,الكوثر,الكافرون,النصر,المسد,الإخلاص,الفلق,الناس'.split(',');
+const RECS=[['مشاري العفاسي','https://server8.mp3quran.net/afs/'],['سعد الغامدي','https://server7.mp3quran.net/shatri/'],['ياسر الدوسري','https://server11.mp3quran.net/yasser/'],['ماهر المعيقلي','https://server12.mp3quran.net/maher/'],['محمود خليل الحصري','https://server13.mp3quran.net/husr/'],['أحمد العجمي','https://server10.mp3quran.net/ajm/'],['ناصر القطامي','https://server6.mp3quran.net/qtm/']];
+const ADH_COMMON=[
+['آية الكرسي','اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ',1],
+['الإخلاص والفلق والناس','قراءة سور: الإخلاص، الفلق، الناس',3],
+['سيد الاستغفار','اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',1],
+['الرضا','رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صلى الله عليه وسلم نَبِيًّا',3],
+['الحفظ من الضرر','بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',3],
+['التسبيح','سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100],
+['الاستغفار','أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',100],
+['التهليل','لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',10],
+['الصلاة على النبي','اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ',10]];
+const ADH={m:[['دعاء الصباح','أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',1],['اللهم بك أصبحنا','اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ',1]],
+ e:[['دعاء المساء','أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',1],['اللهم بك أمسينا','اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ',1]]};
+const hxSet=(k,v)=>{const o=ls.get('hx',{});o[k]=v;ls.set('hx',o)},hxGet=(k,d)=>ls.get('hx',{})[k]??d;
+const pad3=n=>String(n).padStart(3,'0');
+function hxPage(t,h){setTab('all');$('viewTitle').textContent=t;$('list').innerHTML='<div class="hxp" style="grid-column:1/-1">'+h+'</div>'}
+const hxBtn=(a,l,x)=>`<button class="hxb" data-hx="${a}" ${x||''}>${l}</button>`;
+const hxCell=(a,ic,l)=>`<div class="gcell" data-hx="${a}"><span class="gi">${ic}</span><span class="gl">${l}</span></div>`;
+const hxPart=()=>{const h=new Date().getHours();return h>=4&&h<11?'m':(h>=15&&h<20?'e':null)};
+const HX={
+hub(){const ds=hxGet('dsave',false),bg=hxGet('big',false);
+ hxPage('🌟 مفيد كل يوم',`<div class="hgrp">🕌 عبادة</div><div class="hgrid">${hxCell('wird','📖','ورد القرآن')}${hxCell('adh','🤲','أذكار')}${hxCell('tasbeeh','📿','مسبحة')}${hxCell('qibla','🧭','القبلة')}</div>
+ <div class="hgrp">🎓 تعلّم وركّز</div><div class="hgrid">${hxCell('lang','🗣','تعلّم لغة')}${hxCell('pomo','🍅','تركيز بومودورو')}${hxCell('forme','✨','جديد لك')}</div>
+ <div class="hgrp">⚙ ذكي</div><div class="hgrid">${hxCell('share','🔗','شارك مفضلتك')}${hxCell('dsave',ds?'✅':'📶','توفير البيانات')}${hxCell('big',bg?'✅':'👴','وضع مريح')}</div>
+ <p class="m" style="margin-top:12px">📶 توفير البيانات: يقدّم المحطات الأخف ويخفي الصور. 👴 وضع مريح: خط وأزرار أكبر وشاشة رئيسية من 4 أزرار.</p>`)},
+wird(){const w=ls.get('wird',{s:1,g:1,r:0,done:'',n:0}),k=dayKey(),done=w.done===k;
+ const nm=i=>SURAHS[(i-1)%114];
+ const list=[];for(let i=0;i<w.g;i++)list.push(((w.s-1+i)%114)+1);
+ hxPage('📖 ورد القرآن اليومي',`<div class="hxc"><div class="m">ورد اليوم</div><div style="font-size:20px;font-weight:bold;margin:6px 0">${list.map(i=>'سورة '+nm(i)).join(' + ')}</div>${w.n>1?`<div class="m">🔥 ${w.n} يوم متتالي</div>`:''}
+ ${hxBtn('wplay','▶ اسمع الورد')}${hxBtn('wdone',done?'✅ تم اليوم':'✔ خلّصت الورد',done?'disabled':'')}</div>
+ <div class="hxc"><label>القارئ <select id="wR">${RECS.map((r,i)=>`<option value="${i}" ${i==w.r?'selected':''}>${r[0]}</option>`).join('')}</select></label>
+ <label>عدد السور يوميًا <select id="wG">${[1,2,3,5,10].map(n=>`<option ${n==w.g?'selected':''}>${n}</option>`).join('')}</select></label>
+ <label>ابدأ من سورة <select id="wS">${SURAHS.map((s,i)=>`<option value="${i+1}" ${i+1==w.s?'selected':''}>${i+1}. ${s}</option>`).join('')}</select></label>
+ <label><input type="checkbox" id="wRem" ${hxGet('wrem',true)?'checked':''}> ذكّرني على الرئيسية لو ما خلّصتش ورد اليوم</label></div>`);
+ const sv=()=>{const o=ls.get('wird',w);o.r=+$('wR').value;o.g=+$('wG').value;o.s=+$('wS').value;ls.set('wird',o);HX.wird()};
+ ['wR','wG','wS'].forEach(i=>$(i).onchange=sv);$('wRem').onchange=e=>hxSet('wrem',e.target.checked)},
+wplay(){const w=ls.get('wird',{s:1,g:1,r:0}),items=[];
+ for(let i=0;i<w.g;i++){const n=((w.s-1+i)%114)+1;items.push({stationuuid:'ia:wird'+w.r+'_'+n,name:'القرآن الكريم — سورة '+SURAHS[n-1]+' — '+RECS[w.r][0],country:'ورد اليوم',tags:'quran',url_resolved:RECS[w.r][1]+pad3(n)+'.mp3',url:RECS[w.r][1]+pad3(n)+'.mp3',file:pad3(n)+'.mp3',id:'wird'+n})}
+ results=items;playlist=items;render(items);play(items[0])},
+wdone(){const w=ls.get('wird',{s:1,g:1,r:0,done:'',n:0}),k=dayKey();if(w.done===k)return;
+ const y=new Date(Date.now()-864e5),f=n=>String(n).padStart(2,'0'),yk=y.getFullYear()+'-'+f(y.getMonth()+1)+'-'+f(y.getDate());
+ w.n=w.done===yk?(w.n||0)+1:1;w.done=k;w.s=((w.s-1+w.g)%114)+1;ls.set('wird',w);toast('تقبّل الله منك 🤍 — ورد بكرة من سورة '+SURAHS[w.s-1]);HX.wird()},
+adh(){const p=hxPart()||'m',t=p==='m'?'أذكار الصباح':'أذكار المساء';HX.adhShow(p,t)},
+adhShow(p,t){const L=[...ADH[p],...ADH_COMMON];
+ hxPage('🤲 '+t,`<div class="hxc" style="display:flex;gap:8px">${hxBtn('adhm','🌅 الصباح')}${hxBtn('adhe','🌇 المساء')}</div>`+L.map((a,i)=>`<div class="hxc adc" data-c="${a[2]}" data-n="0"><b>${a[0]}</b><div class="adt">${a[1]}</div><button class="adn" data-hx="adtap" data-i="${i}">${a[2]>1?'0 / '+a[2]:'اضغط عند القراءة'}</button></div>`).join('')+hxBtn('adfin','✅ أنهيت الأذكار','style="width:100%;margin-top:8px"'));
+ $('list').dataset.adp=p},
+adtap(el){const c=el.closest('.adc'),m=+c.dataset.c;let n=+c.dataset.n+1;if(n>m)n=m;c.dataset.n=n;el.textContent=m>1?n+' / '+m:'✓';if(n>=m){c.classList.add('ok');navigator.vibrate&&navigator.vibrate(30)}},
+adfin(){const p=$('list').dataset.adp||'m',d=hxGet('adh',{});d[p]=dayKey();hxSet('adh',d);toast('جزاك الله خيرًا 🤍');HX.hub()},
+tasbeeh(){const n=hxGet('tsb',0);hxPage('📿 المسبحة',`<div class="hxc" style="text-align:center"><div id="tsN" style="font-size:64px;font-weight:bold;color:var(--gold)">${n}</div><button class="hxb" id="tsTap" style="width:70%;height:140px;border-radius:50%;font-size:22px;margin:10px auto;display:block">سبّح</button>${hxBtn('tsreset','🔄 تصفير')}</div>`);
+ $('tsTap').onclick=()=>{const v=hxGet('tsb',0)+1;hxSet('tsb',v);$('tsN').textContent=v;navigator.vibrate&&navigator.vibrate(15)}},
+tsreset(){hxSet('tsb',0);HX.tasbeeh()},
+qibla(){hxPage('🧭 اتجاه القبلة',`<div class="hxc" style="text-align:center"><div id="qA" style="font-size:90px;transition:transform .2s;display:inline-block">⬆️</div><div id="qT" class="m">اضغط الزر لتحديد موقعك</div>${hxBtn('qgo','📍 حدّد القبلة')}<p class="m">لازم تسمح بالموقع. على الموبايل الأسهم يتحرك مع بوصلة الجهاز؛ لو مفيش بوصلة هتشوف الزاوية من الشمال. ابعد الموبايل عن المعادن للدقة.</p></div>`)},
+qgo(){if(!navigator.geolocation)return toast('الجهاز لا يدعم تحديد الموقع');
+ navigator.geolocation.getCurrentPosition(async pos=>{const R=Math.PI/180,la=pos.coords.latitude*R,lo=pos.coords.longitude*R,ka=21.4225*R,ko=39.8262*R;
+  const b=((Math.atan2(Math.sin(ko-lo)*Math.cos(ka),Math.cos(la)*Math.sin(ka)-Math.sin(la)*Math.cos(ka)*Math.cos(ko-lo))/R)+360)%360;
+  $('qT').innerHTML='القبلة <b>'+Math.round(b)+'°</b> من الشمال (باتجاه عقارب الساعة)';let hd=null;const up=()=>{$('qA').style.transform='rotate('+(b-(hd||0))+'deg)'};up();
+  try{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')return}}catch{}
+  const h=e=>{const v=e.webkitCompassHeading!=null?e.webkitCompassHeading:(e.alpha!=null?(360-e.alpha)%360:null);if(v!=null&&$('qA')){hd=v;up()}else window.removeEventListener('deviceorientationabsolute',h,true)};
+  window.addEventListener('deviceorientationabsolute',h,true);window.addEventListener('deviceorientation',h,true)},()=>toast('ما قدرتش أحدد موقعك — اسمح بالموقع'),{enableHighAccuracy:true,timeout:15000})},
+pomo(){const P=window.hxP;
+ hxPage('🍅 تركيز بومودورو',`<div class="hxc" style="text-align:center"><div id="pmT" style="font-size:56px;font-weight:bold;color:var(--gold)">${P?'':'--:--'}</div><div id="pmS" class="m">${P?'':'اختار نظام وابدأ — الراديو بيشتغل وقت التركيز ويسكت وقت الراحة'}</div>
+ <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0">${hxBtn('pm25','25 تركيز / 5 راحة')}${hxBtn('pm50','50 / 10')}${hxBtn('pm15','15 / 3')}${hxBtn('pmstop','⏹ إيقاف')}</div></div>`);HX.pmDraw()},
+pm25(){HX.pmGo(25,5)},pm50(){HX.pmGo(50,10)},pm15(){HX.pmGo(15,3)},
+pmGo(f,b){HX.pmstop(true);window.hxP={f,b,ph:'f',end:Date.now()+f*60000,rounds:0};if(current&&au.paused)au.play().catch(()=>{});
+ window.hxPi=setInterval(()=>{const P=window.hxP;if(!P)return;if(Date.now()>=P.end){if(P.ph==='f'){P.ph='b';P.end=Date.now()+P.b*60000;P.rounds++;au.pause();hxBeep();toast('🍅 خلّصت جولة! خد راحة '+P.b+' دقايق');}else{P.ph='f';P.end=Date.now()+P.f*60000;hxBeep();toast('يلا نكمّل تركيز 💪');if(current)au.play().catch(()=>{})}}HX.pmDraw()},1000);HX.pomo()},
+pmDraw(){const P=window.hxP,t=$('pmT');if(!t||!P)return;const s=Math.max(0,Math.round((P.end-Date.now())/1000));t.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');$('pmS').textContent=(P.ph==='f'?'🎯 تركيز':'☕ راحة')+' · جولات مكتملة: '+P.rounds},
+pmstop(q){clearInterval(window.hxPi);window.hxP=null;if(q!==true)HX.pomo()},
+lang(){hxPage('🗣 تعلّم لغة بالراديو',`<div class="hxc"><div class="m">اختار اللغة اللي بتتعلمها — هنجيبلك أخبار وبرامج تعليمية ومحادثات بيها</div><div class="chips" style="display:flex;flex-wrap:wrap;gap:8px">${LANGS.filter(l=>l[0]&&l[0]!=='arabic').map(l=>`<span class="chip" data-hx="langgo" data-l="${l[0]}">${l[1]}</span>`).join('')}</div></div>`)},
+langgo(el){const l=el.dataset.l,nm=el.textContent;const old=setLang;setLang='';
+ loadSet('🗣 تعلّم '+nm,['news','talk','education','learning'].map(t=>q('language='+l+'&tag='+t)),{n:40}).then(()=>{setLang=old})},
+forme(){const S=ls.get('listenStats',{}),tot={};Object.values(S).forEach(d=>Object.entries(d.st||{}).forEach(([u,e])=>{if(!/^ia:|^quran|^masp/.test(u)&&!/^\d+$/.test(u))tot[u]=(tot[u]||0)+e.s}));
+ const top=Object.entries(tot).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+ if(!top.length)return hxPage('✨ جديد لك','<div class="hxc">لسه مفيش سماع كفاية. اسمع كام محطة وارجع هنقترحلك محطات شبه اللي بتحبها 🎧</div>');
+ hxPage('✨ جديد لك','<div class="hxc">بنحلل اللي بتسمعه...</div>');
+ fetch(API+'/json/stations/byuuid?uuids='+top.join(',')).then(r=>r.json()).then(a=>{const tags={};a.forEach(s=>String(s.tags||'').split(',').map(x=>x.trim()).filter(x=>x&&x.length<20).forEach(x=>tags[x]=(tags[x]||0)+1));
+  const tg=Object.entries(tags).sort((x,y)=>y[1]-x[1]).slice(0,3).map(x=>x[0]);if(!tg.length)throw 0;
+  const seen=new Set(top);loadSet('✨ جديد لك — زي: '+tg.join('، '),tg.map(t=>q('tag='+encodeURIComponent(t))),{n:40})}).catch(()=>toast('ما قدرتش أجيب اقتراحات دلوقتي'))},
+share(){const ids=favs.filter(s=>s&&!String(s.stationuuid).startsWith('ia:')&&!s.masp&&s.stationuuid).slice(0,40).map(s=>s.stationuuid);
+ if(!ids.length)return hxPage('🔗 شارك مفضلتك','<div class="hxc">ضيف محطات للمفضلة الأول ⭐ وبعدها تقدر تبعتها لصحابك برابط واحد.</div>');
+ const url=location.origin+location.pathname+'?f='+ids.join(',');
+ hxPage('🔗 شارك مفضلتك',`<div class="hxc">هتبعت ${ids.length} محطة برابط واحد. اللي يفتحه يشوفهم ويضيفهم لمفضلته بضغطة.${hxBtn('shgo','📤 شارك الرابط')}<input id="shU" readonly value="${esc(url)}" style="margin-top:8px;width:100%"></div>`)},
+async shgo(){const u=$('shU').value;try{if(navigator.share){await navigator.share({title:'محطاتي المفضلة — راديو العالم',url:u})}else{await navigator.clipboard.writeText(u);toast('اتنسخ الرابط ✅')}}catch{}},
+dsave(){const v=!hxGet('dsave',false);hxSet('dsave',v);document.body.classList.toggle('dsave',v);toast(v?'📶 توفير البيانات اشتغل: محطات أخف وبدون صور':'توفير البيانات اتقفل');HX.hub()},
+big(){const v=!hxGet('big',false);hxSet('big',v);document.body.classList.toggle('big',v);toast(v?'👴 الوضع المريح اشتغل':'رجعنا للوضع العادي');showHome&&(v?showHome():HX.hub())},
+bigq(){loadSet('📖 القرآن الكريم',['quran','holy quran','koran'].map(t=>q('tag='+encodeURIComponent(t))),{n:30})}
+};
+function hxBeep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.2;o.start();setTimeout(()=>{o.stop();c.close()},350)}catch{}}
+HX.adhm=()=>HX.adhShow('m','أذكار الصباح');HX.adhe=()=>HX.adhShow('e','أذكار المساء');
+$('list').addEventListener('click',e=>{const t=e.target.closest('[data-hx]');if(!t)return;e.stopImmediatePropagation();e.preventDefault();const a=t.dataset.hx;if(a==='hub'||a==='dsave'||a==='big'){}
+ if(['wird','adh','tasbeeh','qibla','pomo','lang','forme','share','hub'].includes(a))navPush();
+ const f=HX[a];f&&f(t)},true);
+// عند العودة للرئيسية: شريط مفيد + شريط سياقي
+(function(){const _s=showHome;showHome=function(){_s();const mt=$('list').querySelector('[data-act="modes"]');
+ const w=ls.get('wird',{}),adh=hxGet('adh',{}),p=hxPart(),k=dayKey();
+ const S=(a,ic,t,s)=>`<div class="strip one" data-hx="${a}"><span class="si">${ic}</span><div class="st2"><b>${t}</b> <span class="m">· ${s}</span></div></div>`;
+ let h='';
+ if(p&&adh[p]!==k)h+=S('adh',p==='m'?'🌅':'🌇',p==='m'?'أذكار الصباح':'أذكار المساء','اضغط للقراءة');
+ else if(hxGet('wrem',true)&&w.done!==k&&w.s)h+=S('wird','📖','ورد اليوم','سورة '+SURAHS[(w.s||1)-1]);
+ h+=S('hub','🌟','مفيد كل يوم','ورد · أذكار · قبلة · لغات · تركيز');
+ if(mt)mt.insertAdjacentHTML('afterend',h);
+ if(hxGet('big',false)){$('list').innerHTML=`<div class="bigg" style="grid-column:1/-1">${(ls.get('radioLast',null)?`<div class="gcell" data-act="resume"><span class="gi">▶</span><span class="gl">كمّل</span></div>`:'')}<div class="gcell" data-act="fav"><span class="gi">⭐</span><span class="gl">المفضلة</span></div><div class="gcell" data-hx="bigq"><span class="gi">📖</span><span class="gl">القرآن</span></div><div class="gcell" data-act="all"><span class="gi">🌍</span><span class="gl">كل المحطات</span></div><div class="gcell" data-hx="hub"><span class="gi">🌟</span><span class="gl">المزيد</span></div><div class="gcell" data-hx="big"><span class="gi">↩</span><span class="gl">الوضع العادي</span></div></div>`}}})();
+// ?f= استقبال مفضلة مُشاركة
+setTimeout(async()=>{const f=new URLSearchParams(location.search).get('f');if(!f)return;
+ try{const a=await (await fetch(API+'/json/stations/byuuid?uuids='+encodeURIComponent(f))).json();if(!a.length)return toast('الرابط ده مفيهوش محطات');
+  setTab('all');$('viewTitle').textContent='🔗 مفضلة مُشاركة معاك';results=a;playlist=a;render(a);
+  $('list').insertAdjacentHTML('afterbegin',`<div class="hxc" style="grid-column:1/-1">وصلك ${a.length} محطة ${hxBtn('imp','⭐ ضيفهم لمفضلتي')}</div>`);
+  HX.imp=()=>{a.forEach(s=>{if(!favs.some(x=>x.stationuuid===s.stationuuid))favs.push(slim(s))});ls.set('radioFavs',favs);toast('اتضافوا للمفضلة ✅')}}catch{toast('تعذر فتح المفضلة المُشاركة')}},1800);
+// توفير البيانات: ترتيب الأخف أولاً
+(function(){const _r=render;render=function(arr){if(hxGet('dsave',false)&&Array.isArray(arr))arr.sort((a,b)=>((+a.bitrate||999)>96?1:0)-((+b.bitrate||999)>96?1:0));return _r(arr)}})();
+if(hxGet('dsave',false))document.body.classList.add('dsave');if(hxGet('big',false))document.body.classList.add('big');
 </script>
 </body>
 </html>
