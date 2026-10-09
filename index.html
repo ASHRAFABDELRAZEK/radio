@@ -224,6 +224,8 @@ body.big{zoom:1.2}
 body.guest #menuB{display:none!important}
 :root[data-theme=green]{--bg:#06231c;--card:#0b3a2e;--card2:#082d24;--acc:#16a34a;--gold:#e5c158;--bar:#04180f;--btn2:#14584a;--line:#1c6150;--side:#04180f}
 :root[data-theme=gold]{--bg:#1a1409;--card:#2b210f;--card2:#221a0c;--acc:#b8860b;--gold:#f0c84a;--bar:#120d05;--btn2:#4a3a18;--line:#5b4a22;--side:#120d05}
+.tstrip{scrollbar-width:none}.tstrip::-webkit-scrollbar{display:none}.tstrip .gcell{width:74px;min-height:62px;padding:8px 2px}.tstrip .gi{font-size:24px}.tstrip .gl{font-size:11.5px}
+.hgrid.hlist{display:flex;flex-direction:column;gap:8px}
 </style>
 </head>
 <body>
@@ -1466,8 +1468,8 @@ document.addEventListener('keydown',e=>{const t=e.target;if(t&&/^(INPUT|SELECT|T
   if(occ.length)h+=strip('data-occ="0"',occ[0].ic,occ[0].t,occ[0].s,'gold');
   if(di!=null)h+=strip('data-act="daily"','✨','مقترح اليوم',MODES[di][1]+(st.n>1?' · 🔥 '+st.n+' أيام':''));
   if(last)h+=strip('data-act="resume"','▶','كمّل: '+esc(last.item.name),esc(last.item.country||'')+(last.t>5?' · من '+fmt(last.t):''));
-  h+=`<div class="hgrp">🎵 مكتبتي</div><div class="hgrid">${cell('fav','⭐','المفضلة',favs.length||'')}${cell('rec','🕘','آخر ما سمعته',recent.length||'')}${cell('later','🔖','بعدين',later.length||'')}</div>`;
-  h+=`<div class="hgrp">🧭 استكشاف المحطات</div><div class="hgrid">${cell('eg','🇪🇬','محطات مصر')}${cell('masp','📡','إذاعات ماسبيرو')}${cell('arc','🎭','أرشيف زمان')}${cell('all','🌍','كل المحطات')}</div>`;
+  h+=`<div class="hgrp">🎵 مكتبتي</div><div class="hgrid hlist">${strip('data-act="fav"','⭐','المفضلة',favs.length?favs.length+' عنصر':'ضيف محطاتك المفضلة')}${strip('data-act="rec"','🕘','آخر ما سمعته',recent.length?recent.length+' عنصر':'')}${strip('data-act="later"','🔖','بعدين',later.length?later.length+' عنصر':'احفظ حاجة تسمعها بعدين')}</div>`;
+  h+=`<div class="hgrp">🧭 استكشاف المحطات</div><div class="hgrid hlist">${strip('data-act="eg"','🇪🇬','محطات مصر','إذاعات وبرامج مصرية')}${strip('data-act="masp"','📡','إذاعات ماسبيرو','الشبكات الرسمية')}${strip('data-act="arc"','🎭','أرشيف زمان','مسرحيات ومسلسلات وحلقات قديمة')}${strip('data-act="all"','🌍','كل المحطات','بحث في كل العالم')}</div>`;
   if(recent.length)h+=`<div class="hgrp" style="display:flex;justify-content:space-between;align-items:center">🕘 تابع الاستماع <button class="clrRec" style="background:var(--btn2);font-size:12px;padding:3px 10px">🗑 مسح</button></div><div class="rrow">${recent.slice(0,8).map((r,i)=>`<div class="rc" data-ri="${i}" data-u="${esc(r.stationuuid)}"><b>${esc(r.name)}</b><div class="m">${esc(r.country||'')}</div><button class="rmHome" data-rh="${i}" title="إزالة">✕</button></div>`).join('')}</div>`;
   h+=`<details class="mdet" id="hsBox"><summary>🔎 بحث متقدم (اسم، دولة، لغة، نوع)</summary><div style="padding:0 12px 14px;display:grid;gap:8px"><input id="hsQ" placeholder="اسم المحطة أو الكلمة"><select id="hsC">${$('country')?$('country').innerHTML:''}</select><select id="hsL">${$('lang')?$('lang').innerHTML:''}</select><input id="hsT" placeholder="النوع (مثال: jazz, news, quran)"><button id="hsGo" style="padding:12px">🔍 ابحث</button></div></details>`;
   $('list').innerHTML=h;
