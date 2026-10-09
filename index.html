@@ -197,6 +197,19 @@ body.hasSide>#gBar{margin-right:300px}
 .chip.on{background:var(--acc);border-color:var(--gold);color:#fff}.chip:hover{border-color:var(--gold)}
 
 .toolrow{grid-column:1/-1;display:flex;gap:8px}.tbtn{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center;cursor:pointer;font-size:13px;line-height:1.5}.tbtn:hover{border-color:var(--gold)}.tbtn .tIc{font-size:24px;display:block}
+
+.hgrp{grid-column:1/-1;font-size:13px;color:var(--mut);margin:4px 2px 0;font-weight:bold}
+.hgrid{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.gcell{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center;cursor:pointer;position:relative;min-height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.gcell:hover{border-color:var(--gold)}.gcell .gi{font-size:22px}.gcell .gl{font-size:12px;line-height:1.3}
+.gcell .gb{position:absolute;top:4px;left:6px;background:var(--acc);color:#fff;border-radius:10px;font-size:10px;padding:0 6px}
+.strip{grid-column:1/-1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;gap:10px;align-items:center;cursor:pointer;font-size:14px}
+.strip .si{font-size:22px}.strip .st2{flex:1;min-width:0}.strip .m{font-size:12px;color:var(--mut)}
+.strip.gold{border-color:var(--gold)}.strip.hero{background:linear-gradient(90deg,var(--acc),#112240);color:#fff;border:none;padding:12px}.strip.one .st2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.strip.one .m{display:inline}.strip.one .si{font-size:18px}.strip.hero .m{color:#e2e8f0}
+.rrow{grid-column:1/-1;display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.rc{flex:0 0 130px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;cursor:pointer;position:relative;font-size:12px;line-height:1.4}
+.rc b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px}
+.rc .rmHome{position:absolute;top:2px;left:2px;background:none;font-size:12px;padding:2px 6px;opacity:.7}
 </style>
 </head>
 <body>
@@ -1375,7 +1388,7 @@ $('list').addEventListener('click',e=>{
   const t=e.target.closest('[data-occ],[data-mysec],[data-act="mysecMgr"],[data-act="secOrd"],[data-act="homeOcc"]');if(!t)return;e.stopImmediatePropagation();navPush();
   if(t.dataset.act==='mysecMgr')mysecMgr();else if(t.dataset.act==='secOrd')secOrd();
   else if(t.dataset.mysec!==undefined)openMySec(+t.dataset.mysec);
-  else{const o=occFor(new Date())[+(t.dataset.occ||0)];if(o)loadSet(o.ic+' '+o.t,o.tags.map(x=>q('tag='+encq(x))),{})}
+  else{const o=occFor(new Date())[+(t.dataset.occ||0)];if(o&&o.t==='جمعة مباركة')fridayPage();else if(o)loadSet(o.ic+' '+o.t,o.tags.map(x=>q('tag='+encq(x))),{})}
 },true);
 (function(){const _s=showHome;showHome=function(){_s();const mt=$('list').querySelector('[data-act="modes"]');if(!mt)return;const o=occFor(new Date());if(!o.length)return;
   mt.insertAdjacentHTML('afterend',`<div class="tile" data-occ="0"><div class="tIc">${o[0].ic}</div><div><b>${o[0].t}</b><div class="m">${o[0].s}</div></div></div>`)}})();
@@ -1427,6 +1440,36 @@ document.addEventListener('keydown',e=>{const t=e.target;if(t&&/^(INPUT|SELECT|T
 (function(){let v0=null;setInterval(()=>{try{const left=sleepAt?sleepAt-Date.now():0;
   if(sleepAt&&left>0&&left<30000){if(v0==null)v0=au.volume;au.volume=Math.max(.03,v0*left/30000)}
   else if(v0!=null){au.volume=v0;$('vol')&&($('vol').value=v0);v0=null}}catch{}},1000)})();
+
+// ===== 11) رئيسية جديدة منظمة =====
+(function(){const _s=showHome;showHome=function(){_s();
+  const last=ls.get('radioLast',null),occ=occFor(new Date()),di=dailyIdx(),st=ls.get('streak',{d:'',n:0}),pn=prayerNear();
+  const cell=(a,ic,l,b)=>`<div class="gcell" data-act="${a}"><span class="gi">${ic}</span><span class="gl">${l}</span>${b?`<span class="gb">${b}</span>`:''}</div>`;
+  const strip=(attr,ic,t,s,cls)=>{const one=!/hero/.test(cls||'');return `<div class="strip ${cls||''} ${one?'one':''}" ${attr}><span class="si">${ic}</span><div class="st2"><b>${t}</b>${s?(one?` <span class="m">· ${s}</span>`:`<div class="m">${s}</div>`):''}</div></div>`};
+  let h='';
+  if(pn){const mins=Math.max(0,Math.round((pn.t-new Date())/60000));h+=strip('data-act="prset"','🕌',pn.inside?'وقت صلاة '+PN[pn.k]:'قرب أذان '+PN[pn.k],pn.inside?'التشغيل متوقف مؤقتًا (القرآن مستثنى)':'باقي '+mins+' دقيقة','gold')}
+  h+=strip('data-act="modes"','🎧','أوضاع وأقسام','تركيز · استرخاء · نوم · رياضة · أنواع · بلدان','hero');
+  if(occ.length)h+=strip('data-occ="0"',occ[0].ic,occ[0].t,occ[0].s,'gold');
+  if(di!=null)h+=strip('data-act="daily"','✨','مقترح اليوم',MODES[di][1]+(st.n>1?' · 🔥 '+st.n+' أيام':''));
+  if(last)h+=strip('data-act="resume"','▶','كمّل: '+esc(last.item.name),esc(last.item.country||'')+(last.t>5?' · من '+fmt(last.t):''));
+  h+=`<div class="hgrp">🎵 استمع</div><div class="hgrid">${cell('fav','⭐','المفضلة',favs.length||'')}${cell('rec','🕘','آخر ما سمعته',recent.length||'')}${cell('later','🔖','بعدين',later.length||'')}</div>`;
+  h+=`<div class="hgrp">🧭 تصفّح</div><div class="hgrid">${cell('eg','🇪🇬','محطات مصر')}${cell('masp','📡','إذاعات ماسبيرو')}${cell('arc','🎭','أرشيف زمان')}${cell('all','🌍','كل المحطات')}</div>`;
+  h+=`<div class="hgrp">🛠 أدوات</div><div class="hgrid">${cell('drive','🚗','وضع السواقة')}${cell('study','🎓','مذاكرة')}${cell('discover','🎲','اكتشف')}${cell('stats','📊','إحصائياتي')}</div>`;
+  if(recent.length)h+=`<div class="hgrp" style="display:flex;justify-content:space-between;align-items:center">🕘 سمعتهم مؤخرًا <button class="clrRec" style="background:var(--btn2);font-size:12px;padding:3px 10px">🗑 مسح</button></div><div class="rrow">${recent.slice(0,8).map((r,i)=>`<div class="rc" data-ri="${i}" data-u="${esc(r.stationuuid)}"><b>${esc(r.name)}</b><div class="m">${esc(r.country||'')}</div><button class="rmHome" data-rh="${i}" title="إزالة">✕</button></div>`).join('')}</div>`;
+  h+=`<details class="mdet" id="hsBox"><summary>🔎 بحث متقدم (اسم، دولة، لغة، نوع)</summary><div style="padding:0 12px 14px;display:grid;gap:8px"><input id="hsQ" placeholder="اسم المحطة أو الكلمة"><select id="hsC">${$('country')?$('country').innerHTML:''}</select><select id="hsL">${$('lang')?$('lang').innerHTML:''}</select><input id="hsT" placeholder="النوع (مثال: jazz, news, quran)"><button id="hsGo" style="padding:12px">🔍 ابحث</button></div></details>`;
+  $('list').innerHTML=h;
+  const set=(id,v)=>{const e=$(id);if(e)e.value=v};
+  $('hsQ').value=($('q')||{}).value||'';$('hsC').value=($('country')||{}).value||'';$('hsL').value=($('lang')||{}).value||'';$('hsT').value=($('tag')||{}).value||'';
+  const go=()=>{set('q',$('hsQ').value);set('country',$('hsC').value);set('lang',$('hsL').value);set('tag',$('hsT').value);navPush();setTab('all');search()};
+  $('hsGo').onclick=go;$('hsQ').onkeydown=e=>{if(e.key==='Enter')go()};
+  if(typeof markPlaying==='function')markPlaying()}})();
+
+// ===== جمعة مباركة: سورة الكهف مثبّتة =====
+const KAHF=[['مشاري العفاسي','https://server8.mp3quran.net/afs/018.mp3'],['سعد الغامدي','https://server7.mp3quran.net/shatri/018.mp3'],['ياسر الدوسري','https://server11.mp3quran.net/yasser/018.mp3'],['ماهر المعيقلي','https://server12.mp3quran.net/maher/018.mp3'],['محمود خليل الحصري','https://server13.mp3quran.net/husr/018.mp3'],['أحمد العجمي','https://server10.mp3quran.net/ajm/018.mp3'],['ناصر القطامي','https://server6.mp3quran.net/qtm/018.mp3']];
+function kahfItems(){return KAHF.map((k,i)=>({stationuuid:'ia:kahf'+i,name:'القرآن الكريم — سورة الكهف — '+k[0],country:'تلاوة كاملة',tags:'quran,kahf',url_resolved:k[1],url:k[1],file:'018.mp3',id:'kahf'+i}))}
+function fridayPage(){setTab('all');$('viewTitle').textContent='🕌 جمعة مباركة';const items=kahfItems();results=items;playlist=items;render(items);
+  $('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center">📖 سورة الكهف (ملف صوتي) — اختار القارئ <button id="frQ" style="background:var(--btn2);font-size:13px;padding:5px 10px">📻 محطات القرآن الكريم</button></div>`);
+  $('frQ').onclick=()=>{const o=occFor(new Date()).find(x=>x.t==='جمعة مباركة')||{tags:['quran','islamic']};loadSet('🕌 محطات القرآن الكريم',o.tags.map(x=>q('tag='+encq(x))),{})}}
 </script>
 </body>
 </html>
