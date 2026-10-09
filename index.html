@@ -374,6 +374,30 @@ body.nodel .st .rmx{display:none!important}
 .hs-circle .hgrid.hlist:not(#zAuto) .strip .st2{white-space:normal!important}.hs-circle .hgrid.hlist:not(#zAuto) .strip b{font-size:11.5px;line-height:1.25}
 .hs-circle .hgrid.hlist:not(#zAuto) .strip .m{display:none!important}
 .hs-circle .hgrid.hlist:not(#zAuto) .strip.gold .si{border-color:var(--gold,#C9A227)}
+
+/* HX35: مستويات الطي (قسم ← قسم فرعي ← عناصر) */
+.hsub{display:flex;align-items:center;gap:8px;margin:6px 12px 6px 0!important;margin-inline-start:14px!important;padding:9px 12px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-inline-start:4px solid var(--gold,#C9A227);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;user-select:none}
+.hsub .hfa{margin-inline-start:auto;font-size:14px;opacity:.8;transition:transform .2s;background:rgba(255,255,255,.08);border-radius:7px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center}
+.hsub.fold .hfa{transform:rotate(90deg)}
+.hsub+.hgrid{margin-inline-start:14px}
+.hfs{display:none!important}
+.hs-pill .hsub{border-radius:999px}.hs-square .hsub{border-radius:3px}
+/* HX36: الشكل الهندسي على الرئيسي والفرعي */
+.st .n{font-size:14px!important;-webkit-line-clamp:4!important;line-height:1.35!important}.st .m{font-size:11.5px}
+#list#list>.hfh,#list#list>.hfs{display:none!important}
+.hs-circle #list#list:has(.hgrp),.hs-square #list#list:has(.hgrp),.hs-dot #list#list:has(.hgrp){grid-template-columns:repeat(12,minmax(0,1fr))!important}
+.hs-circle #list#list>.strip,.hs-square #list#list>.strip,.hs-dot #list#list>.strip{grid-column:span 3!important}
+.hs-circle #list#list>:is(.hgrp,.hsub),.hs-square #list#list>:is(.hgrp,.hsub),.hs-dot #list#list>:is(.hgrp,.hsub){grid-column:span 4!important;aspect-ratio:1/1;flex-direction:column!important;justify-content:center;align-items:center;text-align:center;gap:4px!important;padding:6px!important;margin:4px!important;font-size:13px!important;line-height:1.25;border:2px solid var(--line)!important;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.hs-circle #list#list>:is(.hgrp,.hsub){border-radius:50%!important}
+.hs-square #list#list>:is(.hgrp,.hsub){border-radius:18px!important}
+.hs-dot #list#list>:is(.hgrp,.hsub){grid-column:span 3!important;border-radius:50%!important;font-size:10.5px!important;padding:3px!important}
+.hs-circle #list#list>.hsub,.hs-square #list#list>.hsub,.hs-dot #list#list>.hsub{background:rgba(255,255,255,.06);font-size:12px!important;border-style:dashed!important}
+.hs-circle #list#list>:is(.hgrp,.hsub):not(.fold),.hs-square #list#list>:is(.hgrp,.hsub):not(.fold),.hs-dot #list#list>:is(.hgrp,.hsub):not(.fold){border-color:var(--gold,#C9A227)!important;background:rgba(201,162,39,.16)}
+.hs-circle #list>:is(.hgrp,.hsub) .hfa,.hs-square #list>:is(.hgrp,.hsub) .hfa,.hs-dot #list>:is(.hgrp,.hsub) .hfa{display:none!important}
+.hs-circle #list#list>.hgrp,.hs-square #list#list>.hgrp,.hs-dot #list#list>.hgrp{order:0}
+.hs-circle #list#list>.hsub,.hs-square #list#list>.hsub,.hs-dot #list#list>.hsub{order:1}
+.hs-circle #list#list>.hgrid,.hs-square #list#list>.hgrid,.hs-dot #list#list>.hgrid{order:2;grid-column:1/-1!important}
+.hs-circle #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid),.hs-square #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid),.hs-dot #list#list>.hgrp~*:not(.hgrp):not(.hsub):not(.hgrid){order:3;grid-column:1/-1!important}
 </style>
 </head>
 <body>
@@ -1904,7 +1928,7 @@ HX.gstart=function(){const p=$('gP').value;if(!/^\d{4}$/.test(p))return toast('�
  {const fg=$('list').querySelector('.hgrp'),P=mySecs.map((x,i)=>[x,i]).filter(([x])=>x.pin);if(fg&&P.length)fg.insertAdjacentHTML('beforebegin',`<div class="hgrp">⭐ أقسامي</div><div class="hgrid">${P.map(([x,i])=>`<div class="gcell" data-mysec="${i}"><span class="gi">${esc(x.ic||'⭐')}</span><span class="gl">${esc(x.name)}</span></div>`).join('')}<div class="gcell" data-act="mysecMgr"><span class="gi">⚙</span><span class="gl">إدارة</span></div></div>`)}
  {const hb=$('list').querySelector('#hsBox');if(hb&&typeof hxToolStrips==='function')hb.insertAdjacentHTML('beforebegin',hxToolStrips())}
  const hid=hxGet('hhid',[]),ord=hxGet('hord',HGRP),L=$('list'),kids=[...L.children],blocks=[];let cur=null;
- kids.forEach(n=>{if(n.classList&&n.classList.contains('hgrp')){cur={g:n.textContent.replace(/\s*🗑.*$/,'').trim(),nodes:[n]};blocks.push(cur)}else if(cur&&(n.classList.contains('hgrid')||n.classList.contains('rrow')))cur.nodes.push(n);else cur=null});
+ kids.forEach(n=>{if(n.classList&&n.classList.contains('hgrp')){cur={g:n.textContent.replace(/\s*🗑.*$/,'').trim(),nodes:[n]};blocks.push(cur)}else if(cur&&(n.classList.contains('hgrid')||n.classList.contains('rrow')||n.classList.contains('hsub')))cur.nodes.push(n);else cur=null});
  const gk=g=>g.replace(/^\S+\s*/,'').slice(0,4);blocks.forEach(b=>{if(hid.some(h=>gk(h)===gk(b.g)))b.nodes.forEach(n=>n.remove())});
  const anchor=L.querySelector('#hsBox');const live=blocks.filter(b=>b.nodes[0].isConnected).sort((a,b)=>{const ia=ord.findIndex(o=>gk(o)===gk(a.g)),ib=ord.findIndex(o=>gk(o)===gk(b.g));return (ia<0?9:ia)-(ib<0?9:ib)});
  live.forEach(b=>b.nodes.forEach(n=>anchor?L.insertBefore(n,anchor):L.appendChild(n)))}})();
@@ -2211,7 +2235,16 @@ function hxToolStrips(){if(hxGet('guest',false))return '';const ds=hxGet('dsave'
  ['💼 الأعمال والحياة اليومية',[['exp','💰','المصروفات'],['appt','📅','المواعيد'],['shop','🛒','المشتريات'],['vn','🎙','مذكرات صوتية'],['time','⏱','تتبّع الوقت'],['calc','🧮','الحاسبات'],['prices','💱','الذهب والعملات'],['weather','🌤','الطقس'],['trans','🌐','الترجمة'],['qr','🔳','قارئ الفواتير']]],
  ['🎧 أدوات الاستماع',[['drive','🚗','وضع السواقة',1],['study','🎓','وضع المذاكرة',1],['discover','🎲','اكتشف محطة',1],['stats','📊','إحصائياتي',1],['chimeP','🔔','دقّات الساعة']]],
  ['⚙ التخصيص والنظام',[['dsave',ds?'✅':'📶','الوضع الموفّر'],['big',bg?'✅':'👴','العرض المريح'],['remind','⏰','التذكيرات'],['theme','🎨','المظهر'],['hview','🖼','شكل الرئيسية'],['order','↕','ترتيب الرئيسية'],['share','🔗','مشاركة المفضلة'],['favcheck','🩺','فحص المفضلة'],['offline','📥','بدون إنترنت'],['backup','💾','نسخة احتياطية'],['lock','🔐','قفل التطبيق']]]];
- return G.map(([n,L])=>`<div class="hgrp">${n}</div><div class="hgrid hlist">${L.map(x=>t(x[0],x[1],x[2],x[3])).join('')}</div>`).join('')}
+ const SUBS={'🕌 الروحانيات':[['📖 القرآن والورد',['wird','khatma','today']],['📿 الأذكار والتسبيح',['adh','tasbeeh']],['🕋 الصلاة والقبلة',['qibla','pal']]],
+ '🎓 التعلّم والإنتاجية':[['🗣 تعلّم واكتشف',['lang','pro','forme']],['🍅 تركيز وإنجاز',['pomo','moments','week']]],
+ '💼 الأعمال والحياة اليومية':[['💰 المال',['exp','prices','calc']],['📅 التنظيم',['appt','shop','time','vn']],['🧰 أدوات سريعة',['weather','trans','qr']]],
+ '⚙ التخصيص والنظام':[['🎨 المظهر والعرض',['dsave','big','theme','hview','order']],['📻 المحطات والقوائم',['favcheck']],['🔐 النسخ والأمان',['share','offline','backup','lock','remind']]]};
+ const grid=L=>`<div class="hgrid hlist">${L.map(x=>t(x[0],x[1],x[2],x[3])).join('')}</div>`;
+ return G.map(([n,L])=>{const S=SUBS[n];if(!S)return `<div class="hgrp">${n}</div>${grid(L)}`;
+  const by={};L.forEach(x=>by[x[0]]=x);const used=new Set();
+  const parts=S.map(([sn,ids])=>{const items=ids.map(i=>by[i]).filter(Boolean);items.forEach(x=>used.add(x[0]));return items.length?`<div class="hsub">${sn}</div>${grid(items)}`:`<div class="hsub">${sn}</div><div class="hgrid hlist"></div>`});
+  const rest=L.filter(x=>!used.has(x[0]));if(rest.length)parts.push(`<div class="hsub">➕ أخرى</div>${grid(rest)}`);
+  return `<div class="hgrp">${n}</div>`+parts.join('')}).join('')}
 
 // ===== HX10: تسميات جديدة + ترحيل ترتيب الرئيسية القديم =====
 (function(){const M={'🎵 استمع':'🎵 مكتبتي','🧭 تصفّح':'🧭 استكشاف المحطات','🕘 سمعتهم مؤخرًا':'🕘 تابع الاستماع'};const o=ls.get('hx',{});let ch=false;
@@ -2254,8 +2287,10 @@ const g='🕰 زمن الفن الجميل';
 if(!HGRP.includes(g)){const k=HGRP.indexOf('🧭 استكشاف المحطات');HGRP.splice(k+1,0,g)}
 const o=hxGet('hord',null);if(o&&!o.includes(g)){const k=o.indexOf('🧭 استكشاف المحطات');o.splice(k+1,0,g);hxSet('hord',o)}
 const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
- const tiles=Z.map((z,i)=>`<div class="strip one" data-hx="zm${i}"><span class="si">${z[0]}</span><div class="st2"><b>${z[1]}</b></div></div>`).join('')+`<div class="strip one" data-hx="zmfree"><span class="si">🔍</span><div class="st2"><b>كل أقسام الأرشيف</b></div></div>`;
- return h.replace('<div class="hgrp">🕌',`<div class="hgrp">${g}</div><div class="hgrid hlist">${tiles}</div><div class="hgrp">🕌`)};
+ const T=i=>`<div class="strip one" data-hx="zm${i}"><span class="si">${Z[i][0]}</span><div class="st2"><b>${Z[i][1]}</b></div></div>`;
+ const SB=(n,ids,extra)=>`<div class="hsub">${n}</div><div class="hgrid hlist">${ids.map(T).join('')}${extra||''}</div>`;
+ const tiles=SB('📻 إذاعيات ومسلسلات',[0,1,2,3,4,5])+SB('🎞 سينما ومسرح',[6,7])+SB('🎤 غناء وطرب',[8,9])+SB('🧩 منوعات ونوادر',[10,11],`<div class="strip one" data-hx="zmfree"><span class="si">🔍</span><div class="st2"><b>كل أقسام الأرشيف</b></div></div>`);
+ return h.replace('<div class="hgrp">🕌',`<div class="hgrp">${g}</div>${tiles}<div class="hgrp">🕌`)};
 })();
 
 /* HX16: مصادر نادرة إضافية (بودكاست + ويكيميديا) */
@@ -2341,11 +2376,11 @@ function sibs(g){const o=[];let e=g.nextElementSibling;while(e&&!e.classList.con
 function apply(){const L=$('list');if(!L)return;const f=hxGet('hfold',[]);L.querySelectorAll('.hgrp').forEach(g=>{if(!g.querySelector('.hfa')){const a=document.createElement('span');a.className='hfa';a.textContent='▾';g.appendChild(a)}
  const fo=f.includes(key(g));g.classList.toggle('fold',fo);sibs(g).forEach(s=>s.classList.toggle('hfh',fo))})}
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.hgrp');if(!g||!$('list').contains(g))return;
- const k=key(g);let f=hxGet('hfold',[]);if(f.includes(k)){f=f.filter(x=>x!==k);if(hxGet('hacc',false))f=[...$('list').querySelectorAll('.hgrp')].map(key).filter(x=>x!==k)}else f=[...f,k];hxSet('hfold',f);apply();if(hxGet('hacc',false))g.scrollIntoView({block:'start',behavior:'smooth'})},true);
+ const k=key(g);let f=hxGet('hfold',[]);if(f.includes(k)){f=f.filter(x=>x!==k);if(hxGet('hacc',false)||(window.hxGeo&&hxGeo()))f=[...$('list').querySelectorAll('.hgrp')].map(key).filter(x=>x!==k)}else f=[...f,k];hxSet('hfold',f);apply();if(hxGet('hacc',false)&&!(window.hxGeo&&hxGeo()))g.scrollIntoView({block:'start',behavior:'smooth'})},true);
 const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(apply,0);setTimeout(apply,400)};
 HX.foldall=function(){const g=[...$('list').querySelectorAll('.hgrp')].map(key);hxSet('hfold',g);apply()};
 HX.unfoldall=function(){hxSet('hfold',[]);apply()};
-setTimeout(apply,600);
+setTimeout(apply,600);window.hxFoldApply=apply;
 })();
 
 /* HX22 */
@@ -2568,6 +2603,30 @@ const tip=()=>{document.querySelectorAll('#list .strip').forEach(e=>{if(!e.title
 const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(tip,50);setTimeout(tip,600)};
 const _h=HX.hview;HX.hview=function(){_h();const chip=document.querySelector('.hxp [data-k=hshape][data-v=circle]');if(chip&&!document.querySelector('.hxp [data-v=dot]')){const d=document.createElement('span');d.className='chip';d.dataset.hx='hviewset';d.dataset.k='hshape';d.dataset.v='dot';d.textContent='● نقطة (أيقونات بس)';if(hxGet('hshape','rect')==='dot')d.style.outline='2px solid var(--gold)';chip.parentNode.appendChild(d)}};
 setTimeout(tip,800);
+})();
+
+/* HX35: طي المستويات الفرعية */
+(function(){
+const kk=g=>'sub:'+g.textContent.replace('▾','').trim();
+function sibs(g){const o=[];let e=g.nextElementSibling;while(e&&!e.classList.contains('hgrp')&&!e.classList.contains('hsub')&&e.id!=='hsBox'){o.push(e);e=e.nextElementSibling}return o}
+function apply(){const L=$('list');if(!L)return;const op=hxGet('hsubopen',[]);L.querySelectorAll('.hsub').forEach(g=>{if(!g.querySelector('.hfa')){const a=document.createElement('span');a.className='hfa';a.textContent='▾';g.appendChild(a)}
+ const fo=!op.includes(kk(g));g.classList.toggle('fold',fo);sibs(g).forEach(s=>s.classList.toggle('hfs',fo))})}
+document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.hsub');if(!g||!$('list').contains(g))return;e.stopImmediatePropagation();
+ const k=kk(g);let op=hxGet('hsubopen',[]);op=op.includes(k)?op.filter(x=>x!==k):((window.hxGeo&&hxGeo())?[k]:[...op,k]);hxSet('hsubopen',op);apply()},true);
+const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(apply,10);setTimeout(apply,500)};
+setTimeout(apply,700);window.hxSubApply=apply;
+})();
+
+/* HX36: أكورديون تلقائي في الأشكال الهندسية */
+(function(){
+const geo=()=>/circle|square|dot/.test(hxGet('hshape','rect'));
+function norm(){if(!geo())return;const L=$('list');if(!L)return;
+ const hs=[...L.querySelectorAll(':scope>.hgrp')];const k=g=>g.textContent.replace('▾','').trim();
+ const f=hxGet('hfold',[]);const op=hs.filter(g=>!f.includes(k(g)));
+ if(op.length>1){hxSet('hfold',hs.filter(g=>g!==op[0]).map(k));window.hxFoldApply&&hxFoldApply()}
+ const so=hxGet('hsubopen',[]);if(so.length>1){const o=[...L.querySelectorAll(':scope>.hsub')].find(g=>!g.classList.contains('fold')&&!g.classList.contains('hfh'));hxSet('hsubopen',o?['sub:'+k(o)]:[]);window.hxSubApply&&hxSubApply()}}
+const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(norm,30);setTimeout(norm,700)};
+window.hxGeo=geo;setTimeout(norm,900);
 })();
 </script>
 </body>
