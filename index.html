@@ -1885,6 +1885,46 @@ setInterval(()=>{const o=hxCh();if(o.mode==='off')return;const d=new Date(),mi=d
  if(typeof pWin!=='undefined'&&pWin&&hxGet('x',0)===0&&typeof pCfg!=='undefined'&&pCfg.on)return;
  hxChime(d.getHours(),o.mode,mi===30)},1000);
 {const _h=HX.hub;HX.hub=function(){_h();const g=[...$('list').firstElementChild.querySelectorAll('.hgrp')].find(x=>/ذكي/.test(x.textContent));if(g&&g.nextElementSibling)g.nextElementSibling.insertAdjacentHTML('beforeend',hxCell('chimeP','🔔','دقّة الساعة'))}}
+
+// ===== HX6: تنقّل الأرشيف (استمرار + مجموعة + حد بعدد أو وقت) =====
+const hxAC0={on:false,scope:'arc',limit:'none',n:5,mins:30,done:0,until:0};
+const hxA=()=>Object.assign({},hxAC0,ls.get('hxArc',{}));
+const hxASave=c=>ls.set('hxArc',c);
+let hxArcDocs=[],hxArcTimer=null;
+function hxArcSchedule(){clearTimeout(hxArcTimer);const c=hxA();if(!c.on||c.limit!=='t'||!c.until)return;
+ const ms=c.until-Date.now();if(ms<=0)return;hxArcTimer=setTimeout(()=>{const v0=au.volume;let v=v0;const iv=setInterval(()=>{v-=v0/16;if(v<=.02){clearInterval(iv);au.pause();au.volume=v0;$('status').textContent='⏰ خلص الوقت اللي حددته';toast('⏰ خلص الوقت — الراديو وقّف')}else au.volume=v},500)},ms)}
+function hxArcStatus(){const c=hxA(),e=$('hxArcSt');if(!e)return;e.textContent=!c.on?'مقفول':('شغّال · '+(c.limit==='n'?`مقاطع: ${c.done}/${c.n}`:c.limit==='t'?`باقي ${Math.max(0,Math.ceil((c.until-Date.now())/60000))} دقيقة`:'بدون حد'))}
+function hxArcUI(){if($('hxArcBox')||!$('emBox'))return;
+ $('emBox').insertAdjacentHTML('beforeend',`<details id="hxArcBox" style="margin-top:12px;text-align:right"><summary style="font-weight:bold;cursor:pointer">🧭 تنقّل تلقائي في الأرشيف <span class="m" id="hxArcSt"></span></summary><div style="display:grid;gap:8px;margin-top:8px">
+ <label><input type="checkbox" id="hxAOn"> كمّل تلقائي بعد ما المقطع يخلص</label>
+ <label>لما القايمة تخلص كمّل في <select id="hxAS"><option value="list">القايمة الحالية بس</option><option value="arc">المجموعة اللي بعدها في نتائج الأرشيف</option><option value="fav">⭐ مفضلة الأرشيف</option><option value="later">🔖 قايمة «بعدين»</option></select></label>
+ <label>الوقف <select id="hxAL"><option value="none">بدون حد (مفتوح)</option><option value="n">بعد عدد مقاطع</option><option value="t">بعد وقت محدد</option></select></label>
+ <label id="hxANw" style="display:none">عدد المقاطع <input id="hxAN" type="number" min="1" max="200" style="width:80px"></label>
+ <label id="hxATw" style="display:none">المدة بالدقايق <input id="hxAT" type="number" min="1" max="720" style="width:80px"></label>
+ <button id="hxAReset" style="background:var(--btn2)">🔄 ابدأ العدّ من دلوقتي</button></div></details>`);
+ const c=hxA();$('hxAOn').checked=c.on;$('hxAS').value=c.scope;$('hxAL').value=c.limit;$('hxAN').value=c.n;$('hxAT').value=c.mins;
+ const sync=()=>{$('hxANw').style.display=$('hxAL').value==='n'?'':'none';$('hxATw').style.display=$('hxAL').value==='t'?'':'none'};sync();
+ const sv=(reset)=>{const o=hxA();o.on=$('hxAOn').checked;o.scope=$('hxAS').value;o.limit=$('hxAL').value;o.n=Math.max(1,+$('hxAN').value||5);o.mins=Math.max(1,+$('hxAT').value||30);
+  if(reset){o.done=0;o.until=o.limit==='t'?Date.now()+o.mins*60000:0}hxASave(o);sync();if(o.on&&$('endMode').value!=='next'&&$('endMode').value!=='all'){$('endMode').value='next';$('endMode').onchange&&$('endMode').onchange()}hxArcSchedule();hxArcStatus()};
+ ['hxAOn','hxAS','hxAL','hxAN','hxAT'].forEach(i=>$(i).onchange=()=>sv(true));$('hxAReset').onclick=()=>{sv(true);toast('اتصفّر العدّاد')};hxArcStatus();setInterval(hxArcStatus,15000)}
+hxArcUI();
+// حفظ نتائج الأرشيف الحالية عند التشغيل
+{const _p=play;play=function(s){if(s&&String(s.stationuuid).startsWith('ia:')&&arcState&&arcState.docs&&arcState.docs.length)hxArcDocs=arcState.docs.map(d=>({id:d.identifier,t:Array.isArray(d.title)?d.title[0]:d.title}));return _p(s)}}
+async function hxArcNext(){const c=hxA(),scope=c.scope;
+ if(scope==='fav'||scope==='later'){const src=(scope==='fav'?favs:later).filter(s=>s&&String(s.stationuuid).startsWith('ia:'));if(!src.length)return false;const i=src.findIndex(s=>current&&s.stationuuid===current.stationuuid);const nx=src[(i+1)%src.length];if(nx.stationuuid===(current&&current.stationuuid)&&src.length===1)return false;playlist=src;playMedia(nx);markPlaying();return true}
+ if(scope==='arc'){const cid=playCtx&&playCtx.id;let i=hxArcDocs.findIndex(d=>d.id===cid);if(i<0)return false;
+  for(let k=i+1;k<hxArcDocs.length;k++){const d=hxArcDocs[k];try{const items=(await getItems(d.id,d.t)).filter(x=>!x.video);if(!items.length)continue;arcState={mode:'item',items,id:d.id,title:d.t,docs:arcState.docs};playlist=items;playCtx={id:d.id,title:d.t};playMedia(items[0]);markPlaying();toast('▶ انتقلنا إلى: '+d.t,4000);return true}catch{}}}
+ return false}
+{const _o=onEnd;onEnd=function(el){const c=hxA(),m=$('endMode').value;if(!c.on||(m!=='next'&&m!=='all'))return _o(el);
+  c.done=(c.done||0)+1;hxASave(c);hxArcStatus();
+  const stop=msg=>{$('status').textContent=msg;toast(msg,5000)};
+  if(c.limit==='n'&&c.done>=c.n)return stop('✋ وقّفت بعد '+c.n+' مقطع زي ما حددت');
+  if(c.limit==='t'&&Date.now()>=c.until)return stop('⏰ خلص الوقت اللي حددته');
+  const i=curIdx();if(i>=0&&i<playlist.length-1)return playAt(i+1);
+  if(c.scope==='list'){return _o(el)}
+  hxArcNext().then(ok=>{if(!ok)_o(el)})}}
+// اظهار الخيارات في «الآن يعمل»
+setInterval(()=>{hxArcUI()},2000);
 </script>
 </body>
 </html>
