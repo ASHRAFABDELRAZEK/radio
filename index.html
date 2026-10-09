@@ -2112,6 +2112,31 @@ if(nav==='reload'&&was==='1'&&ls.get('radioLast',null)){
 HX.hview=function(){const v=hxGet('hview','list');hxPage('🖼 شكل الشاشة الرئيسية',`<div class="hxc"><div class="chips" style="display:flex;flex-wrap:wrap;gap:8px">${[['list','☰ قائمة'],['comp','▦ مدمج (عمودين)'],['grid','⊞ شبكة (3 أعمدة)'],['card','🃏 بطاقات'],['scroll','⇄ شرائط أفقية']].map(x=>`<span class="chip" data-hx="hviewset" data-v="${x[0]}" style="${x[0]===v?'outline:2px solid var(--gold)':''}">${x[1]}</span>`).join('')}</div><p class="m">تقدر كمان تغيّر ترتيب الأقسام أو تخفيها من «ترتيب الرئيسية».</p></div>`)};
 HX.hviewset=function(el){hxSet('hview',el.dataset.v);A();HX.hview()};
 })();
+
+/* HX15: زمن الفن الجميل */
+(function(){
+const Z=[['📻','مسرحيات إذاعية','"مسرحية إذاعية" OR "مسرحيات إذاعية" OR "مسرحية اذاعية"','audio'],
+['🌙','سهرات إذاعية','"سهرة إذاعية" OR "سهرات إذاعية" OR "سهرة اذاعية"','audio'],
+['🎬','أفلام إذاعية','"فيلم إذاعي" OR "أفلام إذاعية" OR "فيلم اذاعي"','audio'],
+['🎭','تمثيليات إذاعية','"تمثيلية إذاعية" OR "تمثيليات اذاعية" OR "تمثيلية اذاعية"','audio'],
+['📺','مسلسلات إذاعية','"مسلسل إذاعي" OR "مسلسلات اذاعية" OR "مسلسل اذاعي"','audio'],
+['🕌','ألف ليلة وليلة','"ألف ليلة وليلة" OR "الف ليلة وليلة"','audio'],
+['🎞','أفلام مصرية قديمة','فيلم مصري قديم','movies'],
+['🎪','مسرح زمان','مسرحية مصرية كاملة','movies'],
+['🎤','أم كلثوم','ام كلثوم OR "أم كلثوم"','audio'],
+['🎶','أغاني زمان','"عبد الحليم" OR "فريد الاطرش" OR "محمد عبد الوهاب" OR "أسمهان"','audio'],
+['🧩','فوازير ومنوعات','فوازير OR "ساعة لقلبك" OR "قطر الندى"','both'],
+['📖','تلاوات نادرة','"مصطفى اسماعيل" OR "محمد رفعت" OR "الحصري" OR "عبد الباسط"','audio']];
+Z.forEach((z,i)=>{HX['zm'+i]=function(){navPush();$('aq').value=z[2];$('amt').value=z[3];arcSearch()}});
+HX.zmfree=function(){arcCats()};
+window.HXZ=Z;
+const g='🕰 زمن الفن الجميل';
+if(!HGRP.includes(g)){const k=HGRP.indexOf('🧭 استكشاف المحطات');HGRP.splice(k+1,0,g)}
+const o=hxGet('hord',null);if(o&&!o.includes(g)){const k=o.indexOf('🧭 استكشاف المحطات');o.splice(k+1,0,g);hxSet('hord',o)}
+const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
+ const tiles=Z.map((z,i)=>`<div class="strip one" data-hx="zm${i}"><span class="si">${z[0]}</span><div class="st2"><b>${z[1]}</b></div></div>`).join('')+`<div class="strip one" data-hx="zmfree"><span class="si">🔍</span><div class="st2"><b>كل أقسام الأرشيف</b></div></div>`;
+ return h.replace('<div class="hgrp">🕌',`<div class="hgrp">${g}</div><div class="hgrid hlist">${tiles}</div><div class="hgrp">🕌`)};
+})();
 </script>
 </body>
 </html>
