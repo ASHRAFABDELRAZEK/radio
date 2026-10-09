@@ -1766,6 +1766,97 @@ HX.gstart=function(){const p=$('gP').value;if(!/^\d{4}$/.test(p))return toast('�
 HX.applyTheme();
 setTimeout(()=>{const g=new URLSearchParams(location.search).get('go');if(g&&HX[g]&&!hxGet('lock','')){navPush&&navPush();HX[g]()}},1200);
 setTimeout(()=>{if(hxGet('fchk','')!==dayKey()&&navigator.onLine)HX.favcheck(true)},6000);
+
+// ===== HX4: حياة عملية =====
+const hxN=s=>{const m={'٠':0,'١':1,'٢':2,'٣':3,'٤':4,'٥':5,'٦':6,'٧':7,'٨':8,'٩':9};return String(s).replace(/[٠-٩]/g,d=>m[d]).replace(/٫/g,'.')};
+const hxMoney=n=>(+n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+const wkStart=()=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+1)%7));return +d};
+const csvDl=(name,rows)=>{const b=new Blob(['﻿'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click()};
+function hxMic(cb){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return toast('الميكروفون مش مدعوم في المتصفح ده');const r=new R();r.lang='ar-EG';r.onresult=e=>cb(e.results[0][0].transcript);r.onerror=()=>toast('ما سمعتش — جرّب تاني');try{r.start();toast('🎤 اتكلم...')}catch{}}
+const EXPCATS=['طعام','مواصلات','فواتير','تسوق','صحة','ترفيه','أخرى'];
+Object.assign(HX,{
+// 1 مصاريف
+exp(){const E=ls.get('exp',[]),ws=wkStart(),ms=new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime();
+ const sum=(f)=>E.filter(f).reduce((a,x)=>a+x.a,0),by={};E.filter(x=>x.t>=ms).forEach(x=>by[x.c]=(by[x.c]||0)+x.a);
+ hxPage('💰 دفتر المصاريف',`<div class="hxc"><div style="display:flex;gap:8px"><input id="eA" inputmode="decimal" placeholder="المبلغ" style="flex:1"><button class="hxb" data-hx="expmic">🎤</button></div><select id="eC">${EXPCATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="eN" placeholder="ملاحظة (اختياري)">${hxBtn('expadd','➕ سجّل')}</div>
+ <div class="hxc"><b>الأسبوع: ${hxMoney(sum(x=>x.t>=ws))} · الشهر: ${hxMoney(sum(x=>x.t>=ms))}</b>${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="m">${c}: ${hxMoney(v)}</div>`).join('')}${hxBtn('expcsv','⬇ تصدير CSV')}</div>`+E.slice(0,15).map((x,i)=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>${hxMoney(x.a)}</b> · ${x.c}<div class="m">${new Date(x.t).toLocaleDateString('en-GB')} ${esc(x.n||'')}</div></div><button class="hxb" data-hx="expdel" data-i="${i}">🗑</button></div>`).join(''))},
+expmic(){hxMic(t=>{const m=hxN(t).match(/\d+(\.\d+)?/);if(m)$('eA').value=m[0];$('eN').value=hxN(t).replace(/\d+(\.\d+)?/,'').trim()})},
+expadd(){const a=parseFloat(hxN($('eA').value));if(!(a>0))return toast('اكتب المبلغ');const E=ls.get('exp',[]);E.unshift({t:Date.now(),a,c:$('eC').value,n:$('eN').value.trim()});ls.set('exp',E.slice(0,2000));toast('اتسجّل ✅');HX.exp()},
+expdel(el){const E=ls.get('exp',[]);E.splice(+el.dataset.i,1);ls.set('exp',E);HX.exp()},
+expcsv(){csvDl('expenses.csv',[['التاريخ','المبلغ','التصنيف','ملاحظة'],...ls.get('exp',[]).map(x=>[new Date(x.t).toLocaleDateString('en-GB'),x.a,x.c,x.n||''])])},
+// 2 مواعيد
+appt(){const A=ls.get('appt',[]).sort((a,b)=>a.t-b.t),perm=window.Notification?Notification.permission:'n/a';
+ hxPage('📅 مواعيد وتذكيرات',`<div class="hxc"><input id="aM" placeholder="التذكير (مثال: اجتماع)"><input id="aT" type="datetime-local"><label><input type="checkbox" id="aR"> شغّل الراديو وقت التذكير</label>${hxBtn('apadd','➕ أضف')}<div class="m">التنبيه بيشتغل والتطبيق مفتوح (في الخلفية على الموبايل ممكن يتأخر). ${perm==='default'?hxBtn('apperm','🔔 اسمح بالإشعارات'):''}</div></div>`+A.map(x=>`<div class="hxc" style="display:flex;align-items:center;gap:8px;${x.done?'opacity:.5':''}"><div style="flex:1"><b>${esc(x.m)}</b><div class="m">${new Date(x.t).toLocaleString('en-GB')} ${x.radio?'· 📻':''} ${x.done?'· ✓':''}</div></div><button class="hxb" data-hx="apdel" data-t="${x.t}">🗑</button></div>`).join(''))},
+apadd(){const t=+new Date($('aT').value),m=$('aM').value.trim();if(!m||!t)return toast('اكتب التذكير والوقت');const A=ls.get('appt',[]);A.push({t,m,radio:$('aR').checked,done:false});ls.set('appt',A);HX.appt()},
+apdel(el){ls.set('appt',ls.get('appt',[]).filter(x=>x.t!=el.dataset.t));HX.appt()},
+apperm(){Notification.requestPermission().then(()=>HX.appt())},
+// 3 مشتريات
+shop(){const S=ls.get('shop',[]);hxPage('🛒 قائمة المشتريات',`<div class="hxc"><div style="display:flex;gap:8px"><input id="sI" placeholder="أضف صنف" style="flex:1"><button class="hxb" data-hx="shmic">🎤</button></div>${hxBtn('shadd','➕ أضف')}</div>`+S.map((x,i)=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><label style="flex:1;${x.ok?'text-decoration:line-through;opacity:.5':''}"><input type="checkbox" data-hx="shck" data-i="${i}" ${x.ok?'checked':''}> ${esc(x.t)}</label><button class="hxb" data-hx="shdel" data-i="${i}">🗑</button></div>`).join('')+`<div class="hxc">${hxBtn('shshare','🔗 شارك القائمة (نسخة)')}${hxBtn('shclear','🧹 امسح اللي اتشرا')}<div class="m">الرابط بيبعت نسخة من القائمة وقت المشاركة، مش قائمة بتتحدّث لحظيًا.</div></div>`)},
+shmic(){hxMic(t=>{$('sI').value=t})},
+shadd(){const t=$('sI').value.trim();if(!t)return;const S=ls.get('shop',[]);t.split(/[,،]| و /).map(x=>x.trim()).filter(Boolean).forEach(x=>S.push({t:x,ok:false}));ls.set('shop',S);HX.shop()},
+shck(el){const S=ls.get('shop',[]);S[+el.dataset.i].ok=el.checked;ls.set('shop',S);HX.shop()},
+shdel(el){const S=ls.get('shop',[]);S.splice(+el.dataset.i,1);ls.set('shop',S);HX.shop()},
+shclear(){ls.set('shop',ls.get('shop',[]).filter(x=>!x.ok));HX.shop()},
+async shshare(){const d=btoa(unescape(encodeURIComponent(JSON.stringify(ls.get('shop',[]).filter(x=>!x.ok).map(x=>x.t))))),u=location.origin+location.pathname+'?sl='+d;try{navigator.share?await navigator.share({title:'قائمة مشتريات',url:u}):(await navigator.clipboard.writeText(u),toast('اتنسخ الرابط ✅'))}catch{}},
+// 4 ملاحظات صوتية
+vn(){hxPage('🎙 ملاحظات صوتية',`<div class="hxc" style="text-align:center">${hxBtn('vnrec','⏺ سجّل','id="vnB"')}<div id="vnS" class="m"></div></div><div id="vnL"></div>`);HX.vnList()},
+async vnDB(){return new Promise((res,rej)=>{const r=indexedDB.open('hxvn',1);r.onupgradeneeded=()=>r.result.createObjectStore('n',{keyPath:'id',autoIncrement:true});r.onsuccess=()=>res(r.result);r.onerror=rej})},
+async vnList(){try{const db=await HX.vnDB(),all=await new Promise(r=>{const q=db.transaction('n').objectStore('n').getAll();q.onsuccess=()=>r(q.result)});const L=$('vnL');if(!L)return;L.innerHTML=all.reverse().map(n=>`<div class="hxc"><div class="m">${new Date(n.d).toLocaleString('en-GB')} · ${n.s}ث</div><audio controls src="${URL.createObjectURL(n.b)}" style="width:100%"></audio><button class="hxb" data-hx="vndel" data-i="${n.id}">🗑</button></div>`).join('')||'<div class="hxc m">مفيش ملاحظات لسه.</div>'}catch{}},
+async vnrec(){if(window.hxRec){window.hxRec.stop();return}
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:true});au.pause();const mr=new MediaRecorder(st),ch=[],t0=Date.now();window.hxRec=mr;mr.ondataavailable=e=>ch.push(e.data);
+  mr.onstop=async()=>{st.getTracks().forEach(t=>t.stop());window.hxRec=null;const db=await HX.vnDB();db.transaction('n','readwrite').objectStore('n').add({d:Date.now(),b:new Blob(ch,{type:mr.mimeType}),s:Math.round((Date.now()-t0)/1000)});setTimeout(()=>{if($('vnB'))$('vnB').textContent='⏺ سجّل';$('vnS')&&($('vnS').textContent='اتحفظت ✅');HX.vnList()},200)};
+  mr.start();$('vnB').textContent='⏹ إيقاف وحفظ';$('vnS').textContent='🔴 بيسجّل...'}catch{toast('محتاج إذن الميكروفون')}},
+async vndel(el){const db=await HX.vnDB();db.transaction('n','readwrite').objectStore('n').delete(+el.dataset.i);setTimeout(HX.vnList,150)},
+// 5 تتبّع وقت
+time(){const T=ls.get('tt',{run:null,log:[]}),run=T.run,ws=wkStart(),by={};T.log.filter(x=>x.t0>=ws).forEach(x=>by[x.p]=(by[x.p]||0)+(x.t1-x.t0));
+ const H=ms=>{const m=Math.round(ms/60000);return Math.floor(m/60)+'س '+m%60+'د'};const ps=[...new Set(T.log.map(x=>x.p))];
+ hxPage('⏱ تتبّع الوقت',`<div class="hxc">${run?`<b>شغّال: ${esc(run.p)}</b><div class="m" id="ttN">منذ ${H(Date.now()-run.t0)}</div>${hxBtn('ttstop','⏹ وقّف')}`:`<input id="tP" list="tPl" placeholder="اسم المشروع / العميل"><datalist id="tPl">${ps.map(p=>`<option>${esc(p)}</option>`).join('')}</datalist>${hxBtn('ttstart','▶ ابدأ')}`}</div><div class="hxc"><b>هذا الأسبوع</b>${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`<div class="m">${esc(p)}: ${H(v)}</div>`).join('')||'<div class="m">لسه مفيش</div>'}${hxBtn('ttcsv','⬇ تصدير CSV')}</div>`+T.log.slice(-8).reverse().map((x,i)=>`<div class="hxc"><b>${esc(x.p)}</b> · ${H(x.t1-x.t0)}<div class="m">${new Date(x.t0).toLocaleString('en-GB')}</div></div>`).join(''))},
+ttstart(){const p=$('tP').value.trim();if(!p)return toast('اكتب اسم المشروع');const T=ls.get('tt',{run:null,log:[]});T.run={p,t0:Date.now()};ls.set('tt',T);HX.time()},
+ttstop(){const T=ls.get('tt',{run:null,log:[]});if(T.run){T.log.push({p:T.run.p,t0:T.run.t0,t1:Date.now()});T.run=null;ls.set('tt',T)}HX.time()},
+ttcsv(){csvDl('time.csv',[['المشروع','البداية','النهاية','دقائق'],...ls.get('tt',{log:[]}).log.map(x=>[x.p,new Date(x.t0).toLocaleString('en-GB'),new Date(x.t1).toLocaleString('en-GB'),Math.round((x.t1-x.t0)/60000)])])},
+// 6 حاسبات
+calc(){hxPage('🧮 حاسبات',`<div class="hxc"><b>ضريبة القيمة المضافة (15%)</b><input id="cV" inputmode="decimal" placeholder="المبلغ"><div style="display:flex;gap:8px">${hxBtn('vatadd','أضف الضريبة')}${hxBtn('vatext','استخرج الضريبة من الإجمالي')}</div><div id="cVr" class="m"></div></div><div class="hxc"><b>زكاة المال (2.5%)</b><input id="cZ" inputmode="decimal" placeholder="المال الذي حال عليه الحول"><div id="cZr" class="m"></div>${hxBtn('zk','احسب')}<div class="m">تأكد من بلوغ النصاب واستيفاء الشروط، وراجع جهة موثوقة للتفاصيل.</div></div><div class="hxc"><b>نسبة مئوية</b><div style="display:flex;gap:8px"><input id="pA" inputmode="decimal" placeholder="النسبة %"><input id="pB" inputmode="decimal" placeholder="من"></div>${hxBtn('pct','احسب')}<div id="cPr" class="m"></div></div>`)},
+vatadd(){const v=parseFloat(hxN($('cV').value));if(!(v>=0))return;$('cVr').innerHTML=`الضريبة: <b>${hxMoney(v*.15)}</b> · الإجمالي: <b>${hxMoney(v*1.15)}</b>`},
+vatext(){const v=parseFloat(hxN($('cV').value));if(!(v>=0))return;const b=v/1.15;$('cVr').innerHTML=`قبل الضريبة: <b>${hxMoney(b)}</b> · الضريبة: <b>${hxMoney(v-b)}</b>`},
+zk(){const v=parseFloat(hxN($('cZ').value));if(!(v>=0))return;$('cZr').innerHTML=`الزكاة: <b>${hxMoney(v*.025)}</b>`},
+pct(){const a=parseFloat(hxN($('pA').value)),b=parseFloat(hxN($('pB').value));if(isNaN(a)||isNaN(b))return;$('cPr').innerHTML=`${a}% من ${b} = <b>${hxMoney(a*b/100)}</b>`},
+// 7 أسعار
+async prices(){hxPage('💱 أسعار وعملات','<div class="hxc">جاري التحميل...</div>');
+ try{const [fx,g]=await Promise.all([fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json()),fetch('https://api.gold-api.com/price/XAU').then(r=>r.json())]);const R=fx.rates,sar=R.SAR,gp=g.price/31.1035*sar;window.hxFx=R;
+  const cur=['SAR','USD','EUR','GBP','EGP','AED','KWD','TRY','CNY','JPY'];
+  hxPage('💱 أسعار وعملات',`<div class="hxc"><b>ذهب (بالريال/جرام)</b><div class="m">عيار 24: ${hxMoney(gp)} · عيار 22: ${hxMoney(gp*22/24)} · عيار 21: ${hxMoney(gp*21/24)} · عيار 18: ${hxMoney(gp*18/24)}</div><div class="m">سعر عالمي للأونصة: $${hxMoney(g.price)} (غير شامل المصنعية)</div></div><div class="hxc"><b>محوّل عملات</b><input id="fA" inputmode="decimal" value="100"><div style="display:flex;gap:8px"><select id="fF">${cur.map(c=>`<option ${c==='SAR'?'selected':''}>${c}</option>`).join('')}</select><select id="fT">${cur.map(c=>`<option ${c==='EGP'?'selected':''}>${c}</option>`).join('')}</select></div><div id="fR" style="font-size:20px"></div><div class="m">الأسعار استرشادية وليست أسعار بنوك.</div></div>`);
+  const up=()=>{const a=parseFloat(hxN($('fA').value))||0;$('fR').innerHTML='<b>'+hxMoney(a/R[$('fF').value]*R[$('fT').value])+'</b> '+$('fT').value};['fA','fF','fT'].forEach(i=>$(i).oninput=up);up()}catch{hxPage('💱 أسعار وعملات','<div class="hxc">تعذر تحميل الأسعار — تأكد من الإنترنت.</div>')}},
+// 8 طقس
+weather(){hxPage('🌤 الطقس','<div class="hxc">بنحدد موقعك...</div>');if(!navigator.geolocation)return toast('الموقع غير مدعوم');
+ navigator.geolocation.getCurrentPosition(async p=>{try{const j=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&current=temperature_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=3`).then(r=>r.json());
+  const W=c=>c===0?['☀️','صافي']:c<4?['⛅','غائم جزئيًا']:c<50?['🌫','ضباب']:c<70?['🌧','مطر']:c<80?['❄️','ثلج']:c<90?['🌦','زخات']:['⛈','عاصفة رعدية'],cw=W(j.current.weather_code),rain=j.daily.precipitation_probability_max[0],hot=j.daily.temperature_2m_max[0];
+  const tip=rain>=50?'☂ خد شمسية أو مطرية':hot>=38?'🥵 حرارة عالية — اشرب ماء وتجنّب الشمس':'🙂 يوم مناسب';
+  hxPage('🌤 الطقس',`<div class="hxc" style="text-align:center"><div style="font-size:60px">${cw[0]}</div><div style="font-size:34px;font-weight:bold">${Math.round(j.current.temperature_2m)}°</div><div>${cw[1]} · رياح ${Math.round(j.current.wind_speed_10m)} كم/س</div><div class="m">اليوم: ${Math.round(j.daily.temperature_2m_min[0])}° – ${Math.round(hot)}° · احتمال مطر ${rain}%</div><b>${tip}</b></div>`+[1,2].map(i=>{const d=new Date(j.daily.time[i]);return `<div class="hxc">${d.toLocaleDateString('ar',{weekday:'long'})}: ${Math.round(j.daily.temperature_2m_min[i])}° – ${Math.round(j.daily.temperature_2m_max[i])}° · مطر ${j.daily.precipitation_probability_max[i]}%</div>`}).join('')+`<div class="hxc m">المرور مش متاح مجانًا داخل التطبيق؛ افتح خرائط جوجل قبل الخروج.</div>`)}catch{toast('تعذر تحميل الطقس')}},()=>toast('اسمح بالموقع'),{timeout:15000})},
+// 9 ترجمة
+trans(){const L=[['ar','عربي'],['en','English'],['fr','Français'],['tr','Türkçe'],['de','Deutsch'],['es','Español'],['ur','اردو']];
+ hxPage('🌐 ترجمة',`<div class="hxc"><div style="display:flex;gap:8px"><select id="tF">${L.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join('')}</select><button class="hxb" data-hx="tsw">⇄</button><select id="tT">${L.map(l=>`<option value="${l[0]}" ${l[0]==='en'?'selected':''}>${l[1]}</option>`).join('')}</select></div><textarea id="tX" rows="3" maxlength="480" placeholder="اكتب أو اتكلم..."></textarea><div style="display:flex;gap:8px">${hxBtn('tmic','🎤')}${hxBtn('tgo','🌐 ترجم')}</div><div id="tR" style="font-size:20px;line-height:1.8"></div>${hxBtn('tsay','🔊 انطق','id="tSayB" style="display:none"')}</div>`)},
+tsw(){const a=$('tF').value;$('tF').value=$('tT').value;$('tT').value=a},
+tmic(){hxMic(t=>{$('tX').value=t;HX.tgo()})},
+async tgo(){const q=$('tX').value.trim();if(!q)return;$('tR').textContent='...';try{const j=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=${$('tF').value}|${$('tT').value}`).then(r=>r.json());$('tR').textContent=j.responseData.translatedText;$('tSayB').style.display=''}catch{$('tR').textContent='تعذرت الترجمة'}},
+tsay(){try{const u=new SpeechSynthesisUtterance($('tR').textContent);u.lang=$('tT').value;speechSynthesis.speak(u)}catch{}},
+// 10 QR / فاتورة
+qr(){hxPage('🔳 قارئ QR / فاتورة',`<div class="hxc">${hxBtn('qrcam','📷 امسح بالكاميرا')}<label>أو صورة <input type="file" id="qrF" accept="image/*"></label><textarea id="qrT" rows="3" placeholder="أو الصق نص QR هنا (Base64 للفاتورة الضريبية)"></textarea>${hxBtn('qrdec','🔍 فك')}<video id="qrV" playsinline muted style="width:100%;display:none;border-radius:12px"></video><div id="qrR"></div></div>`);
+ $('qrF').onchange=async e=>{if(!('BarcodeDetector'in window))return toast('المتصفح لا يدعم قراءة QR من الصور');try{const bm=await createImageBitmap(e.target.files[0]),r=await new BarcodeDetector().detect(bm);r[0]?(($('qrT').value=r[0].rawValue),HX.qrdec()):toast('مفيش QR واضح في الصورة')}catch{toast('تعذرت القراءة')}}},
+async qrcam(){if(!('BarcodeDetector'in window))return toast('المتصفح لا يدعم المسح — استخدم الصورة أو الصق النص');
+ try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}),v=$('qrV');v.srcObject=st;v.style.display='block';await v.play();const det=new BarcodeDetector();const loop=async()=>{if(!$('qrV')||!st.active)return;try{const r=await det.detect(v);if(r[0]){st.getTracks().forEach(t=>t.stop());v.style.display='none';$('qrT').value=r[0].rawValue;navigator.vibrate&&navigator.vibrate(60);return HX.qrdec()}}catch{}setTimeout(loop,300)};loop()}catch{toast('محتاج إذن الكاميرا')}},
+qrdec(){const t=$('qrT').value.trim(),o=$('qrR');if(!t)return;
+ try{const bin=atob(t),by=Uint8Array.from(bin,c=>c.charCodeAt(0)),F={};let i=0;while(i<by.length){const tag=by[i],len=by[i+1];F[tag]=new TextDecoder().decode(by.slice(i+2,i+2+len));i+=2+len}
+  if(!F[1]||!F[4])throw 0;const tot=parseFloat(F[4]),vat=parseFloat(F[5]||0),base=tot-vat;
+  o.innerHTML=`<div class="hxc"><b>فاتورة ضريبية (ZATCA)</b><div>البائع: ${esc(F[1])}</div><div>الرقم الضريبي: ${esc(F[2]||'-')}</div><div>التاريخ: ${esc(F[3]||'-')}</div><div>الإجمالي: <b>${hxMoney(tot)}</b></div><div>الضريبة: <b>${hxMoney(vat)}</b></div><div class="m">قبل الضريبة: ${hxMoney(base)} · النسبة الفعلية: ${base>0?(vat/base*100).toFixed(1):'-'}%</div><div class="m">فك هيكلي فقط — لا يتحقق من التوقيع أو صلاحية الفاتورة.</div></div>`}
+ catch{o.innerHTML=`<div class="hxc"><div class="m">نص عادي:</div><div style="word-break:break-all">${esc(t)}</div>${/^https?:\/\//.test(t)?`<a href="${esc(t)}" target="_blank" rel="noopener">فتح الرابط</a>`:''}</div>`}}
+});
+// hub
+{const _h=HX.hub;HX.hub=function(){_h();$('list').firstElementChild.insertAdjacentHTML('beforeend',`<div class="hgrp">💼 حياة عملية</div><div class="hgrid">${hxCell('exp','💰','مصاريف')}${hxCell('appt','📅','مواعيد')}${hxCell('shop','🛒','مشتريات')}${hxCell('vn','🎙','ملاحظات صوتية')}${hxCell('time','⏱','تتبّع وقت')}${hxCell('calc','🧮','حاسبات')}${hxCell('prices','💱','ذهب وعملات')}${hxCell('weather','🌤','طقس')}${hxCell('trans','🌐','ترجمة')}${hxCell('qr','🔳','QR وفاتورة')}</div>`)}}
+// المواعيد: فحص كل 20 ثانية
+setInterval(()=>{const A=ls.get('appt',[]),n=Date.now();let ch=false;A.forEach(x=>{if(!x.done&&x.t<=n){x.done=true;ch=true;toast('⏰ '+x.m,12000);hxBeep();navigator.vibrate&&navigator.vibrate([200,100,200]);try{if(window.Notification&&Notification.permission==='granted')new Notification('⏰ '+x.m)}catch{}
+ if(x.radio){const l=ls.get('radioLast',null);if(l&&l.item)hxPlayAll([l.item])}}});if(ch)ls.set('appt',A)},20000);
+// استقبال قائمة مشتريات
+setTimeout(()=>{const d=new URLSearchParams(location.search).get('sl');if(!d)return;try{const L=JSON.parse(decodeURIComponent(escape(atob(d))));if(!Array.isArray(L)||!L.length)return;if(confirm('وصلتك قائمة مشتريات فيها '+L.length+' صنف. تضيفها لقائمتك؟')){const S=ls.get('shop',[]);L.forEach(t=>S.push({t:String(t).slice(0,80),ok:false}));ls.set('shop',S);navPush();HX.shop()}}catch{}},1600);
 </script>
 </body>
 </html>
