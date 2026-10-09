@@ -421,7 +421,7 @@ body.nodel .st .rmx{display:none!important}
 .hs-circle #list#list>.hsub,.hs-square #list#list>.hsub,.hs-dot #list#list>.hsub{grid-column:span 3!important;margin:3px!important;padding:4px!important;font-size:11px!important;font-weight:700;background:linear-gradient(150deg,rgba(20,184,166,.32),rgba(20,184,166,.10))!important;border:2px dashed rgba(45,212,191,.8)!important}
 .hs-circle #list#list>.hsub:not(.fold),.hs-square #list#list>.hsub:not(.fold),.hs-dot #list#list>.hsub:not(.fold){background:linear-gradient(150deg,rgba(20,184,166,.55),rgba(20,184,166,.2))!important;border:2px solid #2dd4bf!important;box-shadow:0 0 0 3px rgba(45,212,191,.28)}
 .hs-circle #list#list>.hsub,.hs-dot #list#list>.hsub{border-radius:30%!important}
-.hs-square #list#list>.hsub{border-radius:50%!important}
+.hs-square #list#list>.hsub{border-radius:12px!important}
 .hs-dot #list#list>.hgrp{grid-column:span 3!important;font-size:10.5px!important}
 .hs-dot #list#list>.hsub{grid-column:span 2!important;font-size:9px!important}
 .hcrumb{grid-column:1/-1;font-size:12px;font-weight:700;padding:5px 12px;margin:2px 0 0;border-radius:10px;background:rgba(100,140,255,.16);border-inline-start:5px solid rgba(130,160,255,.9);color:#cfd8ff}
@@ -2428,7 +2428,7 @@ setTimeout(apply,600);window.hxFoldApply=apply;
 (function(){
 const MODES=['hv-grid','hv-comp','hv-scroll','hv-card','hv-g4','hv-big'],SH=['hs-pill','hs-square','hs-circle'],DN=['hd-s','hd-l'];
 const A=()=>{const b=document.body.classList;[...MODES,...SH,...DN].forEach(c=>b.remove(c));
- const v=hxGet('hview','list');if(v!=='list')b.add('hv-'+v);const s=hxGet('hshape','rect');if(s!=='rect')b.add('hs-'+s);const d=hxGet('hdens','m');if(d!=='m')b.add('hd-'+d)};
+ const v=hxGet('hview','list');if(v!=='list')b.add('hv-'+v);const s=hxGet('hshape','square');if(s!=='rect')b.add('hs-'+s);const d=hxGet('hdens','m');if(d!=='m')b.add('hd-'+d)};
 A();window.hxApplyView=A;
 const chips=(k,def,arr)=>{const v=hxGet(k,def);return `<div class="chips" style="display:flex;flex-wrap:wrap;gap:8px;margin:6px 0">${arr.map(x=>`<span class="chip" data-hx="hviewset" data-k="${k}" data-v="${x[0]}" style="${x[0]===v?'outline:2px solid var(--gold)':''}">${x[1]}</span>`).join('')}</div>`};
 HX.hview=function(){hxPage('🖼 شكل الشاشة الرئيسية',
@@ -2638,11 +2638,11 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 (function(){
 const SH=['hs-pill','hs-square','hs-circle','hs-dot'];
 const A0=window.hxApplyView;
-window.hxApplyView=function(){A0&&A0();const b=document.body.classList;SH.forEach(c=>b.remove(c));const s=hxGet('hshape','rect');if(s!=='rect')b.add('hs-'+s)};
+window.hxApplyView=function(){A0&&A0();const b=document.body.classList;SH.forEach(c=>b.remove(c));const s=hxGet('hshape','square');if(s!=='rect')b.add('hs-'+s)};
 window.hxApplyView();
 const tip=()=>{document.querySelectorAll('#list .strip').forEach(e=>{if(!e.title){const t=(e.querySelector('.st2 b')||e.querySelector('.st2')||{}).textContent;if(t)e.title=t.trim()}})};
 const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(tip,50);setTimeout(tip,600)};
-const _h=HX.hview;HX.hview=function(){_h();const chip=document.querySelector('.hxp [data-k=hshape][data-v=circle]');if(chip&&!document.querySelector('.hxp [data-v=dot]')){const d=document.createElement('span');d.className='chip';d.dataset.hx='hviewset';d.dataset.k='hshape';d.dataset.v='dot';d.textContent='● نقطة (أيقونات بس)';if(hxGet('hshape','rect')==='dot')d.style.outline='2px solid var(--gold)';chip.parentNode.appendChild(d)}};
+const _h=HX.hview;HX.hview=function(){_h();const chip=document.querySelector('.hxp [data-k=hshape][data-v=circle]');if(chip&&!document.querySelector('.hxp [data-v=dot]')){const d=document.createElement('span');d.className='chip';d.dataset.hx='hviewset';d.dataset.k='hshape';d.dataset.v='dot';d.textContent='● نقطة (أيقونات بس)';if(hxGet('hshape','square')==='dot')d.style.outline='2px solid var(--gold)';chip.parentNode.appendChild(d)}};
 setTimeout(tip,800);
 })();
 
@@ -2660,7 +2660,7 @@ setTimeout(apply,700);window.hxSubApply=apply;
 
 /* HX36: أكورديون تلقائي في الأشكال الهندسية */
 (function(){
-const geo=()=>/circle|square|dot/.test(hxGet('hshape','rect'));
+const geo=()=>/circle|square|dot/.test(hxGet('hshape','square'));
 function norm(){if(!geo())return;const L=$('list');if(!L)return;
  const hs=[...L.querySelectorAll(':scope>.hgrp')];const k=g=>g.textContent.replace('▾','').trim();
  const f=hxGet('hfold',[]);const op=hs.filter(g=>!f.includes(k(g)));
@@ -2808,6 +2808,9 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
 const _s=showHome;showHome=function(){_s.apply(this,arguments);[60,230,900].forEach(t=>setTimeout(()=>{addBtns();applyHidden()},t))};
 setTimeout(()=>{addBtns();applyHidden()},1100);
 })();
+
+/* HX43: الافتراضي مربعات لكل المستخدمين (مرة واحدة عند أول فتح بعد التحديث) */
+(function(){try{if(!hxGet('defsq1',false)){hxSet('hshape','square');hxSet('defsq1',true);hxSet('hfold',HGRP.filter(x=>!/الروحانيات/.test(x)));window.hxApplyView&&hxApplyView();showHome()}}catch(e){}})();
 </script>
 </body>
 </html>
