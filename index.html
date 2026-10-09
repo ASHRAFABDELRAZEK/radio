@@ -2137,6 +2137,28 @@ const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false)
  const tiles=Z.map((z,i)=>`<div class="strip one" data-hx="zm${i}"><span class="si">${z[0]}</span><div class="st2"><b>${z[1]}</b></div></div>`).join('')+`<div class="strip one" data-hx="zmfree"><span class="si">🔍</span><div class="st2"><b>كل أقسام الأرشيف</b></div></div>`;
  return h.replace('<div class="hgrp">🕌',`<div class="hgrp">${g}</div><div class="hgrid hlist">${tiles}</div><div class="hgrp">🕌`)};
 })();
+
+/* HX16: مصادر نادرة إضافية (بودكاست + ويكيميديا) */
+(function(){
+const P=['مسرحية إذاعية','سهرة إذاعية','تمثيلية إذاعية','ألف ليلة وليلة','أم كلثوم','فوازير رمضان','إذاعة زمان','عبد الحليم حافظ','محمد عبد الوهاب','مصطفى إسماعيل','محمد رفعت','نجيب الريحاني','إسماعيل ياسين','يوسف وهبي','ساعة لقلبك'];
+HX.zx=function(){hxPage('🔎 بحث موسّع في مصادر نادرة',`<div class="hxc"><div class="m">بيدوّر في بودكاستات عربية (فيها تسجيلات إذاعية قديمة اترفعت) وفي مكتبة ويكيميديا كومنز (تسجيلات حرّة ونادرة)، غير الأرشيف.</div><input id="zxq" placeholder="اكتب اللي بتدوّر عليه…" style="width:100%;margin:8px 0"><button class="hxb" data-hx="zxgo">🔎 ابحث</button></div><div class="hxc"><div class="m">اقتراحات سريعة</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">${P.map(x=>`<span class="chip" data-hx="zxgo" data-q="${x}">${x}</span>`).join('')}</div></div>`)};
+HX.zxgo=async function(el){const q=((el&&el.dataset&&el.dataset.q)||($('zxq')||{}).value||'').trim();if(!q)return;
+ setTab('all');$('viewTitle').textContent='🔎 '+q;$('list').innerHTML='<p style="grid-column:1/-1">جاري البحث في المصادر…</p>';
+ const J=async u=>{try{return await (await fetch(u)).json()}catch{return null}};
+ const [e1,e2,c]=await Promise.all([
+  J('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=podcast&entity=podcastEpisode&limit=50&country=EG'),
+  J('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=podcast&entity=podcastEpisode&limit=50&country=SA'),
+  J('https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(q)+'&gsrnamespace=6&gsrlimit=40&prop=imageinfo&iiprop=url|mime&format=json&origin=*')]);
+ const seen=new Set(),items=[];
+ [...((e1&&e1.results)||[]),...((e2&&e2.results)||[])].forEach(r=>{const u=r.episodeUrl;if(!u||seen.has(u))return;seen.add(u);
+  items.push({stationuuid:'ext:'+(r.trackId||u),name:r.trackName||'حلقة',country:'🎙 '+(r.collectionName||'بودكاست'),tags:'podcast',favicon:r.artworkUrl100||'',url_resolved:u,url:u})});
+ Object.values((c&&c.query&&c.query.pages)||{}).forEach(p=>{const ii=p.imageinfo&&p.imageinfo[0];if(!ii||!/^(audio|video)\//.test(ii.mime||'')&&!/ogg|webm/.test(ii.mime||''))return;
+  if(seen.has(ii.url))return;seen.add(ii.url);items.push({stationuuid:'ext:'+p.pageid,name:p.title.replace(/^File:/,'').replace(/\.[^.]+$/,'').replace(/_/g,' '),country:'📚 ويكيميديا كومنز',tags:'wiki',favicon:'',url_resolved:ii.url,url:ii.url})});
+ if(!items.length){$('list').innerHTML='<p style="grid-column:1/-1">مفيش نتائج في المصادر دي، جرّب كلمة تانية.</p><div style="grid-column:1/-1"><button class="hxb" data-hx="zx">↩ بحث جديد</button></div>';return}
+ results=items;playlist=items;render(items)};
+const g='🕰 زمن الفن الجميل',_t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
+ return h.replace(/(<div class="strip one" data-hx="zmfree">)/,`<div class="strip one gold" data-hx="zx"><span class="si">🔎</span><div class="st2"><b>بحث موسّع في مصادر نادرة</b> <span class="m">· بودكاست + ويكيميديا</span></div></div>$1`)};
+})();
 </script>
 </body>
 </html>
