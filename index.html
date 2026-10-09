@@ -195,6 +195,8 @@ body.hasSide>#gBar{margin-right:300px}
 .mdet .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 14px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:var(--btn2);border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:14px}
 .chip.on{background:var(--acc);border-color:var(--gold);color:#fff}.chip:hover{border-color:var(--gold)}
+
+.toolrow{grid-column:1/-1;display:flex;gap:8px}.tbtn{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center;cursor:pointer;font-size:13px;line-height:1.5}.tbtn:hover{border-color:var(--gold)}.tbtn .tIc{font-size:24px;display:block}
 </style>
 </head>
 <body>
@@ -1041,7 +1043,7 @@ async function featured(){
 $('tAll').onclick=()=>{featured()};
 // ===== 5) فولدرات المفضلة =====
 let favGrp=ls.get('favGrp','');
-const grps=()=>[...new Set(['قرآن','أخبار','طرب','مسرحيات',...favs.map(f=>f.grp).filter(Boolean)])];
+var grps=()=>[...new Set(['قرآن','أخبار','موسيقى','أرشيف',...favs.map(f=>f.grp).filter(Boolean)])];
 (function(){const _r=render;render=function(arr){
   if(view==='fav'&&arr===favs&&favGrp){const sub=favs.filter(f=>f.grp===favGrp);_r(sub);}else _r(arr);
   if(view==='fav'&&arr===favs){
@@ -1230,12 +1232,67 @@ $('list').addEventListener('click',e=>{
 (function(){const _s=showHome;showHome=function(){_s();const mt=$('list').querySelector('[data-act="modes"]');if(!mt)return;
   const di=dailyIdx(),st=ls.get('streak',{d:'',n:0});
   const tl=(a,ic,t,s)=>`<div class="tile" data-act="${a}"><div class="tIc">${ic}</div><div><b>${t}</b><div class="m">${s}</div></div></div>`;
-  mt.insertAdjacentHTML('afterend',(di!=null?tl('daily','✨','مقترح اليوم',MODES[di][1]+(st.n>1?' · 🔥 '+st.n+' أيام':'')):'')+tl('drive','🚗','وضع السواقة','أزرار كبيرة')+tl('study','🎓','تركيز ومذاكرة','مؤقت + موسيقى هادية')+tl('later','🔖','بعدين',later.length+' عنصر'))}})();
+  mt.insertAdjacentHTML('afterend',(di!=null?tl('daily','✨','مقترح اليوم',MODES[di][1]+(st.n>1?' · 🔥 '+st.n+' أيام':'')):'')+`<div class="toolrow"><div class="tbtn" data-act="drive"><span class="tIc">🚗</span>سواقة</div><div class="tbtn" data-act="study"><span class="tIc">🎓</span>مذاكرة</div><div class="tbtn" data-act="later"><span class="tIc">🔖</span>بعدين (${later.length})</div></div>`)}})();
 // أوقات الصلاة: مفيش افتراض لمدينة معيّنة
 {const _lp=loadPrayer;loadPrayer=async function(f){if(pCfg.lat==null&&!pCfg.city)return;return _lp(f)}}
 (function(){const b=document.createElement('button');b.textContent='⚙️ إعادة الإعداد الأول (اللغة والموقع والاهتمامات)';b.style.cssText='background:var(--btn2);margin:10px';
   const add=()=>{const side=document.querySelector('#side');if(side&&!$('reWel')){b.id='reWel';b.onclick=()=>{document.body.classList.remove('sideOpen');welcome(true)};side.appendChild(b)}};add();setTimeout(add,1500)})();
 setTimeout(()=>welcome(false),800);
+
+// ===== 8) مشاركة محطة + معالجة المحطات المتوقفة + إدارة مجموعات المفضلة =====
+const hidden=new Set(ls.get('radioHidden',[]));
+// -- مشاركة
+function shareStation(s){s=s||current;if(!s)return toast('اختار محطة الأول');
+  if(String(s.stationuuid).startsWith('ia:')||s.masp)return toast('المشاركة بتشتغل مع محطات الراديو بس');
+  const url=location.origin+location.pathname+'?s='+encodeURIComponent(s.stationuuid);
+  if(navigator.share){navigator.share({title:s.name,text:'اسمع '+s.name+' على راديو العالم',url}).catch(()=>{})}
+  else{(navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast('🔗 اتنسخ رابط المحطة')).catch(()=>prompt('انسخ الرابط:',url))}}
+(function(){const n=$('npFav');if(n&&!$('npShare')){n.insertAdjacentHTML('afterend','<button id="npShare">🔗 مشاركة</button>');$('npShare').onclick=()=>shareStation()}})();
+setTimeout(async function(){const id=new URLSearchParams(location.search).get('s');if(!id)return;
+  try{const a=await (await fetch(API+'/json/stations/byuuid/'+encodeURIComponent(id))).json();const s=a[0];if(!s)return toast('المحطة دي مش موجودة');
+    setTab('all');$('viewTitle').textContent='🔗 محطة مُشاركة';results=[s];render([s]);playlist=[s];toast('اضغط على المحطة لتشغيلها');
+    play(s)}catch{toast('تعذر فتح المحطة المُشاركة')}},1500);
+// -- المحطات المتوقفة
+function deadBar(s){if(!s||$('deadBar'))return;const d=document.createElement('div');d.id='deadBar';
+  d.style.cssText='position:fixed;left:10px;right:10px;bottom:150px;z-index:72;background:var(--card);border:2px solid #f59e0b;border-radius:14px;padding:12px;box-shadow:0 6px 24px rgba(0,0,0,.5)';
+  d.innerHTML=`<div style="font-weight:bold;margin-bottom:8px">⚠️ «${esc(s.name)}» مش بتشتغل دلوقتي</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button id="dbRetry">🔄 إعادة المحاولة</button><button id="dbAlt">🔁 رابط بديل</button><button id="dbNext" style="background:var(--btn2)">⏭ التالية</button><button id="dbRep" style="background:#7c2d12">🚫 أبلّغ وأخفيها</button><button id="dbX" style="background:var(--btn2)">✕</button></div><div class="m" id="dbMsg" style="margin-top:6px"></div>`;
+  document.body.appendChild(d);const close=()=>d.remove();
+  $('dbX').onclick=close;
+  $('dbRetry').onclick=()=>{close();bad.delete(s.stationuuid);play(s)};
+  $('dbAlt').onclick=async()=>{const m=$('dbMsg');m.textContent='بدوّر على رابط بديل...';
+    try{const a=await (await fetch(API+'/json/stations/byuuid/'+encodeURIComponent(s.stationuuid))).json();const f=a[0]||{};
+      const cands=[f.url_resolved,f.url,s.url].filter((u,i,arr)=>u&&u!==(s.url_resolved)&&arr.indexOf(u)===i);
+      if(!cands.length){m.textContent='مفيش رابط بديل متاح للمحطة دي';return}
+      close();bad.delete(s.stationuuid);play(Object.assign({},s,{url_resolved:cands[0],hls:/\.m3u8/i.test(cands[0])}));toast('جرّبت الرابط البديل')}catch{m.textContent='تعذر الاتصال'}};
+  $('dbNext').onclick=()=>{close();$('nextB').click()};
+  $('dbRep').onclick=()=>{hidden.add(s.stationuuid);ls.set('radioHidden',[...hidden]);bad.add(s.stationuuid);ls.set('radioBad',[...bad]);close();toast('اتخفت المحطة من القوايم عندك');if(view!=='home'&&window._lastArr)render(window._lastArr)}}
+{const _mb=markBad;markBad=function(s,on){_mb(s,on);if(on&&s&&!String(s.stationuuid).startsWith('ia:'))deadBar(s)}}
+au.addEventListener('error',()=>{const s=current;if(!s||String(s.stationuuid).startsWith('ia:')||!au.error)return;setTimeout(()=>{if(current===s&&(au.error||au.paused&&au.readyState<2))deadBar(s)},800)});
+(function(){const _r=render;render=function(arr){const a=(view==='fav'||!hidden.size)?arr:arr.filter(s=>!hidden.has(s.stationuuid));_r(a);window._lastArr=a}})();
+// -- إدارة مجموعات المفضلة
+(function(){const base=()=>ls.get('grpBase',['قرآن','أخبار','موسيقى','أرشيف']);
+  window.grps=()=>[...new Set([...base(),...favs.map(f=>f.grp).filter(Boolean)])];
+  const _r=render;render=function(arr){_r(arr);if(view==='fav'&&arr===favs){const bar=$('list').querySelector('.grpBar');if(bar)bar.insertAdjacentHTML('beforeend','<button data-grpmgr="1" style="background:var(--btn2)">✏️ تعديل المجموعات</button>')}};
+  window.grpManager=function(){let d=$('grpMgr');if(d)d.remove();d=document.createElement('div');d.id='grpMgr';d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;display:flex;align-items:center;justify-content:center;padding:14px';
+    const draw=()=>{d.innerHTML=`<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(380px,100%);max-height:85vh;overflow:auto;color:var(--txt)"><b>✏️ مجموعات المفضلة</b><div style="margin:10px 0">${grps().map((g,i)=>`<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px"><input data-gn="${i}" value="${esc(g)}" style="flex:1;min-width:0"><span class="m">${favs.filter(f=>f.grp===g).length}</span><button data-gd="${i}" style="background:#7c2d12;padding:6px 10px">🗑</button></div>`).join('')}</div><div style="display:flex;gap:6px"><input id="gnNew" placeholder="مجموعة جديدة..." style="flex:1;min-width:0"><button id="gnAdd">إضافة</button></div><div style="text-align:center;margin-top:14px"><button id="gnX" style="background:var(--btn2);padding:8px 24px">تم</button></div></div>`;
+      const G=grps();
+      d.querySelectorAll('[data-gn]').forEach(inp=>inp.onchange=()=>{const old=G[+inp.dataset.gn],nw=inp.value.trim();if(!nw||nw===old)return draw();
+        favs.forEach(f=>{if(f.grp===old)f.grp=nw});ls.set('radioFavs',favs);const b=base();const k=b.indexOf(old);if(k>=0)b[k]=nw;else b.push(nw);ls.set('grpBase',[...new Set(b)]);if(favGrp===old){favGrp=nw;ls.set('favGrp',nw)}draw()});
+      d.querySelectorAll('[data-gd]').forEach(b2=>b2.onclick=()=>{const old=G[+b2.dataset.gd];if(!confirm('حذف مجموعة «'+old+'»؟ المحطات هترجع من غير مجموعة.'))return;
+        favs.forEach(f=>{if(f.grp===old)delete f.grp});ls.set('radioFavs',favs);ls.set('grpBase',base().filter(x=>x!==old));if(favGrp===old){favGrp='';ls.set('favGrp','')}draw()});
+      $('gnAdd').onclick=()=>{const v=$('gnNew').value.trim();if(!v)return;ls.set('grpBase',[...new Set([...base(),v])]);draw()};
+      $('gnX').onclick=()=>{d.remove();if(view==='fav')render(favs)}};
+    document.body.appendChild(d);draw()};
+  $('list').addEventListener('click',e=>{if(e.target.closest('[data-grpmgr]')){e.stopImmediatePropagation();grpManager()}},true)})();
+
+// بحث متقدم في الرئيسية
+(function(){const _s=showHome;showHome=function(){_s();const tr=$('list').querySelector('.toolrow');if(!tr)return;
+  const opts=id=>{const e=$(id);return e?e.innerHTML:''};
+  tr.insertAdjacentHTML('afterend',`<details class="mdet" id="hsBox"><summary>🔎 بحث متقدم (اسم، دولة، لغة، نوع)</summary><div style="padding:0 12px 14px;display:grid;gap:8px"><input id="hsQ" placeholder="اسم المحطة أو الكلمة"><select id="hsC">${opts('country')}</select><select id="hsL">${opts('lang')}</select><input id="hsT" placeholder="النوع (مثال: jazz, news, quran)"><button id="hsGo" style="padding:12px">🔍 ابحث</button></div></details>`);
+  const set=(id,v)=>{const e=$(id);if(e)e.value=v};
+  $('hsQ').value=($('q')||{}).value||'';$('hsC').value=($('country')||{}).value||'';$('hsL').value=($('lang')||{}).value||'';$('hsT').value=($('tag')||{}).value||'';
+  const go=()=>{set('q',$('hsQ').value);set('country',$('hsC').value);set('lang',$('hsL').value);set('tag',$('hsT').value);navPush();setTab('all');search()};
+  $('hsGo').onclick=go;$('hsQ').onkeydown=e=>{if(e.key==='Enter')go()}}})();
 </script>
 </body>
 </html>
