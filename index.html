@@ -2932,13 +2932,22 @@ HX.eq=function(){const e=hxGet('eq',{b:0,t:0,g:1});
   if(!eqInit()){d.querySelector('#eqOn').checked=false;return}if(ac.state==='suspended')ac.resume();lo.gain.value=v.b;hi.gain.value=v.t;gain.gain.value=v.g;on=true;hxSet('eqon',true)};
  d.querySelectorAll('input').forEach(i=>i.oninput=ap)};
 // خمّن الدولة
-const GC=[['EG','مصر'],['SA','السعودية'],['MA','المغرب'],['LB','لبنان'],['TR','تركيا'],['FR','فرنسا'],['IT','إيطاليا'],['BR','البرازيل'],['JP','اليابان'],['IN','الهند'],['DE','ألمانيا'],['ES','إسبانيا']];
-HX.guess=async function(){const c=GC[Math.floor(Math.random()*GC.length)];const d=panel('<b>🎮 خمّن الدولة</b><p>بدوّر على محطة…</p>');
- try{const r=await fetch(API+q('countrycode='+c[0]));const L=(await r.json()).filter(x=>x.lastcheckok===1&&/^https:/.test(x.url_resolved||''));if(!L.length)throw 0;const s=L[Math.floor(Math.random()*L.length)];playlist=[s];play(s);
-  const o=[c,...GC.filter(x=>x!==c).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
-  d.innerHTML='<b>🎮 اسمع وخمّن: دي محطة من أنهي دولة؟</b>'+o.map(x=>`<button data-c="${x[0]}" style="display:block;width:100%;margin-top:6px">${x[1]}</button>`).join('')+'<div id="gr" style="margin-top:8px"></div><div style="margin-top:10px"><button id="gn">جولة تانية</button> <button onclick="this.closest(\'#hx47p\').remove()">إغلاق</button></div>';
-  d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{d.querySelector('#gr').textContent=b.dataset.c===c[0]?'✅ صح! '+c[1]:'❌ غلط، الصح: '+c[1]});d.querySelector('#gn').onclick=HX.guess}
- catch{d.innerHTML='<p>ما قدرتش أجيب محطة، جرّب تاني</p><button onclick="this.closest(\'#hx47p\').remove()">إغلاق</button>'}};
+const GC=[['EG','مصر',1],['SA','السعودية',1],['AE','الإمارات',1],['MA','المغرب',1],['DZ','الجزائر',1],['TN','تونس',1],['LB','لبنان',1],['JO','الأردن',1],['KW','الكويت',1],['QA','قطر',1],['OM','عُمان',1],['IQ','العراق',1],['SY','سوريا',1],['PS','فلسطين',1],['SD','السودان',1],['LY','ليبيا',1],['TR','تركيا'],['FR','فرنسا'],['IT','إيطاليا'],['ES','إسبانيا'],['DE','ألمانيا'],['GB','بريطانيا'],['US','أمريكا'],['BR','البرازيل'],['JP','اليابان'],['IN','الهند'],['PK','باكستان'],['ID','إندونيسيا'],['MY','ماليزيا'],['RU','روسيا']];
+let gLast='',gS={r:0,c:0};
+HX.guess=async function(){const mode=hxGet('gmode','all'),pool=GC.filter(x=>mode==='all'||x[2]);
+ const d=panel('<b>🎮 خمّن الدولة</b><p>بدوّر على محطة…</p>');
+ let c,s;
+ for(let t=0;t<4&&!s;t++){const cand=pool.filter(x=>x[0]!==gLast);c=cand[Math.floor(Math.random()*cand.length)];
+  try{const L=(await (await fetch(API+q('countrycode='+c[0]))).json()).filter(x=>x.lastcheckok===1&&/^https:/.test(x.url_resolved||''));if(L.length)s=L[Math.floor(Math.random()*L.length)]}catch{}}
+ if(!s){d.innerHTML='<p>ما قدرتش أجيب محطة، جرّب تاني</p><button onclick="this.closest(\'#hx47p\').remove()">إغلاق</button>';return}
+ gLast=c[0];playlist=[s];play(s);
+ const o=[c,...pool.filter(x=>x!==c).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5),best=hxGet('gbest',0);
+ d.innerHTML=`<b>🎮 اسمع وخمّن: دي محطة من أنهي دولة؟</b><div style="margin:6px 0">النتيجة: ✅ ${gS.r} / ${gS.r+gS.c} · أفضل: ${best}</div>`+o.map(x=>`<button data-c="${x[0]}" style="display:block;width:100%;margin-top:6px">${x[1]}</button>`).join('')+
+ `<div id="gr" style="margin-top:8px"></div><div style="margin-top:10px"><button id="gn" style="display:none">جولة تانية ▶</button> <select id="gm"><option value="all">كل العالم</option><option value="ar">دول عربية بس</option></select> <button onclick="this.closest('#hx47p').remove()">إغلاق</button></div>`;
+ d.querySelector('#gm').value=mode;d.querySelector('#gm').onchange=e=>{hxSet('gmode',e.target.value);gS={r:0,c:0};HX.guess()};
+ let done=0;d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{if(done)return;done=1;const ok=b.dataset.c===c[0];ok?gS.r++:gS.c++;if(gS.r>hxGet('gbest',0))hxSet('gbest',gS.r);
+  d.querySelector('#gr').textContent=ok?'✅ صح! '+c[1]:'❌ غلط، الصح: '+c[1];d.querySelector('#gn').style.display='';d.querySelectorAll('[data-c]').forEach(x=>{if(x.dataset.c===c[0])x.style.outline='2px solid #22c55e'})});
+ d.querySelector('#gn').onclick=HX.guess};
 // قائمة أدوات
 const tb=document.createElement('button');tb.textContent='🧰';tb.title='أدوات: آخر ما سمعت / الصوت / خمّن الدولة';tb.style.cssText='flex:0 0 auto;width:auto;background:var(--btn2);padding:8px 12px';
 tb.onclick=()=>{panel('<b>🧰 أدوات</b><button style="display:block;width:100%;margin-top:8px" onclick="HX.last3()">🕘 آخر ما سمعت</button><button style="display:block;width:100%;margin-top:8px" onclick="HX.eq()">🎚 جهير ورفيع وتضخيم</button><button style="display:block;width:100%;margin-top:8px" onclick="HX.guess()">🎮 خمّن الدولة</button>')};
