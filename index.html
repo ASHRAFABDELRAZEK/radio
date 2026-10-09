@@ -316,6 +316,15 @@ body.mvmode .st.mvsel{outline:3px solid var(--gold,#C9A227);background:rgba(201,
 #mvBar button{background:var(--btn2);color:#fff;border:0;border-radius:10px;padding:8px 12px}
 
 body.nodel .st .rmx{display:none!important}
+
+.st .rmx{display:none!important}
+.st .mnx{background:transparent;border:1px solid var(--line);color:inherit;border-radius:10px;min-width:36px;height:36px;font-size:20px;line-height:1;margin-inline-start:4px;cursor:pointer;padding:0}
+#mnSheet{position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#0b1730;border-top:3px solid var(--gold,#C9A227);border-radius:20px 20px 0 0;padding:14px 14px 22px;box-shadow:0 -10px 30px rgba(0,0,0,.6);color:#fff;max-height:75vh;overflow:auto}
+#mnSheet .mh{font-weight:700;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mnSheet .mg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#mnSheet button{background:var(--btn2,#1e3a5f);color:#fff;border:0;border-radius:12px;padding:12px 8px;font-size:15px}
+#mnSheet button.dg{background:#7f1d1d}
+#mnBack{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.45)}
 </style>
 </head>
 <body>
@@ -2414,7 +2423,7 @@ HX.delmgr=function(){const I=info(),tr=HXT.get().length,hd=hxGet('stHide',[]).le
  const lists=Object.entries(I).map(([k,[a,,n]])=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>${n}</b><div class="m">${a.length} عنصر</div></div><button class="hxb" data-hx="dmclr" data-k="${k}">🗑 احذف الكل</button></div>`).join('');
  const gs=grps().map(g=>({g,n:favs.filter(f=>f.grp===g).length})).filter(x=>x.n).map(x=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>📁 ${esc(x.g)}</b><div class="m">${x.n} محطة في المفضلة</div></div><button class="hxb" data-hx="dmgrp" data-g="${esc(x.g)}">🗑 احذف المجموعة</button></div>`).join('');
  hxPage('🗑 إدارة الحذف والاستعادة',
- `<div class="hxc"><b>زرار الحذف ✕ جنب المحطات</b><div class="chips" style="display:flex;gap:8px;margin-top:6px"><span class="chip" data-hx="dmshow" data-v="1" style="${!nd?'outline:2px solid var(--gold)':''}">👁 ظاهر</span><span class="chip" data-hx="dmshow" data-v="0" style="${nd?'outline:2px solid var(--gold)':''}">🙈 مخفي</span></div><div class="m">لو خبّيته مفيش حذف بالغلط، وتقدر تحذف من هنا.</div></div>
+ `<div class="hxc"><b>خيار الحذف في قايمة ⋯ جنب المحطات</b><div class="chips" style="display:flex;gap:8px;margin-top:6px"><span class="chip" data-hx="dmshow" data-v="1" style="${!nd?'outline:2px solid var(--gold)':''}">👁 ظاهر</span><span class="chip" data-hx="dmshow" data-v="0" style="${nd?'outline:2px solid var(--gold)':''}">🙈 مخفي</span></div><div class="m">لو خبّيته مفيش حذف بالغلط، وتقدر تحذف من هنا.</div></div>
  <div class="hxc"><b>حذف قايمة كاملة</b><div class="m">بتروح السلة وتقدر تستعيدها.</div></div>${lists}${gs}
  <div class="hxc"><b>🗑 السلة</b> <span class="m">(${tr})</span><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="hxb" data-hx="trash">فتح السلة</button><button class="hxb" data-hx="dmrestall">↩ استعادة الكل</button><button class="hxb" data-hx="trashclr">🧹 فضّي السلة</button></div></div>
  <div class="hxc"><b>🙈 المحطات المخفية</b> <span class="m">(${hd})</span><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="hxb" data-hx="sthide">فتح القايمة</button><button class="hxb" data-hx="stshowall">↩ رجّع الكل</button></div></div>`)};
@@ -2426,6 +2435,43 @@ HX.dmgrp=function(el){const g=el.dataset.g,items=favs.filter(f=>f.grp===g);if(!c
 HX.dmrestall=function(){const n=HXT.get().length;if(!n){toast('السلة فاضية');return}for(let k=n-1;k>=0;k--)HXT.restore(k,false);toast('اترجّع كل اللي في السلة ✔');HX.delmgr()};
 const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
  return h.replace(/(<div class="strip one" data-hx="addst">)/,`<div class="strip one gold" data-hx="delmgr"><span class="si">🗑</span><div class="st2"><b>إدارة الحذف والاستعادة</b></div></div>$1`)};
+})();
+
+/* HX27: قايمة خيارات ⋯ جنب كل محطة */
+(function(){
+const _r=render;render=function(arr){_r(arr);const L=$('list');if(!L)return;L.querySelectorAll('.st[data-i]').forEach(el=>{if(el.querySelector('.mnx'))return;el.insertAdjacentHTML('beforeend',`<button class="mnx" data-mn="${el.dataset.i}" title="خيارات">⋯</button>`)})};
+const close=()=>{['mnSheet','mnBack'].forEach(i=>{const e=document.getElementById(i);e&&e.remove()})};
+const open=(h,t)=>{close();const b=document.createElement('div');b.id='mnBack';b.onclick=close;document.body.appendChild(b);const s=document.createElement('div');s.id='mnSheet';s.innerHTML=`<div class="mh">${t}</div>${h}`;document.body.appendChild(s);return s};
+const arch=()=>hxGet('arch',[]);
+function menu(arr,i){const s=arr[i];if(!s)return;const inFav=favs.some(f=>f.stationuuid===s.stationuuid),isL=arr===favs||arr===recent||arr===later,nd=hxGet('nodel',false);
+ const sh=open(`<div class="mg">
+ <button data-a="fav">${inFav?'★ شيلها من المفضلة':'☆ ضيفها للمفضلة'}</button>
+ <button data-a="later">🔖 بعدين</button>
+ <button data-a="move">📁 نقل لمجموعة</button>
+ <button data-a="arch">🗄 أرشفة</button>
+ <button data-a="share">🔗 مشاركة</button>
+ <button data-a="copy">📋 نسخ الرابط</button>
+ ${nd?'':`<button class="dg" data-a="del" style="grid-column:1/-1">${isL?'🗑 حذف من القايمة':'🙈 إخفاء المحطة'}</button>`}</div>`,'⋯ '+esc(s.name));
+ sh.onclick=e=>{const a=e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;
+  if(k==='fav'){toggleFav(s);close();return}
+  if(k==='later'){if(!later.some(x=>x.stationuuid===s.stationuuid)){later.unshift(slim(s));ls.set('radioLater',later)}close();toast('اتضافت لـ «بعدين»');return}
+  if(k==='share'){close();shareStation(s);return}
+  if(k==='copy'){close();const u=s.url_resolved||s.url||'';(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast('اتنسخ الرابط')).catch(()=>prompt('انسخ الرابط:',u));return}
+  if(k==='del'){close();const b=document.querySelector(`.st[data-i="${i}"] .rmx`);b&&b.click();return}
+  if(k==='arch'){close();const x=arch();if(!x.some(y=>y.s.stationuuid===s.stationuuid))hxSet('arch',[{s:slim(s),d:Date.now()},...x].slice(0,300));
+   if(arr===favs){const j=favs.findIndex(f=>f.stationuuid===s.stationuuid);if(j>=0){favs.splice(j,1);ls.set('radioFavs',favs)}render(favs)}
+   else if(arr===recent){recent.splice(i,1);ls.set('radioRecent',recent);render(recent)}else if(arr===later){later.splice(i,1);ls.set('radioLater',later);render(later)}
+   else render(arr);HXT.snack('اتأرشفت «'+esc(s.name).slice(0,26)+'»',()=>{hxSet('arch',arch().filter(y=>y.s.stationuuid!==s.stationuuid));toast('اترجّعت من الأرشيف')});return}
+  if(k==='move'){const G=grps();const s2=open(`<div class="mg">${G.map(g=>`<button data-g="${esc(g)}">📁 ${esc(g)}</button>`).join('')}<button data-g="">📂 من غير مجموعة</button><button data-g="__new">➕ مجموعة جديدة</button></div>`,'📁 نقل «'+esc(s.name)+'» إلى');
+   s2.onclick=ev=>{const b=ev.target.closest('[data-g]');if(!b)return;let v=b.dataset.g;if(v==='__new'){v=(prompt('اسم المجموعة الجديدة:')||'').trim();if(!v)return;ls.set('grpBase',[...new Set([...ls.get('grpBase',['قرآن','أخبار','موسيقى','أرشيف']),v])])}
+    let f=favs.find(x=>x.stationuuid===s.stationuuid);if(!f){f=slim(s);favs.unshift(f)}if(v)f.grp=v;else delete f.grp;ls.set('radioFavs',favs);close();toast('اتنقلت إلى «'+(v||'من غير مجموعة')+'»');if(view==='fav')render(favs)}}}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.mnx');if(!b)return;e.stopImmediatePropagation();e.preventDefault();menu(window._rxArr||[],+b.dataset.mn)},true);
+HX.archv=function(){const a=arch();hxPage('🗄 الأرشيف',a.length?a.map((x,i)=>`<div class="hxc" style="display:flex;align-items:center;gap:6px"><div style="flex:1;min-width:0"><b>${esc(x.s.name)}</b><div class="m">${esc(x.s.country||'')}</div></div><button class="hxb" data-hx="archplay" data-i="${i}">▶</button><button class="hxb" data-hx="archre" data-i="${i}">↩ للمفضلة</button><button class="hxb" data-hx="archdel" data-i="${i}">✕</button></div>`).join(''):'<div class="hxc">الأرشيف فاضي. من ⋯ جنب أي محطة اختار «أرشفة».</div>')};
+HX.archplay=function(el){const a=arch();hxPlayAll(a.map(x=>x.s),+el.dataset.i)};
+HX.archre=function(el){const a=[...arch()],x=a.splice(+el.dataset.i,1)[0];if(!x)return;hxSet('arch',a);if(!favs.some(f=>f.stationuuid===x.s.stationuuid)){favs.unshift(x.s);ls.set('radioFavs',favs)}toast('اترجّعت للمفضلة');HX.archv()};
+HX.archdel=function(el){const a=[...arch()];a.splice(+el.dataset.i,1);hxSet('arch',a);HX.archv()};
+const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
+ return h.replace(/(<div class="strip one" data-hx="sthide">)/,`<div class="strip one" data-hx="archv"><span class="si">🗄</span><div class="st2"><b>الأرشيف (محطات مؤرشفة)</b></div></div>$1`)};
 })();
 </script>
 </body>
