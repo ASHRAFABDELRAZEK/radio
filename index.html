@@ -328,6 +328,13 @@ body.nodel .st .rmx{display:none!important}
 
 /* HX29: صف أنضف — الخيارات كلها في ⋯ */
 .st .laterB,.st .grpSet{display:none!important}
+
+/* HX31: عنوان القسم كمستطيل زي الشرائط */
+.hgrp{display:flex!important;align-items:center;gap:10px;margin:10px 0 8px!important;padding:12px 14px!important;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:15px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.hgrp::after{display:none!important}
+.hgrp .hfa{margin-inline-start:auto;order:3;font-size:16px;opacity:.85;background:rgba(255,255,255,.08);border-radius:8px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center}
+.hgrp.fold{opacity:.95}
+.hgrp:not(.fold){border-color:var(--gold,#C9A227)}
 </style>
 </head>
 <body>
