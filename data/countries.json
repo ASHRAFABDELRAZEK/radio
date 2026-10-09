@@ -1,0 +1,1262 @@
+[
+{
+"cc": "US",
+"ar": "الولايات المتحدة",
+"en": "The United States Of America",
+"n": 3927
+},
+{
+"cc": "DE",
+"ar": "ألمانيا",
+"en": "Germany",
+"n": 3088
+},
+{
+"cc": "FR",
+"ar": "فرنسا",
+"en": "France",
+"n": 1664
+},
+{
+"cc": "MX",
+"ar": "المكسيك",
+"en": "Mexico",
+"n": 1275
+},
+{
+"cc": "CN",
+"ar": "الصين",
+"en": "China",
+"n": 1215
+},
+{
+"cc": "GB",
+"ar": "بريطانيا",
+"en": "The United Kingdom Of Great Britain And Northern Ireland",
+"n": 1069
+},
+{
+"cc": "BR",
+"ar": "البرازيل",
+"en": "Brazil",
+"n": 1018
+},
+{
+"cc": "GR",
+"ar": "اليونان",
+"en": "Greece",
+"n": 1005
+},
+{
+"cc": "RU",
+"ar": "روسيا",
+"en": "The Russian Federation",
+"n": 969
+},
+{
+"cc": "ES",
+"ar": "إسبانيا",
+"en": "Spain",
+"n": 834
+},
+{
+"cc": "AR",
+"ar": "الأرجنتين",
+"en": "Argentina",
+"n": 834
+},
+{
+"cc": "CA",
+"ar": "كندا",
+"en": "Canada",
+"n": 807
+},
+{
+"cc": "IT",
+"ar": "إيطاليا",
+"en": "Italy",
+"n": 751
+},
+{
+"cc": "NL",
+"ar": "هولندا",
+"en": "The Netherlands",
+"n": 732
+},
+{
+"cc": "RO",
+"ar": "رومانيا",
+"en": "Romania",
+"n": 606
+},
+{
+"cc": "AE",
+"ar": "الإمارات",
+"en": "The United Arab Emirates",
+"n": 594
+},
+{
+"cc": "IN",
+"ar": "الهند",
+"en": "India",
+"n": 583
+},
+{
+"cc": "TR",
+"ar": "تركيا",
+"en": "Türkiye",
+"n": 485
+},
+{
+"cc": "CO",
+"ar": "كولومبيا",
+"en": "Colombia",
+"n": 484
+},
+{
+"cc": "PL",
+"ar": "بولندا",
+"en": "Poland",
+"n": 399
+},
+{
+"cc": "ID",
+"ar": "إندونيسيا",
+"en": "Indonesia",
+"n": 395
+},
+{
+"cc": "CL",
+"ar": "تشيلي",
+"en": "Chile",
+"n": 377
+},
+{
+"cc": "AU",
+"ar": "أستراليا",
+"en": "Australia",
+"n": 374
+},
+{
+"cc": "PH",
+"ar": "الفلبين",
+"en": "The Philippines",
+"n": 333
+},
+{
+"cc": "CH",
+"ar": "سويسرا",
+"en": "Switzerland",
+"n": 230
+},
+{
+"cc": "BE",
+"ar": "بلجيكا",
+"en": "Belgium",
+"n": 226
+},
+{
+"cc": "PE",
+"ar": "بيرو",
+"en": "Peru",
+"n": 219
+},
+{
+"cc": "RS",
+"ar": "صربيا",
+"en": "Serbia",
+"n": 216
+},
+{
+"cc": "PT",
+"ar": "البرتغال",
+"en": "Portugal",
+"n": 200
+},
+{
+"cc": "AT",
+"ar": "أستريا",
+"en": "Austria",
+"n": 190
+},
+{
+"cc": "BG",
+"ar": "بلغاريا",
+"en": "Bulgaria",
+"n": 180
+},
+{
+"cc": "HU",
+"ar": "المجر",
+"en": "Hungary",
+"n": 179
+},
+{
+"cc": "UA",
+"ar": "أوكرانيا",
+"en": "Ukraine",
+"n": 160
+},
+{
+"cc": "SE",
+"ar": "السويد",
+"en": "Sweden",
+"n": 157
+},
+{
+"cc": "ZA",
+"ar": "جنوب أفريقيا",
+"en": "South Africa",
+"n": 149
+},
+{
+"cc": "NZ",
+"ar": "نيوزيلندا",
+"en": "New Zealand",
+"n": 141
+},
+{
+"cc": "IE",
+"ar": "أيرلندا",
+"en": "Ireland",
+"n": 138
+},
+{
+"cc": "NP",
+"ar": "نيبال",
+"en": "Nepal",
+"n": 136
+},
+{
+"cc": "VE",
+"ar": "فنزويلا",
+"en": "Bolivarian Republic Of Venezuela",
+"n": 130
+},
+{
+"cc": "CZ",
+"ar": "التشيك",
+"en": "Czechia",
+"n": 119
+},
+{
+"cc": "DK",
+"ar": "الدانمارك",
+"en": "Denmark",
+"n": 105
+},
+{
+"cc": "IL",
+"ar": "إسرائيل",
+"en": "Israel",
+"n": 99
+},
+{
+"cc": "EC",
+"ar": "الإكوادور",
+"en": "Ecuador",
+"n": 97
+},
+{
+"cc": "NO",
+"ar": "النرويج",
+"en": "Norway",
+"n": 95
+},
+{
+"cc": "FI",
+"ar": "فنلندا",
+"en": "Finland",
+"n": 94
+},
+{
+"cc": "UY",
+"ar": "أوروغواي",
+"en": "Uruguay",
+"n": 93
+},
+{
+"cc": "HR",
+"ar": "كرواتيا",
+"en": "Croatia",
+"n": 85
+},
+{
+"cc": "DO",
+"ar": "الدومينيكان",
+"en": "The Dominican Republic",
+"n": 81
+},
+{
+"cc": "GH",
+"ar": "غانا",
+"en": "Ghana",
+"n": 76
+},
+{
+"cc": "BA",
+"ar": "البوسنة والهرسك",
+"en": "Bosnia And Herzegovina",
+"n": 76
+},
+{
+"cc": "JP",
+"ar": "اليابان",
+"en": "Japan",
+"n": 74
+},
+{
+"cc": "TH",
+"ar": "تايلاند",
+"en": "Thailand",
+"n": 68
+},
+{
+"cc": "KR",
+"ar": "كوريا الجنوبية",
+"en": "The Republic Of Korea",
+"n": 66
+},
+{
+"cc": "TW",
+"ar": "تايوان",
+"en": "Taiwan, Republic Of China",
+"n": 64
+},
+{
+"cc": "MD",
+"ar": "مولدوفا",
+"en": "The Republic Of Moldova",
+"n": 63
+},
+{
+"cc": "SK",
+"ar": "سلوفاكيا",
+"en": "Slovakia",
+"n": 62
+},
+{
+"cc": "GT",
+"ar": "غواتيمالا",
+"en": "Guatemala",
+"n": 58
+},
+{
+"cc": "EE",
+"ar": "إستونيا",
+"en": "Estonia",
+"n": 58
+},
+{
+"cc": "DZ",
+"ar": "الجزائر",
+"en": "Algeria",
+"n": 56
+},
+{
+"cc": "NG",
+"ar": "نيجيريا",
+"en": "Nigeria",
+"n": 56
+},
+{
+"cc": "HK",
+"ar": "هونغ كونغ",
+"en": "Hong Kong",
+"n": 54
+},
+{
+"cc": "BO",
+"ar": "بوليفيا",
+"en": "Bolivia",
+"n": 51
+},
+{
+"cc": "UG",
+"ar": "أوغندا",
+"en": "Uganda",
+"n": 49
+},
+{
+"cc": "MY",
+"ar": "ماليزيا",
+"en": "Malaysia",
+"n": 47
+},
+{
+"cc": "LT",
+"ar": "ليتوانيا",
+"en": "Lithuania",
+"n": 47
+},
+{
+"cc": "SI",
+"ar": "سلوفينيا",
+"en": "Slovenia",
+"n": 47
+},
+{
+"cc": "LV",
+"ar": "لاتفيا",
+"en": "Latvia",
+"n": 45
+},
+{
+"cc": "MA",
+"ar": "المغرب",
+"en": "Morocco",
+"n": 44
+},
+{
+"cc": "SA",
+"ar": "السعودية",
+"en": "Saudi Arabia",
+"n": 44
+},
+{
+"cc": "BY",
+"ar": "بيلاروسيا",
+"en": "Belarus",
+"n": 42
+},
+{
+"cc": "CR",
+"ar": "كوستاريكا",
+"en": "Costa Rica",
+"n": 41
+},
+{
+"cc": "PK",
+"ar": "باكستان",
+"en": "Pakistan",
+"n": 40
+},
+{
+"cc": "EG",
+"ar": "مصر",
+"en": "Egypt",
+"n": 39
+},
+{
+"cc": "LK",
+"ar": "سريلانكا",
+"en": "Sri Lanka",
+"n": 36
+},
+{
+"cc": "SV",
+"ar": "السلفادور",
+"en": "El Salvador",
+"n": 36
+},
+{
+"cc": "PR",
+"ar": "بورتوريكو",
+"en": "Puerto Rico",
+"n": 36
+},
+{
+"cc": "LB",
+"ar": "لبنان",
+"en": "Lebanon",
+"n": 35
+},
+{
+"cc": "RE",
+"ar": "ريونيون",
+"en": "Reunion",
+"n": 33
+},
+{
+"cc": "AF",
+"ar": "أفغانستان",
+"en": "Afghanistan",
+"n": 32
+},
+{
+"cc": "JM",
+"ar": "جامايكا",
+"en": "Jamaica",
+"n": 32
+},
+{
+"cc": "MK",
+"ar": "مقدونيا الشمالية",
+"en": "Republic Of North Macedonia",
+"n": 32
+},
+{
+"cc": "SG",
+"ar": "سنغافورة",
+"en": "Singapore",
+"n": 32
+},
+{
+"cc": "TN",
+"ar": "تونس",
+"en": "Tunisia",
+"n": 31
+},
+{
+"cc": "PY",
+"ar": "باراغواي",
+"en": "Paraguay",
+"n": 31
+},
+{
+"cc": "ME",
+"ar": "الجبل الأسود",
+"en": "Montenegro",
+"n": 31
+},
+{
+"cc": "KZ",
+"ar": "كازاخستان",
+"en": "Kazakhstan",
+"n": 27
+},
+{
+"cc": "SN",
+"ar": "السنغال",
+"en": "Senegal",
+"n": 27
+},
+{
+"cc": "CY",
+"ar": "قبرص",
+"en": "Cyprus",
+"n": 27
+},
+{
+"cc": "KE",
+"ar": "كينيا",
+"en": "Kenya",
+"n": 26
+},
+{
+"cc": "PA",
+"ar": "بنما",
+"en": "Panama",
+"n": 26
+},
+{
+"cc": "HN",
+"ar": "هندوراس",
+"en": "Honduras",
+"n": 25
+},
+{
+"cc": "AL",
+"ar": "ألبانيا",
+"en": "Albania",
+"n": 22
+},
+{
+"cc": "GE",
+"ar": "جورجيا",
+"en": "Georgia",
+"n": 21
+},
+{
+"cc": "VN",
+"ar": "فيتنام",
+"en": "Vietnam",
+"n": 20
+},
+{
+"cc": "UM",
+"ar": "جزر أمريكية نائية",
+"en": "The United States Minor Outlying Islands",
+"n": 20
+},
+{
+"cc": "ET",
+"ar": "إثيوبيا",
+"en": "Ethiopia",
+"n": 19
+},
+{
+"cc": "NI",
+"ar": "نيكاراغوا",
+"en": "Nicaragua",
+"n": 19
+},
+{
+"cc": "HT",
+"ar": "هايتي",
+"en": "Haiti",
+"n": 19
+},
+{
+"cc": "AZ",
+"ar": "أذربيجان",
+"en": "Azerbaijan",
+"n": 18
+},
+{
+"cc": "SY",
+"ar": "سوريا",
+"en": "Syrian Arab Republic",
+"n": 18
+},
+{
+"cc": "TT",
+"ar": "ترينيداد وتوباغو",
+"en": "Trinidad And Tobago",
+"n": 18
+},
+{
+"cc": "CV",
+"ar": "الرأس الأخضر",
+"en": "Cabo Verde",
+"n": 17
+},
+{
+"cc": "IR",
+"ar": "إيران",
+"en": "Islamic Republic Of Iran",
+"n": 15
+},
+{
+"cc": "IQ",
+"ar": "العراق",
+"en": "Iraq",
+"n": 15
+},
+{
+"cc": "CU",
+"ar": "كوبا",
+"en": "Cuba",
+"n": 15
+},
+{
+"cc": "QA",
+"ar": "قطر",
+"en": "Qatar",
+"n": 14
+},
+{
+"cc": "MU",
+"ar": "موريشيوس",
+"en": "Mauritius",
+"n": 14
+},
+{
+"cc": "BD",
+"ar": "بنغلاديش",
+"en": "Bangladesh",
+"n": 14
+},
+{
+"cc": "LU",
+"ar": "لوكسمبورغ",
+"en": "Luxembourg",
+"n": 14
+},
+{
+"cc": "VA",
+"ar": "الفاتيكان",
+"en": "The Holy See",
+"n": 13
+},
+{
+"cc": "CW",
+"ar": "كوراساو",
+"en": "Curacao",
+"n": 13
+},
+{
+"cc": "KW",
+"ar": "الكويت",
+"en": "Kuwait",
+"n": 12
+},
+{
+"cc": "NA",
+"ar": "ناميبيا",
+"en": "Namibia",
+"n": 12
+},
+{
+"cc": "TZ",
+"ar": "تنزانيا",
+"en": "United Republic Of Tanzania",
+"n": 11
+},
+{
+"cc": "GP",
+"ar": "غوادلوب",
+"en": "Guadeloupe",
+"n": 11
+},
+{
+"cc": "ML",
+"ar": "مالي",
+"en": "Mali",
+"n": 11
+},
+{
+"cc": "JO",
+"ar": "الأردن",
+"en": "Jordan",
+"n": 10
+},
+{
+"cc": "AM",
+"ar": "أرمينيا",
+"en": "Armenia",
+"n": 10
+},
+{
+"cc": "CI",
+"ar": "ساحل العاج",
+"en": "Coted Ivoire",
+"n": 10
+},
+{
+"cc": "IS",
+"ar": "أيسلندا",
+"en": "Iceland",
+"n": 9
+},
+{
+"cc": "VC",
+"ar": "سانت فنسنت",
+"en": "Saint Vincent And The Grenadines",
+"n": 9
+},
+{
+"cc": "YE",
+"ar": "اليمن",
+"en": "Yemen",
+"n": 8
+},
+{
+"cc": "CD",
+"ar": "الكونغو الديمقراطية",
+"en": "The Democratic Republic Of The Congo",
+"n": 8
+},
+{
+"cc": "GY",
+"ar": "غيانا",
+"en": "Guyana",
+"n": 8
+},
+{
+"cc": "BQ",
+"ar": "الكاريبي الهولندي",
+"en": "Bonaire",
+"n": 8
+},
+{
+"cc": "MG",
+"ar": "مدغشقر",
+"en": "Madagascar",
+"n": 8
+},
+{
+"cc": "MW",
+"ar": "مالاوي",
+"en": "Malawi",
+"n": 7
+},
+{
+"cc": "MT",
+"ar": "مالطا",
+"en": "Malta",
+"n": 7
+},
+{
+"cc": "AO",
+"ar": "أنغولا",
+"en": "Angola",
+"n": 7
+},
+{
+"cc": "AQ",
+"ar": "أنتاركتيكا",
+"en": "Antarctica",
+"n": 7
+},
+{
+"cc": "LC",
+"ar": "سانت لوسيا",
+"en": "Saint Lucia",
+"n": 7
+},
+{
+"cc": "MQ",
+"ar": "مارتينيك",
+"en": "Martinique",
+"n": 7
+},
+{
+"cc": "KY",
+"ar": "جزر كايمان",
+"en": "The Cayman Islands",
+"n": 7
+},
+{
+"cc": "MZ",
+"ar": "موزمبيق",
+"en": "Mozambique",
+"n": 6
+},
+{
+"cc": "BB",
+"ar": "بربادوس",
+"en": "Barbados",
+"n": 6
+},
+{
+"cc": "KG",
+"ar": "قيرغيزستان",
+"en": "Kyrgyzstan",
+"n": 6
+},
+{
+"cc": "BH",
+"ar": "البحرين",
+"en": "Bahrain",
+"n": 6
+},
+{
+"cc": "NC",
+"ar": "كاليدونيا الجديدة",
+"en": "New Caledonia",
+"n": 6
+},
+{
+"cc": "AD",
+"ar": "أندورا",
+"en": "Andorra",
+"n": 6
+},
+{
+"cc": "MO",
+"ar": "ماكاو",
+"en": "Macao",
+"n": 6
+},
+{
+"cc": "FO",
+"ar": "جزر فارو",
+"en": "The Faroe Islands",
+"n": 6
+},
+{
+"cc": "PS",
+"ar": "فلسطين",
+"en": "State Of Palestine",
+"n": 5
+},
+{
+"cc": "SR",
+"ar": "سورينام",
+"en": "Suriname",
+"n": 5
+},
+{
+"cc": "PF",
+"ar": "بولينيزيا الفرنسية",
+"en": "French Polynesia",
+"n": 5
+},
+{
+"cc": "AS",
+"ar": "ساموا الأمريكية",
+"en": "American Samoa",
+"n": 5
+},
+{
+"cc": "KP",
+"ar": "كوريا الشمالية",
+"en": "The Democratic Peoples Republic Of Korea",
+"n": 5
+},
+{
+"cc": "MN",
+"ar": "منغوليا",
+"en": "Mongolia",
+"n": 5
+},
+{
+"cc": "IO",
+"ar": "إقليم المحيط الهندي البريطاني",
+"en": "British Indian Ocean Territory",
+"n": 5
+},
+{
+"cc": "DM",
+"ar": "دومينيكا",
+"en": "Dominica",
+"n": 5
+},
+{
+"cc": "KH",
+"ar": "كمبوديا",
+"en": "Cambodia",
+"n": 5
+},
+{
+"cc": "LY",
+"ar": "ليبيا",
+"en": "Libya",
+"n": 4
+},
+{
+"cc": "UZ",
+"ar": "أوزبكستان",
+"en": "Uzbekistan",
+"n": 4
+},
+{
+"cc": "BF",
+"ar": "بوركينا فاسو",
+"en": "Burkina Faso",
+"n": 4
+},
+{
+"cc": "MC",
+"ar": "موناكو",
+"en": "Monaco",
+"n": 4
+},
+{
+"cc": "SD",
+"ar": "السودان",
+"en": "The Sudan",
+"n": 4
+},
+{
+"cc": "ZM",
+"ar": "زامبيا",
+"en": "Zambia",
+"n": 4
+},
+{
+"cc": "GI",
+"ar": "جبل طارق",
+"en": "Gibraltar",
+"n": 4
+},
+{
+"cc": "XK",
+"ar": "كوسوفو",
+"en": "Kosovo",
+"n": 4
+},
+{
+"cc": "GL",
+"ar": "غرينلاند",
+"en": "Greenland",
+"n": 4
+},
+{
+"cc": "GU",
+"ar": "غوام",
+"en": "Guam",
+"n": 4
+},
+{
+"cc": "VI",
+"ar": "جزر العذراء الأمريكية",
+"en": "US Virgin Islands",
+"n": 4
+},
+{
+"cc": "IM",
+"ar": "جزيرة مان",
+"en": "Isle Of Man",
+"n": 4
+},
+{
+"cc": "GN",
+"ar": "غينيا",
+"en": "Guinea",
+"n": 4
+},
+{
+"cc": "MM",
+"ar": "ميانمار",
+"en": "Myanmar",
+"n": 3
+},
+{
+"cc": "TG",
+"ar": "توغو",
+"en": "Togo",
+"n": 3
+},
+{
+"cc": "ZW",
+"ar": "زيمبابوي",
+"en": "Zimbabwe",
+"n": 3
+},
+{
+"cc": "OM",
+"ar": "عُمان",
+"en": "Oman",
+"n": 3
+},
+{
+"cc": "RW",
+"ar": "رواندا",
+"en": "Rwanda",
+"n": 3
+},
+{
+"cc": "BJ",
+"ar": "بنين",
+"en": "Benin",
+"n": 3
+},
+{
+"cc": "GD",
+"ar": "غرينادا",
+"en": "Grenada",
+"n": 3
+},
+{
+"cc": "BN",
+"ar": "بروناي",
+"en": "Brunei Darussalam",
+"n": 3
+},
+{
+"cc": "SM",
+"ar": "سان مارينو",
+"en": "San Marino",
+"n": 3
+},
+{
+"cc": "BS",
+"ar": "الباهاما",
+"en": "The Bahamas",
+"n": 3
+},
+{
+"cc": "AW",
+"ar": "أروبا",
+"en": "Aruba",
+"n": 3
+},
+{
+"cc": "LA",
+"ar": "لاوس",
+"en": "The Lao Peoples Democratic Republic",
+"n": 3
+},
+{
+"cc": "MV",
+"ar": "المالديف",
+"en": "Maldives",
+"n": 3
+},
+{
+"cc": "FK",
+"ar": "جزر فوكلاند",
+"en": "The Falkland Islands Malvinas",
+"n": 3
+},
+{
+"cc": "SH",
+"ar": "سانت هيلينا",
+"en": "Ascension And Tristan Da Cunha Saint Helena",
+"n": 3
+},
+{
+"cc": "VU",
+"ar": "فانواتو",
+"en": "Vanuatu",
+"n": 3
+},
+{
+"cc": "TO",
+"ar": "تونغا",
+"en": "Tonga",
+"n": 3
+},
+{
+"cc": "YT",
+"ar": "مايوت",
+"en": "Mayotte",
+"n": 2
+},
+{
+"cc": "SO",
+"ar": "الصومال",
+"en": "Somalia",
+"n": 2
+},
+{
+"cc": "GF",
+"ar": "غويانا الفرنسية",
+"en": "French Guiana",
+"n": 2
+},
+{
+"cc": "ER",
+"ar": "إريتريا",
+"en": "Eritrea",
+"n": 2
+},
+{
+"cc": "SS",
+"ar": "جنوب السودان",
+"en": "South Sudan",
+"n": 2
+},
+{
+"cc": "TM",
+"ar": "تركمانستان",
+"en": "Turkmenistan",
+"n": 2
+},
+{
+"cc": "BM",
+"ar": "برمودا",
+"en": "Bermuda",
+"n": 2
+},
+{
+"cc": "CF",
+"ar": "أفريقيا الوسطى",
+"en": "The Central African Republic",
+"n": 2
+},
+{
+"cc": "AG",
+"ar": "أنتيغوا وبربودا",
+"en": "Antigua And Barbuda",
+"n": 2
+},
+{
+"cc": "SC",
+"ar": "سيشل",
+"en": "Seychelles",
+"n": 2
+},
+{
+"cc": "MH",
+"ar": "جزر مارشال",
+"en": "The Marshall Islands",
+"n": 2
+},
+{
+"cc": "BZ",
+"ar": "بليز",
+"en": "Belize",
+"n": 2
+},
+{
+"cc": "JE",
+"ar": "جيرسي",
+"en": "Jersey",
+"n": 2
+},
+{
+"cc": "TD",
+"ar": "تشاد",
+"en": "Chad",
+"n": 1
+},
+{
+"cc": "GW",
+"ar": "غينيا بيساو",
+"en": "Guinea Bissau",
+"n": 1
+},
+{
+"cc": "CG",
+"ar": "الكونغو",
+"en": "The Congo",
+"n": 1
+},
+{
+"cc": "WF",
+"ar": "واليس وفوتونا",
+"en": "Wallis And Futuna",
+"n": 1
+},
+{
+"cc": "GG",
+"ar": "غيرنزي",
+"en": "Guernsey",
+"n": 1
+},
+{
+"cc": "CC",
+"ar": "جزر كوكوس",
+"en": "The Cocos Keeling Islands",
+"n": 1
+},
+{
+"cc": "AI",
+"ar": "أنغويلا",
+"en": "Anguilla",
+"n": 1
+},
+{
+"cc": "PM",
+"ar": "سان بيير وميكلون",
+"en": "Saint Pierre And Miquelon",
+"n": 1
+},
+{
+"cc": "AX",
+"ar": "جزر أولاند",
+"en": "Aland Islands",
+"n": 1
+},
+{
+"cc": "MS",
+"ar": "مونتسرات",
+"en": "Montserrat",
+"n": 1
+},
+{
+"cc": "KI",
+"ar": "كيريباتي",
+"en": "Kiribati",
+"n": 1
+},
+{
+"cc": "PW",
+"ar": "بالاو",
+"en": "Palau",
+"n": 1
+},
+{
+"cc": "LI",
+"ar": "ليختنشتاين",
+"en": "Liechtenstein",
+"n": 1
+},
+{
+"cc": "VG",
+"ar": "جزر العذراء البريطانية",
+"en": "British Virgin Islands",
+"n": 1
+},
+{
+"cc": "CM",
+"ar": "الكاميرون",
+"en": "Cameroon",
+"n": 1
+},
+{
+"cc": "XX",
+"ar": "",
+"en": "",
+"n": 1
+},
+{
+"cc": "SX",
+"ar": "سينت مارتن",
+"en": "Dutch Part Sint Maarten",
+"n": 1
+}
+]

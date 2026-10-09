@@ -2955,6 +2955,95 @@ bar.insertBefore(tb,ref||null);
 // إعلان/تحديث عن بُعد: ملف config.json اختياري بجانب التطبيق
 fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(c=>{if(c&&c.msg&&hxGet('cfgmsg','')!==c.msg){hxSet('cfgmsg',c.msg);toast(c.msg)}}).catch(()=>{});
 })();
+
+// ===== 12) محطات عربية + اكتشف العالم + محطات مهنية (بيانات مُنتقاة من Radio Browser، ملفات data/) =====
+(function(){
+const DATA='data/', dcache={};
+async function dget(f){if(dcache[f])return dcache[f];try{const r=await fetch(DATA+f,{cache:'force-cache'});if(!r.ok)throw 0;return dcache[f]=await r.json()}catch{return null}}
+const flag=cc=>/^[A-Z]{2}$/.test(cc||'')?String.fromCodePoint(...[...cc].map(c=>127397+c.charCodeAt(0))):'🌐';
+const toSt=s=>({stationuuid:s.id,name:s.name,country:(s.country_ar||s.cc||'')+(s.status==='unverified'?' · غير مؤكدة':''),tags:s.tags||'',favicon:s.logo||'',url_resolved:s.url,url:s.url,bitrate:s.bitrate,homepage:s.home,_cc:s.cc,_cat:s.cat,_status:s.status});
+const chip=(attr,txt,on)=>`<button ${attr} style="background:${on?'var(--gold,#C9A227)':'var(--btn2)'};color:${on?'#111':''};font-size:13px;padding:5px 11px">${txt}</button>`;
+const head=(title,inner)=>`<div class="secT" style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${title} ${inner||''}</div>`;
+const AR_CATS=[['كل الأقسام',''],['قرآن وديني','📖'],['أخبار وحوار','🗞'],['طرب وكلاسيكيات','🎼'],['عام ومنوعات','🎵'],['تعليمي','🎓'],['رياضة','⚽'],['أطفال','🧒']];
+let arSel={cat:'',cc:''},arMore=false;
+function showList(title,items,barHtml,back){
+  setTab('all');$('viewTitle').textContent=title;results=items;playlist=items;
+  if(!items.length)$('list').innerHTML='<p>مفيش محطات في الاختيار ده.</p>';else render(items);
+  $('list').insertAdjacentHTML('afterbegin',head(title,(barHtml||'')+(back?`<button data-act="${back}" style="background:var(--btn2);font-size:13px;padding:5px 10px">↩ رجوع</button>`:'')));
+}
+/* --- محطات عربية --- */
+window.arabPage=async function(){
+  setTab('all');$('viewTitle').textContent='🕌 محطات عربية';$('list').innerHTML='<p>جاري التحميل...</p>';
+  const d=await dget('arabic.json');if(!d){$('list').innerHTML='<p>ملف المحطات العربية غير متاح.</p>';return}
+  const ccs={};d.forEach(s=>{if(s.cc&&s.status!=='unverified')ccs[s.cc]=ccs[s.cc]||{n:0,ar:s.country_ar};ccs[s.cc]&&ccs[s.cc].n++});
+  const ccList=Object.entries(ccs).sort((a,b)=>b[1].n-a[1].n);
+  let items=d.filter(s=>(!arSel.cat||s.cat===arSel.cat)&&(!arSel.cc||s.cc===arSel.cc)).map(toSt);
+  const bar=`<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%">${AR_CATS.map(([c,ic])=>chip(`data-arcat="${c}"`,(ic?ic+' ':'')+c,arSel.cat===c)).join('')}</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;width:100%">${chip('data-arcc=""','كل الدول',!arSel.cc)}${ccList.slice(0,arMore?999:14).map(([cc,v])=>chip(`data-arcc="${cc}"`,flag(cc)+' '+(v.ar||cc)+' <small>'+v.n+'</small>',arSel.cc===cc)).join('')}${ccList.length>14?chip('data-armore="1"',arMore?'▲ أقل':'▼ باقي الدول ('+(ccList.length-14)+')'):''}</div>
+  <span class="m" style="width:100%">${items.length} محطة · المؤكدة أولًا، وغير المؤكدة في الآخر</span>`;
+  showList('🕌 محطات عربية',items,bar);
+};
+/* --- محطات مهنية --- */
+const PRO_F=[['الكل',''],['أخبار','news'],['أعمال واقتصاد','business|finance|econom|bloomberg|cnbc'],['حوار','talk'],['تعليم وعلوم','educat|science|universit|lecture|technolog']];
+let proSel='';
+window.proPage=async function(){
+  setTab('all');$('viewTitle').textContent='💼 محطات مهنية';$('list').innerHTML='<p>جاري التحميل...</p>';
+  const d=await dget('professional.json');if(!d){$('list').innerHTML='<p>الملف غير متاح.</p>';return}
+  const re=proSel?new RegExp(proSel,'i'):null;
+  const items=d.filter(s=>!re||re.test((s.tags||'')+' '+s.name)).map(toSt);
+  const bar=`<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%">${PRO_F.map(([t,v])=>chip(`data-prof="${v}"`,t,proSel===v)).join('')}</div><span class="m" style="width:100%">أخبار وأعمال وتعليم بالإنجليزية من أعلى المحطات تصويتًا في العالم — مناسبة للمحاسب والمهندس والطالب</span>`;
+  showList('💼 محطات مهنية',items,bar);
+};
+/* --- اكتشف العالم --- */
+window.worldPage=async function(){
+  setTab('all');$('viewTitle').textContent='🌍 اكتشف العالم';$('list').innerHTML='<p>جاري التحميل...</p>';
+  const [C,L]=await Promise.all([dget('countries.json'),dget('languages.json')]);
+  if(!C){$('list').innerHTML='<p>الملف غير متاح.</p>';return}
+  const cells=C.map(c=>`<div class="gcell" data-wcc="${c.cc}" title="${esc(c.en)}"><span class="gi">${flag(c.cc)}</span><span class="gl">${esc(c.ar||c.en)}</span><span class="gb">${c.n}</span></div>`).join('');
+  const langs=(L||[]).filter(l=>l.ar).slice(0,40).map(l=>chip(`data-wlang="${esc(l.code)}"`,l.ar+' <small>'+l.n+'</small>')).join('');
+  $('list').innerHTML=head('🌍 اكتشف العالم',`<span class="m">${C.length} دولة · اختار دولة أو لغة</span>`)+
+   `<input id="wq" placeholder="ابحث عن دولة..." style="grid-column:1/-1">`+
+   `<div class="secT" style="grid-column:1/-1;margin:6px 0 0">🗣 حسب اللغة</div><div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap">${langs}</div>`+
+   `<div class="secT" style="grid-column:1/-1;margin:6px 0 0">🏳️ حسب الدولة</div><div class="hgrid" id="wgrid">${cells}</div>`;
+  $('wq').oninput=e=>{const v=e.target.value.trim().toLowerCase();$('wgrid').querySelectorAll('.gcell').forEach(x=>x.style.display=!v||x.textContent.toLowerCase().includes(v)||(x.title||'').toLowerCase().includes(v)?'':'none')};
+};
+window.countryPage=async function(cc,name){
+  setTab('all');$('viewTitle').textContent=flag(cc)+' '+name;$('list').innerHTML='<p>جاري التحميل...</p>';
+  let d=await dget('world/'+cc+'.json');
+  let items=d?d.map(toSt):[];
+  if(!items.length){try{const r=await fetch(API+'/json/stations/bycountrycodeexact/'+cc+'?hidebroken=true&order=votes&reverse=true&limit=100');items=(await r.json()).filter(s=>/^https:/.test(s.url_resolved))}catch{}}
+  showList(flag(cc)+' '+name,items,`<button data-wmore="${cc}" style="background:var(--btn2);font-size:13px;padding:5px 10px">➕ كل محطات الدولة (مباشر)</button>`,'world');
+};
+window.langPage=async function(code,name){
+  setTab('all');$('viewTitle').textContent='🗣 '+name;$('list').innerHTML='<p>جاري التحميل...</p>';
+  let items=[];try{const r=await fetch(API+'/json/stations/bylanguage/'+encodeURIComponent(code)+'?hidebroken=true&order=votes&reverse=true&limit=150');items=(await r.json()).filter(s=>/^https:/.test(s.url_resolved))}catch{}
+  showList('🗣 '+name,items,'','world');
+};
+/* --- النقرات --- */
+$('list').addEventListener('click',e=>{
+  const t=e.target.closest('[data-act="arabw"],[data-act="world"],[data-act="pro"],[data-arcat],[data-arcc],[data-armore],[data-prof],[data-wcc],[data-wlang],[data-wmore]');if(!t)return;
+  e.stopImmediatePropagation();
+  if(t.dataset.act){navPush();({arabw:arabPage,world:worldPage,pro:proPage})[t.dataset.act]();return}
+  if(t.dataset.arcat!=null){arSel.cat=t.dataset.arcat==='كل الأقسام'?'':t.dataset.arcat;arabPage();return}
+  if(t.dataset.arcc!=null){arSel.cc=t.dataset.arcc;arabPage();return}
+  if(t.dataset.armore){arMore=!arMore;arabPage();return}
+  if(t.dataset.prof!=null){proSel=t.dataset.prof;proPage();return}
+  if(t.dataset.wcc){navPush();countryPage(t.dataset.wcc,t.querySelector('.gl').textContent);return}
+  if(t.dataset.wlang){navPush();langPage(t.dataset.wlang,t.textContent.replace(/\d+$/,'').trim());return}
+  if(t.dataset.wmore){$('country').value=t.dataset.wmore;$('q').value='';$('lang').value='';$('tag').value='';search();return}
+},true);
+/* --- الرئيسية: إضافة الأقسام في مجموعة استكشاف --- */
+const _s=showHome;showHome=function(){_s();
+  const eg=$('list').querySelector('[data-act="eg"]');if(!eg)return;
+  const strip=(a,ic,t,s)=>`<div class="strip one" data-act="${a}"><span class="si">${ic}</span><div class="st2"><b>${t}</b> <span class="m">· ${s}</span></div></div>`;
+  eg.insertAdjacentHTML('afterend',strip('arabw','🕌','محطات عربية','500 محطة مُنتقاة · قرآن · أخبار · طرب')+strip('world','🌍','اكتشف العالم','210 دولة و150 لغة')+strip('pro','💼','محطات مهنية','أخبار وأعمال وتعليم'));
+};
+/* --- الأقسام في شريط التبويبات --- */
+try{const nav=$('tAll').parentNode;const b=document.createElement('button');b.id='tArab';b.textContent='🕌 عربي';b.onclick=()=>{navPush();arabPage()};nav.insertBefore(b,$('tAll'));
+  const w=document.createElement('button');w.id='tWorld';w.textContent='🌍 العالم';w.onclick=()=>{navPush();worldPage()};nav.insertBefore(w,$('tAll'))}catch{}
+if(view==='home')showHome();
+})();
+
 </script>
 </body>
 </html>

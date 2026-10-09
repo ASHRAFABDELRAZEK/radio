@@ -1,0 +1,752 @@
+[
+{
+"code": "english",
+"ar": "الإنجليزية",
+"n": 10251
+},
+{
+"code": "german",
+"ar": "الألمانية",
+"n": 3865
+},
+{
+"code": "spanish",
+"ar": "الإسبانية",
+"n": 3646
+},
+{
+"code": "french",
+"ar": "الفرنسية",
+"n": 2259
+},
+{
+"code": "chinese",
+"ar": "الصينية",
+"n": 1903
+},
+{
+"code": "russian",
+"ar": "الروسية",
+"n": 1334
+},
+{
+"code": "italian",
+"ar": "الإيطالية",
+"n": 1187
+},
+{
+"code": "greek",
+"ar": "اليونانية",
+"n": 976
+},
+{
+"code": "dutch",
+"ar": "الهولندية",
+"n": 695
+},
+{
+"code": "polish",
+"ar": "البولندية",
+"n": 627
+},
+{
+"code": "portuguese",
+"ar": "البرتغالية",
+"n": 619
+},
+{
+"code": "american english",
+"ar": "",
+"n": 415
+},
+{
+"code": "brazilian portuguese",
+"ar": "",
+"n": 340
+},
+{
+"code": "romanian",
+"ar": "الرومانية",
+"n": 306
+},
+{
+"code": "hindi",
+"ar": "الهندية",
+"n": 294
+},
+{
+"code": "serbian",
+"ar": "الصربية",
+"n": 271
+},
+{
+"code": "arabic",
+"ar": "العربية",
+"n": 269
+},
+{
+"code": "turkish",
+"ar": "التركية",
+"n": 241
+},
+{
+"code": "hungarian",
+"ar": "المجرية",
+"n": 226
+},
+{
+"code": "tamil",
+"ar": "التاميلية",
+"n": 196
+},
+{
+"code": "español mexico",
+"ar": "",
+"n": 178
+},
+{
+"code": "czech",
+"ar": "التشيكية",
+"n": 177
+},
+{
+"code": "croatian",
+"ar": "الكرواتية",
+"n": 172
+},
+{
+"code": "indonesian",
+"ar": "الإندونيسية",
+"n": 155
+},
+{
+"code": "bulgarian",
+"ar": "البلغارية",
+"n": 153
+},
+{
+"code": "ukrainian",
+"ar": "الأوكرانية",
+"n": 152
+},
+{
+"code": "română",
+"ar": "",
+"n": 145
+},
+{
+"code": "romania",
+"ar": "",
+"n": 142
+},
+{
+"code": "nepali",
+"ar": "النيبالية",
+"n": 136
+},
+{
+"code": "castellano. español",
+"ar": "",
+"n": 133
+},
+{
+"code": "español argentina",
+"ar": "",
+"n": 112
+},
+{
+"code": "swedish",
+"ar": "السويدية",
+"n": 108
+},
+{
+"code": "english uk",
+"ar": "",
+"n": 106
+},
+{
+"code": "japanese",
+"ar": "اليابانية",
+"n": 102
+},
+{
+"code": "engilsh",
+"ar": "",
+"n": 100
+},
+{
+"code": "bosnian",
+"ar": "البوسنية",
+"n": 98
+},
+{
+"code": "catalan",
+"ar": "الكتالانية",
+"n": 97
+},
+{
+"code": "slovak",
+"ar": "السلوفاكية",
+"n": 95
+},
+{
+"code": "danish",
+"ar": "الدانماركية",
+"n": 95
+},
+{
+"code": "korean",
+"ar": "الكورية",
+"n": 93
+},
+{
+"code": "español internacional",
+"ar": "",
+"n": 91
+},
+{
+"code": "cantonese",
+"ar": "",
+"n": 91
+},
+{
+"code": "español - latinoamerica",
+"ar": "",
+"n": 84
+},
+{
+"code": "português  brasil",
+"ar": "",
+"n": 83
+},
+{
+"code": "deutsch fränkisch",
+"ar": "",
+"n": 79
+},
+{
+"code": "slovenian",
+"ar": "السلوفينية",
+"n": 76
+},
+{
+"code": "português (brasil)",
+"ar": "",
+"n": 76
+},
+{
+"code": "finnish",
+"ar": "الفنلندية",
+"n": 75
+},
+{
+"code": "malayalam",
+"ar": "المالايالامية",
+"n": 73
+},
+{
+"code": "british english",
+"ar": "",
+"n": 71
+},
+{
+"code": "язык: русский",
+"ar": "",
+"n": 67
+},
+{
+"code": "thai",
+"ar": "التايلاندية",
+"n": 65
+},
+{
+"code": "hebrew",
+"ar": "العبرية",
+"n": 58
+},
+{
+"code": "francaise",
+"ar": "",
+"n": 58
+},
+{
+"code": "akan",
+"ar": "",
+"n": 56
+},
+{
+"code": "espaňol",
+"ar": "",
+"n": 56
+},
+{
+"code": "punjabi",
+"ar": "البنجابية",
+"n": 55
+},
+{
+"code": "portugues do brasil",
+"ar": "",
+"n": 55
+},
+{
+"code": "norwegian",
+"ar": "النرويجية",
+"n": 54
+},
+{
+"code": "bahasa indonesia",
+"ar": "",
+"n": 52
+},
+{
+"code": "latvian",
+"ar": "اللاتفية",
+"n": 52
+},
+{
+"code": "filipino",
+"ar": "الفلبينية",
+"n": 49
+},
+{
+"code": "espanish",
+"ar": "",
+"n": 48
+},
+{
+"code": "românä",
+"ar": "",
+"n": 47
+},
+{
+"code": "swiss german",
+"ar": "",
+"n": 45
+},
+{
+"code": "estonian",
+"ar": "الإستونية",
+"n": 45
+},
+{
+"code": "pt-br",
+"ar": "",
+"n": 43
+},
+{
+"code": "urdu",
+"ar": "الأوردو",
+"n": 41
+},
+{
+"code": "español chile",
+"ar": "",
+"n": 41
+},
+{
+"code": "ukranian",
+"ar": "",
+"n": 40
+},
+{
+"code": "español colombia",
+"ar": "",
+"n": 37
+},
+{
+"code": "luganda",
+"ar": "",
+"n": 35
+},
+{
+"code": "hokkien",
+"ar": "",
+"n": 35
+},
+{
+"code": "malay",
+"ar": "الملايوية",
+"n": 32
+},
+{
+"code": "macedonian",
+"ar": "المقدونية",
+"n": 31
+},
+{
+"code": "turkçe",
+"ar": "",
+"n": 31
+},
+{
+"code": "lithuanian",
+"ar": "الليتوانية",
+"n": 30
+},
+{
+"code": "mandarin",
+"ar": "",
+"n": 30
+},
+{
+"code": "persian",
+"ar": "الفارسية",
+"n": 28
+},
+{
+"code": "swahili",
+"ar": "السواحلية",
+"n": 27
+},
+{
+"code": "sinhala",
+"ar": "السنهالية",
+"n": 26
+},
+{
+"code": "kazakh",
+"ar": "الكازاخية",
+"n": 26
+},
+{
+"code": "kurdish",
+"ar": "الكردية",
+"n": 25
+},
+{
+"code": "telugu",
+"ar": "التيلوغوية",
+"n": 25
+},
+{
+"code": "azerbaijani",
+"ar": "الأذرية",
+"n": 24
+},
+{
+"code": "português (br)",
+"ar": "",
+"n": 24
+},
+{
+"code": "flemish",
+"ar": "",
+"n": 23
+},
+{
+"code": "afrikaans",
+"ar": "الأفريكانية",
+"n": 21
+},
+{
+"code": "mongolian",
+"ar": "",
+"n": 21
+},
+{
+"code": "kannada",
+"ar": "الكانادية",
+"n": 21
+},
+{
+"code": "basque",
+"ar": "",
+"n": 20
+},
+{
+"code": "montenegro",
+"ar": "",
+"n": 20
+},
+{
+"code": "albanian",
+"ar": "الألبانية",
+"n": 19
+},
+{
+"code": "tagalog",
+"ar": "الفلبينية",
+"n": 19
+},
+{
+"code": "georgian",
+"ar": "الجورجية",
+"n": 18
+},
+{
+"code": "low german",
+"ar": "",
+"n": 18
+},
+{
+"code": "español peruano",
+"ar": "",
+"n": 18
+},
+{
+"code": "armenian",
+"ar": "الأرمنية",
+"n": 18
+},
+{
+"code": "belarusian",
+"ar": "",
+"n": 17
+},
+{
+"code": "creole",
+"ar": "",
+"n": 17
+},
+{
+"code": "haitian creole",
+"ar": "",
+"n": 17
+},
+{
+"code": "galician",
+"ar": "",
+"n": 17
+},
+{
+"code": "portugues do braasil",
+"ar": "",
+"n": 17
+},
+{
+"code": "bangla",
+"ar": "",
+"n": 16
+},
+{
+"code": "gernan",
+"ar": "",
+"n": 16
+},
+{
+"code": "asunción",
+"ar": "",
+"n": 16
+},
+{
+"code": "bengali",
+"ar": "البنغالية",
+"n": 15
+},
+{
+"code": "amharic",
+"ar": "الأمهرية",
+"n": 15
+},
+{
+"code": "icelandic",
+"ar": "الأيسلندية",
+"n": 15
+},
+{
+"code": "norsk",
+"ar": "",
+"n": 15
+},
+{
+"code": "montenegrin",
+"ar": "",
+"n": 15
+},
+{
+"code": "willemstad",
+"ar": "",
+"n": 15
+},
+{
+"code": "deutch",
+"ar": "",
+"n": 15
+},
+{
+"code": "türkisch",
+"ar": "",
+"n": 14
+},
+{
+"code": "inglés/portugués/español",
+"ar": "",
+"n": 14
+},
+{
+"code": "norddeutsch",
+"ar": "",
+"n": 14
+},
+{
+"code": "العربية",
+"ar": "",
+"n": 13
+},
+{
+"code": "latin",
+"ar": "اللاتينية",
+"n": 12
+},
+{
+"code": "rus",
+"ar": "",
+"n": 12
+},
+{
+"code": "ar",
+"ar": "",
+"n": 12
+},
+{
+"code": "español ecuador",
+"ar": "",
+"n": 12
+},
+{
+"code": "uyghur",
+"ar": "",
+"n": 12
+},
+{
+"code": "français - lëtzebuergesch",
+"ar": "",
+"n": 12
+},
+{
+"code": "tibetan",
+"ar": "",
+"n": 12
+},
+{
+"code": "moldovian",
+"ar": "",
+"n": 11
+},
+{
+"code": "faroese",
+"ar": "",
+"n": 10
+},
+{
+"code": "bambara",
+"ar": "",
+"n": 10
+},
+{
+"code": "vietnamese",
+"ar": "الفيتنامية",
+"n": 10
+},
+{
+"code": "spain",
+"ar": "",
+"n": 10
+},
+{
+"code": "kurdi",
+"ar": "",
+"n": 10
+},
+{
+"code": "irish",
+"ar": "الأيرلندية",
+"n": 10
+},
+{
+"code": "franch",
+"ar": "",
+"n": 10
+},
+{
+"code": "javanese",
+"ar": "",
+"n": 9
+},
+{
+"code": "luxembourgish",
+"ar": "",
+"n": 9
+},
+{
+"code": "quechua",
+"ar": "",
+"n": 9
+},
+{
+"code": "yoruba",
+"ar": "",
+"n": 9
+},
+{
+"code": "عربي",
+"ar": "",
+"n": 8
+},
+{
+"code": "moroccan arabic",
+"ar": "",
+"n": 8
+},
+{
+"code": "#spanish",
+"ar": "",
+"n": 8
+},
+{
+"code": "tr",
+"ar": "",
+"n": 8
+},
+{
+"code": "englsih",
+"ar": "",
+"n": 8
+},
+{
+"code": "galego",
+"ar": "",
+"n": 8
+},
+{
+"code": "româna",
+"ar": "",
+"n": 8
+},
+{
+"code": "engilsh uk",
+"ar": "",
+"n": 8
+},
+{
+"code": "tunisian",
+"ar": "",
+"n": 7
+},
+{
+"code": "khmer",
+"ar": "",
+"n": 7
+},
+{
+"code": "ingles español",
+"ar": "",
+"n": 7
+},
+{
+"code": "sanskrit",
+"ar": "",
+"n": 7
+},
+{
+"code": "hakka",
+"ar": "",
+"n": 7
+},
+{
+"code": "tatar",
+"ar": "",
+"n": 7
+}
+]
