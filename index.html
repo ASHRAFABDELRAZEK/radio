@@ -2068,6 +2068,16 @@ function hxToolStrips(){if(hxGet('guest',false))return '';const ds=hxGet('dsave'
 // ===== HX10: تسميات جديدة + ترحيل ترتيب الرئيسية القديم =====
 (function(){const M={'🎵 استمع':'🎵 مكتبتي','🧭 تصفّح':'🧭 استكشاف المحطات','🕘 سمعتهم مؤخرًا':'🕘 تابع الاستماع'};const o=ls.get('hx',{});let ch=false;
  ['hord','hhid'].forEach(k=>{if(Array.isArray(o[k])){const n=o[k].map(x=>M[x]||x).filter(x=>!/🛠|🧰/.test(x));if(JSON.stringify(n)!==JSON.stringify(o[k])){o[k]=n;ch=true}}});if(ch)ls.set('hx',o)})();
+
+/* HX12: reload keeps playing */
+(function(){try{
+au.addEventListener('playing',()=>{try{sessionStorage.setItem('hxWas','1')}catch{}});
+au.addEventListener('pause',()=>{if(document.visibilityState!=='hidden'&&!au.ended){try{sessionStorage.setItem('hxWas','0')}catch{}}});
+let nav='';try{nav=performance.getEntriesByType('navigation')[0].type}catch{}
+let was='0';try{was=sessionStorage.getItem('hxWas')}catch{}
+if(nav==='reload'&&was==='1'&&ls.get('radioLast',null)){
+ setTimeout(()=>{try{resume();const p=au.play&&au.play();if(p&&p.catch)p.catch(()=>{$('status').textContent='▶ المتصفح منع التشغيل التلقائي — اضغط ▶ لإكمال'})}catch{}},600)}
+}catch(e){}})();
 </script>
 </body>
 </html>
