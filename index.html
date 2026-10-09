@@ -2363,8 +2363,8 @@ const J=async u=>{try{const c=new AbortController();const t=setTimeout(()=>c.abo
 const doy=()=>Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5);
 let ITEMS=[];
 const SR=`<div class="zsr" style="grid-column:1/-1;display:flex;gap:6px;margin-bottom:6px"><input id="zQ" placeholder="🔎 ابحث: مسرحية، فنان، إذاعة…" style="flex:1;min-width:0"><button data-hx="zsearch" style="flex:none">بحث</button></div>`;
-let MSG='';
-const html=it=>SR+(MSG?`<div class="m" style="padding:6px">${MSG}</div>`:'')+(it.length?it.map((x,i)=>`<div class="strip one" data-hx="zaplay" data-i="${i}"><span class="si">${x.tags==='wiki'?'📚':'🎙'}</span><div class="st2"><b>${esc(x.name)}</b> <span class="m">· ${esc((x.country||'').replace(/^[^ ]+ /,''))}</span></div></div>`).join('')+`<div class="strip one" data-hx="zarefresh"><span class="si">🔄</span><div class="st2"><b>اكتشافات جديدة</b></div></div>`:'<div class="m" style="padding:6px">جاري البحث التلقائي عن تسجيلات نادرة…</div>');
+let MSG='',IAH=[];
+const html=it=>SR+(MSG?`<div class="m" style="padding:6px">${MSG}</div>`:'')+(it.length?it.map((x,i)=>`<div class="strip one" data-hx="zaplay" data-i="${i}"><span class="si">${x.tags==='wiki'?'📚':'🎙'}</span><div class="st2"><b>${esc(x.name)}</b> <span class="m">· ${esc((x.country||'').replace(/^[^ ]+ /,''))}</span></div></div>`).join('')+IAH.map(x=>`<div class="strip one" data-hx="zaia" data-id="${esc(x.id)}" data-t="${esc(x.t)}"><span class="si">🎭</span><div class="st2"><b>${esc(x.t)}</b> <span class="m">· مجموعة أرشيف · اضغط للحلقات</span></div></div>`).join('')+`<div class="strip one" data-hx="zarefresh"><span class="si">🔄</span><div class="st2"><b>اكتشافات جديدة</b></div></div>`:'<div class="m" style="padding:6px">جاري البحث التلقائي عن تسجيلات نادرة…</div>');
 async function fetchSet(qs,n){const rs=await Promise.all(qs.map(async q=>{const [a,c]=await Promise.all([
  J('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=podcast&entity=podcastEpisode&limit=15&country=EG'),
  J('https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(q)+'&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|mime&format=json&origin=*')]);
@@ -2378,8 +2378,23 @@ async function fill(force){const d=new Date().toDateString();let c=hxGet('zauto'
 function paint(){const e=document.getElementById('zAuto');if(e)e.innerHTML=html(ITEMS)}
 HX.zaplay=function(el){if(ITEMS.length)hxPlayAll(ITEMS,+el.dataset.i)};
 HX.zarefresh=function(){MSG='';const e=document.getElementById('zAuto');if(e)e.innerHTML=html([]);fill(true).then(()=>{if(!ITEMS.length){MSG='ما لقيتش حاجة دلوقتي — اتأكد من النت وجرّب تاني';paint()}})};
-HX.zsearch=async function(){const q=((document.getElementById('zQ')||{}).value||'').trim();if(!q)return;const e=document.getElementById('zAuto');MSG='بدوّر على «'+esc(q)+'»…';ITEMS=[];if(e){e.innerHTML=html([]);const i=document.getElementById('zQ');i&&(i.value=q)}
- const it=await fetchSet([q],24);ITEMS=it;MSG=it.length?'نتايج «'+esc(q)+'» ('+it.length+')':'ما لقيتش نتايج لـ «'+esc(q)+'» — جرّب كلمة تانية';paint();const i=document.getElementById('zQ');i&&(i.value=q)};
+HX.zaia=function(el){navPush();setTab('arc');arcOpen(el.dataset.id,el.dataset.t)};
+HX.zsearch=async function(){const q=((document.getElementById('zQ')||{}).value||'').trim();if(!q)return;const e=document.getElementById('zAuto');MSG='بدوّر على «'+esc(q)+'»…';ITEMS=[];IAH=[];if(e){e.innerHTML=html([]);const i=document.getElementById('zQ');i&&(i.value=q)}
+ const n1=q.replace(/[ىي]/g,'ي').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه'),n2=q.replace(/ى/g,'ي'),n3=n2.split(/\s+/).map(w=>/^ا[مبنسرحخدعفكلهي]/.test(w)?'أ'+w.slice(1):w).join(' '),n4=n1.replace(/ه\b/g,'ة');
+ const vs=[...new Set([q,n2,n3,n1,n4])].filter(Boolean).slice(0,4);
+ const jj=async u=>{try{const c=new AbortController();const t=setTimeout(()=>c.abort(),10000);const r=await fetch(u,{signal:c.signal});clearTimeout(t);return await r.json()}catch{return null}};
+ const res=await Promise.all(vs.map(v=>Promise.all([
+  jj('https://itunes.apple.com/search?term='+encodeURIComponent(v)+'&media=podcast&entity=podcastEpisode&limit=50&country=EG'),
+  jj('https://itunes.apple.com/search?term='+encodeURIComponent(v)+'&media=podcast&entity=podcastEpisode&limit=50&country=SA'),
+  jj('https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(v)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime&format=json&origin=*'),
+  jj('https://archive.org/advancedsearch.php?q='+encodeURIComponent('("'+v+'") AND mediatype:audio')+'&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=25&output=json')])));
+ const seen=new Set(),out=[],ia=[],seenIa=new Set();
+ res.forEach(([a1,a2,c,i])=>{[...((a1&&a1.results)||[]),...((a2&&a2.results)||[])].forEach(r=>{const u=r.episodeUrl;if(!u||seen.has(u))return;seen.add(u);out.push({stationuuid:'ext:'+(r.trackId||u),name:r.trackName||'حلقة',country:'🎙 '+(r.collectionName||'بودكاست'),tags:'podcast',favicon:r.artworkUrl100||'',url_resolved:u,url:u})});
+  Object.values((c&&c.query&&c.query.pages)||{}).forEach(p=>{const ii=p.imageinfo&&p.imageinfo[0];if(!ii||!/^audio\//.test(ii.mime||'')||seen.has(ii.url))return;seen.add(ii.url);out.push({stationuuid:'ext:'+p.pageid,name:p.title.replace(/^File:/,'').replace(/\.[^.]+$/,'').replace(/_/g,' '),country:'📚 ويكيميديا كومنز',tags:'wiki',favicon:'',url_resolved:ii.url,url:ii.url})});
+  ((i&&i.response&&i.response.docs)||[]).forEach(d=>{if(seenIa.has(d.identifier))return;seenIa.add(d.identifier);ia.push({id:d.identifier,t:Array.isArray(d.title)?d.title[0]:(d.title||d.identifier)})})});
+ ITEMS=out.slice(0,40);IAH=ia.slice(0,25);const tot=ITEMS.length+IAH.length;
+ MSG=tot?'نتايج «'+esc(q)+'»: '+ITEMS.length+' ملف مباشر + '+IAH.length+' مجموعة أرشيف':'ما لقيتش نتايج لـ «'+esc(q)+'» — جرّب كلمة تانية أو اتأكد من النت';
+ paint();const i=document.getElementById('zQ');i&&(i.value=q)};
 document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target&&ev.target.id==='zQ'){ev.preventDefault();HX.zsearch()}});
 const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
  const c=hxGet('zauto',null);if(c&&c.items&&!ITEMS.length)ITEMS=c.items;setTimeout(()=>fill(false),50);
