@@ -314,6 +314,8 @@ body.mvmode .st.mvsel{outline:3px solid var(--gold,#C9A227);background:rgba(201,
 #mvBar{position:fixed;left:8px;right:8px;bottom:128px;z-index:9998;background:#0b1730;border:2px solid var(--gold,#C9A227);border-radius:16px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.55);color:#fff}
 #mvBar .mvc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 #mvBar button{background:var(--btn2);color:#fff;border:0;border-radius:10px;padding:8px 12px}
+
+body.nodel .st .rmx{display:none!important}
 </style>
 </head>
 <body>
@@ -2346,10 +2348,10 @@ const isList=a=>a===favs||a===recent||a===later;
 const LN={fav:'المفضلة',rec:'آخر ما سمعته',later:'بعدين'};
 const HXT=window.HXT={get:()=>hxGet('trash',[]),
  snack(m,fn){const o=document.getElementById('hxSnack');o&&o.remove();const d=document.createElement('div');d.id='hxSnack';d.style.cssText='position:fixed;bottom:130px;left:50%;transform:translateX(-50%);background:#0b1730;color:#fff;border:2px solid var(--gold,#C9A227);border-radius:14px;padding:10px 14px;z-index:99999;display:flex;gap:12px;align-items:center;box-shadow:0 6px 18px rgba(0,0,0,.5);max-width:92vw';d.innerHTML=`<span>${m}</span><button style="background:var(--gold,#C9A227);color:#000;border:0;border-radius:8px;padding:6px 12px;font-weight:700">↩ تراجع</button>`;d.querySelector('button').onclick=()=>{fn();d.remove()};document.body.appendChild(d);setTimeout(()=>d.remove(),8000)},
- add(l,s,i){const t=[{l,s,i,d:Date.now()},...HXT.get()].slice(0,60);hxSet('trash',t);HXT.snack('اتحذفت «'+esc(s.name).slice(0,28)+'»',()=>HXT.restore(0,true))},
+ add(l,s,i){const t=[{l,s,i,d:Date.now()},...HXT.get()].slice(0,200);hxSet('trash',t);HXT.snack('اتحذفت «'+esc(s.name).slice(0,28)+'»',()=>HXT.restore(0,true))},
  restore(k,silent){const t=[...HXT.get()],x=t[k];if(!x)return;t.splice(k,1);hxSet('trash',t);
   const arr=x.l==='fav'?favs:x.l==='rec'?recent:later,key=x.l==='fav'?'radioFavs':x.l==='rec'?'radioRecent':'radioLater';
-  if(!arr.some(y=>y.stationuuid===x.s.stationuuid))arr.splice(Math.min(x.i,arr.length),0,x.s);ls.set(key,arr);
+  if(x.bulk){x.bulk.forEach(b=>{if(!arr.some(y=>y.stationuuid===b.stationuuid))arr.push(b)})}else if(!arr.some(y=>y.stationuuid===x.s.stationuuid))arr.splice(Math.min(x.i,arr.length),0,x.s);ls.set(key,arr);
   if(silent){const cur=window._rxArr;if(cur===arr)render(arr);toast('اترجّعت ✔')}else{toast('اترجّعت إلى '+LN[x.l]);HX.trash()}}};
 const hid=()=>hxGet('stHide',[]);
 const _r=render;render=function(arr){if(!isList(arr)){const h=hid();if(h.length)arr=arr.filter(s=>!h.includes(s.stationuuid))}
@@ -2401,6 +2403,29 @@ document.addEventListener('click',e=>{
  if(on&&t.closest('#list')){const st=t.closest('.st[data-u]');if(st&&!t.closest('.rmx')){e.stopImmediatePropagation();e.preventDefault();const u=st.dataset.u;sel.has(u)?sel.delete(u):sel.add(u);refresh();return}}
 },true);
 setTimeout(addBtn,800);
+})();
+
+/* HX26: إدارة الحذف والاستعادة */
+(function(){
+const info=()=>({fav:[favs,'radioFavs','⭐ المفضلة'],rec:[recent,'radioRecent','🕘 آخر ما سمعته'],later:[later,'radioLater','🔖 بعدين']});
+const apply=()=>document.body.classList.toggle('nodel',hxGet('nodel',false));apply();
+const bulkTrash=(l,items,label)=>{if(!items.length)return;const t=[{l,bulk:items.map(x=>({...x})),s:{name:label+' ('+items.length+')',stationuuid:'bulk'},i:0,d:Date.now()},...HXT.get()].slice(0,200);hxSet('trash',t)};
+HX.delmgr=function(){const I=info(),tr=HXT.get().length,hd=hxGet('stHide',[]).length,nd=hxGet('nodel',false);
+ const lists=Object.entries(I).map(([k,[a,,n]])=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>${n}</b><div class="m">${a.length} عنصر</div></div><button class="hxb" data-hx="dmclr" data-k="${k}">🗑 احذف الكل</button></div>`).join('');
+ const gs=grps().map(g=>({g,n:favs.filter(f=>f.grp===g).length})).filter(x=>x.n).map(x=>`<div class="hxc" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>📁 ${esc(x.g)}</b><div class="m">${x.n} محطة في المفضلة</div></div><button class="hxb" data-hx="dmgrp" data-g="${esc(x.g)}">🗑 احذف المجموعة</button></div>`).join('');
+ hxPage('🗑 إدارة الحذف والاستعادة',
+ `<div class="hxc"><b>زرار الحذف ✕ جنب المحطات</b><div class="chips" style="display:flex;gap:8px;margin-top:6px"><span class="chip" data-hx="dmshow" data-v="1" style="${!nd?'outline:2px solid var(--gold)':''}">👁 ظاهر</span><span class="chip" data-hx="dmshow" data-v="0" style="${nd?'outline:2px solid var(--gold)':''}">🙈 مخفي</span></div><div class="m">لو خبّيته مفيش حذف بالغلط، وتقدر تحذف من هنا.</div></div>
+ <div class="hxc"><b>حذف قايمة كاملة</b><div class="m">بتروح السلة وتقدر تستعيدها.</div></div>${lists}${gs}
+ <div class="hxc"><b>🗑 السلة</b> <span class="m">(${tr})</span><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="hxb" data-hx="trash">فتح السلة</button><button class="hxb" data-hx="dmrestall">↩ استعادة الكل</button><button class="hxb" data-hx="trashclr">🧹 فضّي السلة</button></div></div>
+ <div class="hxc"><b>🙈 المحطات المخفية</b> <span class="m">(${hd})</span><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="hxb" data-hx="sthide">فتح القايمة</button><button class="hxb" data-hx="stshowall">↩ رجّع الكل</button></div></div>`)};
+HX.dmshow=function(el){hxSet('nodel',el.dataset.v==='0');apply();HX.delmgr()};
+HX.dmclr=function(el){const [a,key,n]=info()[el.dataset.k];if(!a.length){toast('القايمة فاضية');return}if(!confirm('حذف كل «'+n+'» ('+a.length+')؟ هتروح السلة وتقدر تستعيدها.'))return;
+ bulkTrash(el.dataset.k,a,'كل '+n);a.length=0;ls.set(key,a);toast('اتحذفت — استعيدها من السلة');HX.delmgr()};
+HX.dmgrp=function(el){const g=el.dataset.g,items=favs.filter(f=>f.grp===g);if(!confirm('حذف مجموعة «'+g+'» ('+items.length+' محطة)؟ هتروح السلة.'))return;
+ bulkTrash('fav',items,'مجموعة «'+g+'»');for(let i=favs.length-1;i>=0;i--)if(favs[i].grp===g)favs.splice(i,1);ls.set('radioFavs',favs);toast('اتحذفت — استعيدها من السلة');HX.delmgr()};
+HX.dmrestall=function(){const n=HXT.get().length;if(!n){toast('السلة فاضية');return}for(let k=n-1;k>=0;k--)HXT.restore(k,false);toast('اترجّع كل اللي في السلة ✔');HX.delmgr()};
+const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
+ return h.replace(/(<div class="strip one" data-hx="addst">)/,`<div class="strip one gold" data-hx="delmgr"><span class="si">🗑</span><div class="st2"><b>إدارة الحذف والاستعادة</b></div></div>$1`)};
 })();
 </script>
 </body>
