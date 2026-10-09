@@ -218,6 +218,7 @@ body.hasSide>#gBar{margin-right:300px}
 .chip{background:var(--btn2);padding:8px 14px;border-radius:20px;cursor:pointer}
 body.dsave img{display:none!important}
 body.big{zoom:1.2}
+.tstrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;grid-column:1/-1;-webkit-overflow-scrolling:touch}.tstrip .gcell{flex:none;width:84px;min-height:70px}.tstrip .gl{font-size:12px;line-height:1.3}
 .bigg{display:grid;grid-template-columns:1fr 1fr;gap:12px}.bigg .gcell{min-height:110px}.bigg .gi{font-size:40px}.bigg .gl{font-size:20px;font-weight:bold}
 .hxbar{height:10px;background:var(--btn2);border-radius:6px;overflow:hidden}.hxbar i{display:block;height:100%;background:var(--gold,#fbbf24)}
 body.guest #menuB{display:none!important}
@@ -1583,7 +1584,6 @@ $('list').addEventListener('click',e=>{const t=e.target.closest('[data-hx]');if(
  let h='';
  if(p&&adh[p]!==k)h+=S('adh',p==='m'?'🌅':'🌇',p==='m'?'أذكار الصباح':'أذكار المساء','اضغط للقراءة');
  else if(hxGet('wrem',true)&&w.done!==k&&w.s)h+=S('wird','📖','ورد اليوم','سورة '+SURAHS[(w.s||1)-1]);
- h+=S('hub','✦','مفيد كل يوم','الروحانيات · التعلّم · الأعمال · أدوات النظام');
  if(mt)mt.insertAdjacentHTML('afterend',h);
  if(hxGet('big',false)){$('list').innerHTML=`<div class="bigg" style="grid-column:1/-1">${(ls.get('radioLast',null)?`<div class="gcell" data-act="resume"><span class="gi">▶</span><span class="gl">كمّل</span></div>`:'')}<div class="gcell" data-act="fav"><span class="gi">⭐</span><span class="gl">المفضلة</span></div><div class="gcell" data-hx="bigq"><span class="gi">📖</span><span class="gl">القرآن</span></div><div class="gcell" data-act="all"><span class="gi">🌍</span><span class="gl">كل المحطات</span></div><div class="gcell" data-hx="hub"><span class="gi">🌟</span><span class="gl">المزيد</span></div><div class="gcell" data-hx="big"><span class="gi">↩</span><span class="gl">الوضع العادي</span></div></div>`}}})();
 // ?f= استقبال مفضلة مُشاركة
@@ -1685,7 +1685,7 @@ if(hxGet('guest',false))document.body.classList.add('guest');
 (function(){const o=ls.get('listenStats',{});})();
 
 // ===== HX3: فحص المفضلة، أوفلاين، نسخة احتياطية، قفل، ذاكرة الدراسة، ثيمات، ترتيب الرئيسية، اختصارات، سورة/آية اليوم، مناسبات =====
-const HGRP=['⭐ أقسامي','🎵 مكتبتي','🧭 استكشاف المحطات','🕘 تابع الاستماع'];
+const HGRP=['⭐ أقسامي','🎵 مكتبتي','🧭 استكشاف المحطات','🕌 الروحانيات','👨‍👩‍👧 الأسرة','🎓 التعلّم والإنتاجية','🎲 اكتشف','💼 الأعمال والحياة اليومية','🎧 أدوات الاستماع','⚙ التخصيص والنظام','🕘 تابع الاستماع'];
 const VERSES=[['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','البقرة 201'],['فَإِنَّ مَعَ الْعُسْرِ يُسْرًا إِنَّ مَعَ الْعُسْرِ يُسْرًا','الشرح 5-6'],['وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ','الطلاق 3'],['أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ','الرعد 28'],['رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي','طه 25-26'],['وَقُل رَّبِّ زِدْنِي عِلْمًا','طه 114'],['لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا','البقرة 286'],['فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ','البقرة 152'],['وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ','هود 115'],['رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا','البقرة 286'],['رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ','القصص 24'],['حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ','آل عمران 173'],['رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا','الفرقان 74'],['رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً إِنَّكَ أَنتَ الْوَهَّابُ','آل عمران 8'],['لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ','الأنبياء 87']];
 const DAYSUR=[[55,'الرحمن'],[56,'الواقعة'],[19,'مريم'],[67,'الملك'],[44,'الدخان'],[18,'الكهف'],[36,'يس']];// الأحد..السبت (للتدبّر)
 const dayOfYear=()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)};
@@ -1752,6 +1752,7 @@ HX.gstart=function(){const p=$('gP').value;if(!/^\d{4}$/.test(p))return toast('�
  if(hxGet('guest',false))return;
  const ne=nextEvent(),mt=$('list').querySelector('[data-act="modes"]');if(ne&&ne.i<=30&&mt&&ne.i>0)mt.insertAdjacentHTML('afterend',`<div class="strip one" data-hx="today"><span class="si">${ne.e[3]}</span><div class="st2"><b>باقي ${ne.i} يوم على ${ne.e[2]}</b></div></div>`);
  {const fg=$('list').querySelector('.hgrp'),P=mySecs.map((x,i)=>[x,i]).filter(([x])=>x.pin);if(fg&&P.length)fg.insertAdjacentHTML('beforebegin',`<div class="hgrp">⭐ أقسامي</div><div class="hgrid">${P.map(([x,i])=>`<div class="gcell" data-mysec="${i}"><span class="gi">${esc(x.ic||'⭐')}</span><span class="gl">${esc(x.name)}</span></div>`).join('')}<div class="gcell" data-act="mysecMgr"><span class="gi">⚙</span><span class="gl">إدارة</span></div></div>`)}
+ {const hb=$('list').querySelector('#hsBox');if(hb&&typeof hxToolStrips==='function')hb.insertAdjacentHTML('beforebegin',hxToolStrips())}
  const hid=hxGet('hhid',[]),ord=hxGet('hord',HGRP),L=$('list'),kids=[...L.children],blocks=[];let cur=null;
  kids.forEach(n=>{if(n.classList&&n.classList.contains('hgrp')){cur={g:n.textContent.replace(/\s*🗑.*$/,'').trim(),nodes:[n]};blocks.push(cur)}else if(cur&&(n.classList.contains('hgrid')||n.classList.contains('rrow')))cur.nodes.push(n);else cur=null});
  const gk=g=>g.replace(/^\S+\s*/,'').slice(0,4);blocks.forEach(b=>{if(hid.some(h=>gk(h)===gk(b.g)))b.nodes.forEach(n=>n.remove())});
@@ -2003,29 +2004,38 @@ setInterval(()=>{const p=hxPal();if((!p.pre.on&&!p.post.on)||!pTimes||!pTimes.t)
 
 // ===== HX9: الريفريش يرجّعك لنفس الصفحة (آخر شاشة) =====
 (function(){
- const K='hxrs';let restoring=false;
- const get=()=>{try{return JSON.parse(sessionStorage.getItem(K))}catch{return null}};
- const put=o=>{if(restoring)return;try{o.sy=o.sy||{w:0,l:0};sessionStorage.setItem(K,JSON.stringify(o))}catch{}};
- const isReload=(()=>{try{const n=performance.getEntriesByType('navigation')[0];return n?n.type==='reload':performance.navigation&&performance.navigation.type===1}catch{return false}})();
- const saved=isReload?get():null;
- // تتبّع التمرير
- let tm=null;const sv=()=>{clearTimeout(tm);tm=setTimeout(()=>{const o=get();if(!o||restoring)return;o.sy={w:window.scrollY||0,l:($('list')||{}).scrollTop||0};try{sessionStorage.setItem(K,JSON.stringify(o))}catch{}},250)};
+ const K='hxrs';let restoring=false,ready=false,lastSel=null;
+ const rd=()=>{let v=null;try{v=sessionStorage.getItem(K)}catch{}if(!v)try{v=localStorage.getItem(K)}catch{}try{return v?JSON.parse(v):null}catch{return null}};
+ const wr=o=>{const s=JSON.stringify(o);try{sessionStorage.setItem(K,s)}catch{}try{localStorage.setItem(K,s)}catch{}};
+ const put=o=>{if(restoring||!ready)return;o.sy=o.sy||{w:0,l:0};o.ts=Date.now();wr(o)};
+ const isReload=(()=>{try{const n=performance.getEntriesByType('navigation')[0];return n?n.type==='reload':(performance.navigation&&performance.navigation.type===1)}catch{return false}})();
+ const saved=isReload?rd():null;
+ ready=!saved;
+ // آخر عنصر ضغطت عليه في الرئيسية (للصفحات اللي ملهاش حالة خاصة)
+ $('list').addEventListener('click',e=>{const t=e.target.closest('[data-act],[data-hx],[data-mysec],[data-occ]');if(!t)return;
+  const a=t.dataset;lastSel=a.hx?`[data-hx="${a.hx}"]`:a.act?`[data-act="${a.act}"]`:a.mysec!=null?`[data-mysec="${a.mysec}"]`:`[data-occ="${a.occ}"]`},true);
+
+ // أمان: لو الشاشة الحالية هي الرئيسية وقت الخروج/الريفريش، نسجّل الرئيسية مهما حصل
+ const snap=()=>{try{const t=($('viewTitle')||{}).textContent||'';if(ready&&!restoring&&/الرئيسية/.test(t)){const o=rd();if(!o||o.k!=='home')wr({k:'home',sy:{w:0,l:0},ts:Date.now()})}}catch{}};
+ addEventListener('pagehide',snap);addEventListener('beforeunload',snap);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')snap()});
+ let tm=null;const sv=()=>{clearTimeout(tm);tm=setTimeout(()=>{if(restoring||!ready)return;const o=rd();if(!o)return;o.sy={w:window.scrollY||0,l:($('list')||{}).scrollTop||0};wr(o)},250)};
  window.addEventListener('scroll',sv,{passive:true});$('list').addEventListener('scroll',sv,{passive:true});
  const wrap=(name,rec)=>{try{const f=eval(name);if(typeof f!=='function')return;const w=function(...a){const r=f.apply(this,a);try{put(rec(a))}catch{}return r};eval(name+'=w')}catch{}};
- wrap('setTab',a=>a[0]==='fav'?{k:'fav'}:a[0]==='arc'?{k:'arc'}:{k:'home'});
+ wrap('setTab',a=>a[0]==='fav'?{k:'fav'}:a[0]==='arc'?{k:'arc'}:(lastSel?{k:'nav',sel:lastSel}:{k:'home'}));
  wrap('loadSet',a=>({k:'set',a:[a[0],a[1],a[2]||{}]}));
  wrap('search',()=>({k:'search',f:{q:($('q')||{}).value,country:($('country')||{}).value,lang:($('lang')||{}).value,tag:($('tag')||{}).value}}));
  wrap('arcSearch',()=>({k:'arcSearch',q:($('aq')||{}).value}));
  wrap('arcOpen',a=>({k:'arcOpen',id:a[0],t:a[1]}));
  wrap('arcCats',()=>({k:'arc'}));
  ['modesPage','laterPage','statsPage','fridayPage','discover'].forEach(n=>wrap(n,()=>({k:'fn',n})));
- wrap('showHome',()=>({k:'home'}));
  const PAGES=['hub','wird','khatma','adh','tasbeeh','qibla','kids','bed','pro','learnlog','moments','week','radar','route','news','mix','recap','remind','lang','forme','share','exp','appt','shop','vn','time','calc','prices','weather','trans','qr','today','favcheck','offline','backup','lock','theme','order','pal','chimeP','guest'];
  PAGES.forEach(n=>{const f=HX[n];if(typeof f!=='function')return;HX[n]=function(...a){const r=f.apply(HX,a);put({k:'hx',n});return r}});
- // الاستعادة عند أول عرض للرئيسية بعد التحميل
- if(saved&&saved.k&&saved.k!=='home'){let done=false;const _s=showHome;
-  showHome=function(){if(done)return _s.apply(this,arguments);done=true;restoring=true;
-   const fin=()=>{restoring=false;put(saved);const sy=saved.sy||{};setTimeout(()=>{window.scrollTo(0,sy.w||0);$('list').scrollTop=sy.l||0},250);setTimeout(()=>{window.scrollTo(0,sy.w||0);$('list').scrollTop=sy.l||0},1200)};
+ {const _s=showHome;let first=true;
+  showHome=function(){const wasFirst=first;first=false;
+   if(!wasFirst||!saved||saved.k==='home'||!saved.k){const r=_s.apply(this,arguments);ready=true;if(!restoring)put({k:'home'});lastSel=null;return r}
+   restoring=true;
+   const fin=()=>{restoring=false;ready=true;put(saved);const sy=saved.sy||{};const sc=()=>{window.scrollTo(0,sy.w||0);$('list').scrollTop=sy.l||0};setTimeout(sc,250);setTimeout(sc,1200)};
+   const fb=()=>{restoring=false;ready=true;return _s.apply(this,arguments)};
    try{
     if(saved.k==='fav'){setTab('fav');render(favs);fin()}
     else if(saved.k==='arc'){setTab('arc');arcCats();fin()}
@@ -2035,9 +2045,23 @@ setInterval(()=>{const p=hxPal();if((!p.pre.on&&!p.post.on)||!pTimes||!pTimes.t)
     else if(saved.k==='arcOpen'){setTab('arc');Promise.resolve(arcOpen(saved.id,saved.t)).then(fin,fin)}
     else if(saved.k==='fn'&&typeof window[saved.n]==='function'){Promise.resolve(window[saved.n]()).then(fin,fin)}
     else if(saved.k==='hx'&&HX[saved.n]){Promise.resolve(HX[saved.n]()).then(fin,fin)}
-    else{restoring=false;return _s.apply(this,arguments)}
-   }catch{restoring=false;return _s.apply(this,arguments)}}}
+    else if(saved.k==='nav'&&saved.sel){_s.apply(this,arguments);setTimeout(()=>{const el=$('list').querySelector(saved.sel);if(el){lastSel=saved.sel;el.click();setTimeout(fin,600)}else fin()},80)}
+    else return fb()
+   }catch{return fb()}}}
 })();
+
+
+// ===== HX11: شرائط الأدوات على الرئيسية =====
+function hxToolStrips(){if(hxGet('guest',false))return '';const ds=hxGet('dsave',false),bg=hxGet('big',false);
+ const t=(a,ic,l,act)=>`<div class="gcell" ${act?'data-act':'data-hx'}="${a}"><span class="gi">${ic}</span><span class="gl">${l}</span></div>`;
+ const G=[['🕌 الروحانيات',[['wird','📖','الورد اليومي'],['khatma','🏁','ختمتي'],['adh','🤲','الأذكار'],['tasbeeh','📿','المسبحة'],['qibla','🧭','القبلة'],['pal','🔔','منبّه الصلاة'],['today','📜','آية اليوم']]],
+ ['👨‍👩‍👧 الأسرة',[['kids','🧒','ركن الصغار'],['bed','🌙','هدوء المساء'],['guest','🔒','الوضع المقيّد']]],
+ ['🎓 التعلّم والإنتاجية',[['lang','🗣','تعلّم لغة'],['pro','💼','محتوى مهني'],['pomo','🍅','جلسة تركيز'],['moments','🔖','علامات الاستماع'],['week','🏆','هدف الأسبوع'],['forme','✨','مقترحات لك']]],
+ ['🎲 اكتشف',[['radar','🌍','جولة حول العالم'],['route','🚗','رفيق الطريق'],['news','☕','نشرة الصباح'],['mix','🎚','مزيج الأجواء'],['recap','🎁','حصاد الاستماع']]],
+ ['💼 الأعمال والحياة اليومية',[['exp','💰','المصروفات'],['appt','📅','المواعيد'],['shop','🛒','المشتريات'],['vn','🎙','مذكرات صوتية'],['time','⏱','تتبّع الوقت'],['calc','🧮','الحاسبات'],['prices','💱','الذهب والعملات'],['weather','🌤','الطقس'],['trans','🌐','الترجمة'],['qr','🔳','قارئ الفواتير']]],
+ ['🎧 أدوات الاستماع',[['drive','🚗','وضع السواقة',1],['study','🎓','وضع المذاكرة',1],['discover','🎲','اكتشف محطة',1],['stats','📊','إحصائياتي',1],['chimeP','🔔','دقّات الساعة']]],
+ ['⚙ التخصيص والنظام',[['dsave',ds?'✅':'📶','الوضع الموفّر'],['big',bg?'✅':'👴','العرض المريح'],['remind','⏰','التذكيرات'],['theme','🎨','المظهر'],['order','↕','ترتيب الرئيسية'],['share','🔗','مشاركة المفضلة'],['favcheck','🩺','فحص المفضلة'],['offline','📥','بدون إنترنت'],['backup','💾','نسخة احتياطية'],['lock','🔐','قفل التطبيق']]]];
+ return G.map(([n,L])=>`<div class="hgrp">${n}</div><div class="rrow tstrip">${L.map(x=>t(x[0],x[1],x[2],x[3])).join('')}</div>`).join('')}
 
 // ===== HX10: تسميات جديدة + ترحيل ترتيب الرئيسية القديم =====
 (function(){const M={'🎵 استمع':'🎵 مكتبتي','🧭 تصفّح':'🧭 استكشاف المحطات','🕘 سمعتهم مؤخرًا':'🕘 تابع الاستماع'};const o=ls.get('hx',{});let ch=false;
