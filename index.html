@@ -426,6 +426,11 @@ body.nodel .st .rmx{display:none!important}
 .hs-dot #list#list>.hsub{grid-column:span 2!important;font-size:9px!important}
 .hcrumb{grid-column:1/-1;font-size:12px;font-weight:700;padding:5px 12px;margin:2px 0 0;border-radius:10px;background:rgba(100,140,255,.16);border-inline-start:5px solid rgba(130,160,255,.9);color:#cfd8ff}
 .hcrumb.c2{background:rgba(20,184,166,.16);border-inline-start-color:#2dd4bf;color:#99f6e4;margin-inline-start:12px}
+/* HX40: سحب وترتيب بالمسك والتحريك */
+.hdrag-on{position:relative;z-index:60;box-shadow:0 12px 26px rgba(0,0,0,.55)!important;opacity:.96;transition:none!important;cursor:grabbing;scale:1.06}
+.hdhide{display:none!important}
+body.hdgo{user-select:none;-webkit-user-select:none}
+#list .hgrp,#list .hsub,#list .hgrid .strip{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 </style>
 </head>
 <body>
@@ -2694,6 +2699,73 @@ function crumbs(){const L=$('list');if(!L)return;L.querySelectorAll(':scope>.hcr
 const _s=showHome;showHome=function(){_s.apply(this,arguments);setTimeout(crumbs,120);setTimeout(crumbs,800)};
 document.addEventListener('click',()=>{setTimeout(crumbs,60);setTimeout(crumbs,250)},false);
 window.hxCrumbs=crumbs;setTimeout(crumbs,1000);
+})();
+
+/* HX40: ترتيب الأيقونات بالمسك والتحريك (أقسام + فرعي + عناصر) */
+(function(){
+const L=()=>$('list');
+const nm=e=>e.textContent.replace('▾','').trim();
+const typeOf=t=>{const l=L();if(!l||!t||!t.closest)return null;if(t.closest('.hpn,.hcrumb,button,input,select,textarea,a,.rmx,.mnx'))return null;
+ let e=t.closest('#list>.hgrp');if(e)return{el:e,type:'grp'};e=t.closest('#list>.hsub');if(e)return{el:e,type:'sub'};
+ e=t.closest('.hgrid.hlist>.strip,.hgrid.hlist>.gcell');if(e&&l.contains(e)&&e.parentElement.id!=='zAuto')return{el:e,type:'item'};return null};
+function blockOf(d){const el=d.el;if(d.type==='item')return[el];const o=[el];let e=el.nextElementSibling;
+ while(e&&e.id!=='hsBox'&&!e.classList.contains('mdet')&&!e.classList.contains('hgrp')&&!(d.type==='sub'&&e.classList.contains('hsub'))){o.push(e);e=e.nextElementSibling}return o}
+let tm=null,D=null,pend=null,lastEnd=0,raf=0,fx=0,fy=0,changed=false;
+const scroller=()=>{let e=L();while(e&&e!==document.body){const o=getComputedStyle(e).overflowY;if((o==='auto'||o==='scroll')&&e.scrollHeight>e.clientHeight)return e;e=e.parentElement}return null};
+function groupOf(sub){let e=sub.previousElementSibling;while(e&&!e.classList.contains('hgrp'))e=e.previousElementSibling;return e}
+function sibsOf(d){const l=L();if(d.type==='grp')return[...l.querySelectorAll(':scope>.hgrp')];
+ if(d.type==='sub'){const g=groupOf(d.el);return[...l.querySelectorAll(':scope>.hsub')].filter(s=>groupOf(s)===g)}
+ return[...d.el.parentElement.children].filter(c=>c.matches('.strip,.gcell'))}
+function begin(p){D={el:p.el,type:p.type,b:blockOf(p),gx:p.x-(p.r.left+p.r.width/2),gy:p.y-(p.r.top+p.r.height/2)};D.b=blockOf(D);
+ document.body.classList.add('hdgo');p.el.classList.add('hdrag-on');
+ if(D.type==='grp'){[...L().children].forEach(n=>{if(!n.classList.contains('hgrp')&&!n.classList.contains('strip')&&n.id!=='hsBox'&&!n.classList.contains('mdet'))n.classList.add('hdhide')})}
+ else if(D.type==='sub'){[...L().children].forEach(n=>{if(n.classList.contains('hgrid')||n.classList.contains('hcrumb')||n.classList.contains('hpn'))n.classList.add('hdhide')})}
+ try{navigator.vibrate&&navigator.vibrate(18)}catch{}
+ changed=false;place()}
+function place(){if(!D)return;const el=D.el;el.style.transform='none';const r=el.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;
+ el.style.transform=`translate(${fx-D.gx-cx}px,${fy-D.gy-cy}px)`}
+function swapCheck(){if(!D)return;const el=D.el;el.style.pointerEvents='none';let t=document.elementFromPoint(fx,fy);el.style.pointerEvents='';
+ const tp=typeOf(t);if(!tp||tp.type!==D.type||tp.el===el||tp.el.dataset.fl||Date.now()-(D.last||0)<170)return;const sibs=sibsOf(D);if(!sibs.includes(tp.el))return;
+ const snap=sibs.filter(s=>s!==el&&s.offsetParent!==null).map(s=>[s,s.getBoundingClientRect()]);
+ const tb=blockOf(tp);const after=!!(el.compareDocumentPosition(tp.el)&Node.DOCUMENT_POSITION_FOLLOWING);
+ const par=tp.el.parentNode;
+ if(after){const ref=tb[tb.length-1].nextSibling;D.b.forEach(n=>par.insertBefore(n,ref))}else D.b.forEach(n=>par.insertBefore(n,tp.el));
+ changed=true;D.last=Date.now();
+ snap.forEach(([s,r0])=>{const r1=s.getBoundingClientRect();const dx=r0.left-r1.left,dy=r0.top-r1.top;if(!dx&&!dy)return;s.style.transition='none';s.style.transform=`translate(${dx}px,${dy}px)`;void s.offsetWidth;s.style.transition='transform .2s ease';s.style.transform='';s.dataset.fl=1;setTimeout(()=>{s.style.transition='';delete s.dataset.fl},260)});
+ place()}
+function move(x,y){fx=x;fy=y;place();swapCheck();
+ cancelAnimationFrame(raf);const vh=innerHeight;let d=0;if(y<110)d=-12;else if(y>vh-170)d=12;
+ if(d){const tick=()=>{if(!D)return;const s=scroller();s?s.scrollBy(0,d):window.scrollBy(0,d);place();swapCheck();if(D&&((fy<110)||(fy>vh-170)))raf=requestAnimationFrame(tick)};raf=requestAnimationFrame(tick)}}
+function persist(){const l=L();
+ if(D.type==='grp'){const vis=[...l.querySelectorAll(':scope>.hgrp')].map(nm);const cur=hxGet('hord',HGRP);const all=[...cur.filter(x=>HGRP.includes(x)),...HGRP.filter(x=>!cur.includes(x))];let i=0;const out=all.map(x=>vis.includes(x)?vis[i++]:x);for(;i<vis.length;i++)out.push(vis[i]);hxSet('hord',out)}
+ else if(D.type==='sub'){const now=[...l.querySelectorAll(':scope>.hsub')].map(nm);const old=hxGet('hsord',[]);hxSet('hsord',[...now,...old.filter(x=>!now.includes(x))])}
+ else{const t=titleOf(D.el.parentElement);if(t){const m=hxGet('iord',{});m[t]=[...D.el.parentElement.children].filter(c=>c.matches('.strip,.gcell')).map(nm);hxSet('iord',m)}}}
+function titleOf(grid){let e=grid.previousElementSibling;while(e&&(e.classList.contains('hcrumb')||e.classList.contains('hpn')))e=e.previousElementSibling;return e&&(e.classList.contains('hsub')||e.classList.contains('hgrp'))?nm(e):null}
+function finish(){clearTimeout(tm);cancelAnimationFrame(raf);pend=null;if(!D)return;const d=D;
+ d.el.classList.remove('hdrag-on');d.el.style.transform='';document.body.classList.remove('hdgo');L().querySelectorAll('.hdhide').forEach(n=>n.classList.remove('hdhide'));
+ lastEnd=Date.now();if(changed){persist();toast('اتغيّر الترتيب ✔');setTimeout(()=>{window.hxCrumbs&&hxCrumbs()},50)}D=null}
+const guard=e=>{if(Date.now()-lastEnd<450){e.stopImmediatePropagation();e.preventDefault()}};
+window.addEventListener('click',guard,true);
+function down(e,x,y,mouse){const p=typeOf(e.target);if(!p)return;if(e.stopImmediatePropagation)e.stopImmediatePropagation();
+ pend={...p,x,y,r:p.el.getBoundingClientRect(),mouse};clearTimeout(tm);if(!mouse)tm=setTimeout(()=>{if(pend){const q=pend;pend=null;begin(q);move(q.x,q.y)}},170)}
+window.addEventListener('touchstart',e=>{const t=e.touches[0];down(e,t.clientX,t.clientY,false)},{passive:true,capture:true});
+document.addEventListener('touchmove',e=>{const t=e.touches[0];if(D){e.preventDefault();move(t.clientX,t.clientY)}else if(pend&&(Math.abs(t.clientX-pend.x)>9||Math.abs(t.clientY-pend.y)>9)){clearTimeout(tm);pend=null}},{passive:false});
+document.addEventListener('touchend',finish);document.addEventListener('touchcancel',finish);
+window.addEventListener('mousedown',e=>{if(e.button===0)down(e,e.clientX,e.clientY,true)},true);
+document.addEventListener('mousemove',e=>{if(D){move(e.clientX,e.clientY)}else if(pend&&pend.mouse&&(Math.abs(e.clientX-pend.x)>5||Math.abs(e.clientY-pend.y)>5)){const q=pend;pend=null;begin(q);move(e.clientX,e.clientY)}});
+document.addEventListener('mouseup',()=>{pend=null;finish()});
+document.addEventListener('contextmenu',e=>{if(D||typeOf(e.target))e.preventDefault()});
+// تطبيق الترتيب المحفوظ للفرعي والعناصر
+function applyOrders(){const l=L();if(!l||D)return;
+ const hs=hxGet('hsord',[]);if(hs.length){const kids=[...l.children];const segs=[];let seg=null,cur=null;
+  kids.forEach(n=>{if(n.classList.contains('hgrp')){seg=[];segs.push(seg);cur=null}else if(n.classList.contains('hsub')&&seg){cur={n:nm(n),b:[n]};seg.push(cur)}else if(cur&&seg&&n.id!=='hsBox'&&!n.classList.contains('mdet')&&(n.classList.contains('hgrid')||n.classList.contains('hcrumb')))cur.b.push(n);else cur=null});
+  segs.forEach(s=>{if(s.length<2)return;const idx=x=>{const i=hs.indexOf(x.n);return i<0?999:i};const sorted=[...s].sort((a,b)=>idx(a)-idx(b));if(sorted.every((x,i)=>x===s[i]))return;
+   const last=s[s.length-1].b;const anchor=last[last.length-1].nextSibling;sorted.forEach(x=>x.b.forEach(n=>l.insertBefore(n,anchor)))})}
+ const io=hxGet('iord',{});Object.keys(io).forEach(()=>{});
+ l.querySelectorAll('.hgrid.hlist').forEach(g=>{if(g.id==='zAuto')return;const t=titleOf(g);const o=t&&io[t];if(!o)return;const ch=[...g.children].filter(c=>c.matches('.strip,.gcell'));if(ch.length<2)return;
+  const idx=c=>{const i=o.indexOf(nm(c));return i<0?999:i};const sorted=[...ch].sort((a,b)=>idx(a)-idx(b));if(sorted.every((c,i)=>c===ch[i]))return;sorted.forEach(c=>g.appendChild(c))})}
+const _s=showHome;showHome=function(){_s.apply(this,arguments);[40,200,700].forEach(t=>setTimeout(applyOrders,t))};
+setTimeout(applyOrders,900);window.hxApplyOrders=applyOrders;
 })();
 </script>
 </body>
