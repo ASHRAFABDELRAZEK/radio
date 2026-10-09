@@ -2811,6 +2811,15 @@ setTimeout(()=>{addBtns();applyHidden()},1100);
 
 /* HX43: الافتراضي مربعات لكل المستخدمين (مرة واحدة عند أول فتح بعد التحديث) */
 (function(){try{if(!hxGet('defsq1',false)){hxSet('hshape','square');hxSet('defsq1',true);hxSet('hfold',HGRP.filter(x=>!/الروحانيات/.test(x)));window.hxApplyView&&hxApplyView();showHome()}}catch(e){}})();
+
+/* HX44: رجوع للافتراضي (مربعات) */
+(function(){
+HX.hdefault=function(){if(!confirm('ترجّع الشكل والترتيب للوضع الافتراضي (مربعات)؟ المخفي هيفضل مخفي.'))return;
+ hxSet('hshape','square');hxSet('hview','list');['hdens','hacc'].forEach(k=>{try{hxSet(k,k==='hacc'?false:'m')}catch{}});
+ hxSet('hfold',HGRP.filter(x=>!/الروحانيات/.test(x)));hxSet('hsubopen',[]);hxSet('hord',HGRP);hxSet('hsord',[]);hxSet('iord',{});hxSet('tord',[]);
+ window.hxApplyView&&hxApplyView();showHome();toast('اتظبط على الافتراضي: مربعات ✔');try{HX.hview()}catch{}};
+const _h=HX.hview;HX.hview=function(){_h.apply(this,arguments);setTimeout(()=>{const p=document.querySelector('.hxp');if(p&&!p.querySelector('[data-hx=hdefault]')){const b=document.createElement('button');b.className='hxb';b.dataset.hx='hdefault';b.style.cssText='margin:12px 0;width:100%';b.textContent='↩ الرجوع للافتراضي (مربعات)';p.appendChild(b)}},30)};
+})();
 </script>
 </body>
 </html>
