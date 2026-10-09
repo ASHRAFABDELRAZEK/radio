@@ -226,6 +226,34 @@ body.guest #menuB{display:none!important}
 :root[data-theme=gold]{--bg:#1a1409;--card:#2b210f;--card2:#221a0c;--acc:#b8860b;--gold:#f0c84a;--bar:#120d05;--btn2:#4a3a18;--line:#5b4a22;--side:#120d05}
 .tstrip{scrollbar-width:none}.tstrip::-webkit-scrollbar{display:none}.tstrip .gcell{width:74px;min-height:62px;padding:8px 2px}.tstrip .gi{font-size:24px}.tstrip .gl{font-size:11.5px}
 .hgrid.hlist{display:flex;flex-direction:column;gap:8px}
+
+.hv-grid .hgrid.hlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hv-grid .hgrid.hlist .strip{flex-direction:column;text-align:center;padding:10px 4px;gap:4px}
+.hv-grid .hgrid.hlist .strip .si{font-size:24px}.hv-grid .hgrid.hlist .strip .m{display:none}
+.hv-comp .hgrid.hlist{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.hv-comp .hgrid.hlist .strip{padding:6px 8px;font-size:13px}.hv-comp .hgrid.hlist .strip .m{display:none}
+.hv-scroll .hgrid.hlist{flex-direction:row;overflow-x:auto;scrollbar-width:none}
+.hv-scroll .hgrid.hlist::-webkit-scrollbar{display:none}
+.hv-scroll .hgrid.hlist .strip{flex:0 0 auto;flex-direction:column;width:84px;text-align:center;padding:8px 4px;white-space:normal}
+.hv-scroll .hgrid.hlist .strip .si{font-size:24px}.hv-scroll .hgrid.hlist .strip .m{display:none}
+
+/* HX14: تحسين الشكل */
+.hgrp{display:flex;align-items:center;gap:8px;margin:16px 4px 8px;font-weight:700;letter-spacing:.2px}
+.hgrp::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.hgrid.hlist .strip{background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.18);transition:transform .15s,border-color .15s,box-shadow .15s}
+.hgrid.hlist .strip:active{transform:scale(.97)}
+.hgrid.hlist .strip:hover{border-color:var(--gold);box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.hgrid.hlist .strip .si{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.09);font-size:19px}
+.hv-grid .hgrid.hlist .strip .si,.hv-scroll .hgrid.hlist .strip .si{width:46px;height:46px;border-radius:14px;font-size:24px}
+.hv-grid .hgrid.hlist .strip b,.hv-scroll .hgrid.hlist .strip b{font-size:12px;line-height:1.3}
+.hv-card .hgrid.hlist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hv-card .hgrid.hlist .strip{flex-direction:column;align-items:flex-start;padding:14px;gap:10px;min-height:92px;border-radius:16px;background:linear-gradient(145deg,rgba(100,140,255,.22),rgba(255,255,255,.03))}
+.hv-card .hgrid.hlist .strip .si{width:42px;height:42px;font-size:22px}.hv-card .hgrid.hlist .strip .m{display:none}
+
+.hv-card .hgrid.hlist .strip,.hv-grid .hgrid.hlist .strip,.hv-comp .hgrid.hlist .strip{grid-column:auto}
+
+.hv-card .hgrid.hlist .strip{min-height:0;height:auto;align-items:center;text-align:center;padding:12px 6px;gap:6px}
+.hv-card .hgrid.hlist .strip .st2{white-space:normal}
 </style>
 </head>
 <body>
@@ -2062,7 +2090,7 @@ function hxToolStrips(){if(hxGet('guest',false))return '';const ds=hxGet('dsave'
  ['🎲 اكتشف',[['radar','🌍','جولة حول العالم'],['route','🚗','رفيق الطريق'],['news','☕','نشرة الصباح'],['mix','🎚','مزيج الأجواء'],['recap','🎁','حصاد الاستماع']]],
  ['💼 الأعمال والحياة اليومية',[['exp','💰','المصروفات'],['appt','📅','المواعيد'],['shop','🛒','المشتريات'],['vn','🎙','مذكرات صوتية'],['time','⏱','تتبّع الوقت'],['calc','🧮','الحاسبات'],['prices','💱','الذهب والعملات'],['weather','🌤','الطقس'],['trans','🌐','الترجمة'],['qr','🔳','قارئ الفواتير']]],
  ['🎧 أدوات الاستماع',[['drive','🚗','وضع السواقة',1],['study','🎓','وضع المذاكرة',1],['discover','🎲','اكتشف محطة',1],['stats','📊','إحصائياتي',1],['chimeP','🔔','دقّات الساعة']]],
- ['⚙ التخصيص والنظام',[['dsave',ds?'✅':'📶','الوضع الموفّر'],['big',bg?'✅':'👴','العرض المريح'],['remind','⏰','التذكيرات'],['theme','🎨','المظهر'],['order','↕','ترتيب الرئيسية'],['share','🔗','مشاركة المفضلة'],['favcheck','🩺','فحص المفضلة'],['offline','📥','بدون إنترنت'],['backup','💾','نسخة احتياطية'],['lock','🔐','قفل التطبيق']]]];
+ ['⚙ التخصيص والنظام',[['dsave',ds?'✅':'📶','الوضع الموفّر'],['big',bg?'✅':'👴','العرض المريح'],['remind','⏰','التذكيرات'],['theme','🎨','المظهر'],['hview','🖼','شكل الرئيسية'],['order','↕','ترتيب الرئيسية'],['share','🔗','مشاركة المفضلة'],['favcheck','🩺','فحص المفضلة'],['offline','📥','بدون إنترنت'],['backup','💾','نسخة احتياطية'],['lock','🔐','قفل التطبيق']]]];
  return G.map(([n,L])=>`<div class="hgrp">${n}</div><div class="hgrid hlist">${L.map(x=>t(x[0],x[1],x[2],x[3])).join('')}</div>`).join('')}
 
 // ===== HX10: تسميات جديدة + ترحيل ترتيب الرئيسية القديم =====
@@ -2078,6 +2106,12 @@ let was='0';try{was=sessionStorage.getItem('hxWas')}catch{}
 if(nav==='reload'&&was==='1'&&ls.get('radioLast',null)){
  setTimeout(()=>{try{resume();const p=au.play&&au.play();if(p&&p.catch)p.catch(()=>{$('status').textContent='▶ المتصفح منع التشغيل التلقائي — اضغط ▶ لإكمال'})}catch{}},600)}
 }catch(e){}})();
+
+/* HX13: home view modes */
+(function(){const A=()=>{['hv-grid','hv-comp','hv-scroll','hv-card'].forEach(c=>document.body.classList.remove(c));const v=hxGet('hview','list');if(v!=='list')document.body.classList.add('hv-'+v)};A();window.hxApplyView=A;
+HX.hview=function(){const v=hxGet('hview','list');hxPage('🖼 شكل الشاشة الرئيسية',`<div class="hxc"><div class="chips" style="display:flex;flex-wrap:wrap;gap:8px">${[['list','☰ قائمة'],['comp','▦ مدمج (عمودين)'],['grid','⊞ شبكة (3 أعمدة)'],['card','🃏 بطاقات'],['scroll','⇄ شرائط أفقية']].map(x=>`<span class="chip" data-hx="hviewset" data-v="${x[0]}" style="${x[0]===v?'outline:2px solid var(--gold)':''}">${x[1]}</span>`).join('')}</div><p class="m">تقدر كمان تغيّر ترتيب الأقسام أو تخفيها من «ترتيب الرئيسية».</p></div>`)};
+HX.hviewset=function(el){hxSet('hview',el.dataset.v);A();HX.hview()};
+})();
 </script>
 </body>
 </html>
