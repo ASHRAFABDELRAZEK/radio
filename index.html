@@ -448,6 +448,64 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 .zpin{grid-column:1/-1;margin:0 0 6px;background:rgba(201,162,39,.2);border:1px solid var(--gold,#C9A227)}
 .hs-circle #list>.hgrp .clrRec,.hs-square #list>.hgrp .clrRec,.hs-dot #list>.hgrp .clrRec{position:absolute!important;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px!important;padding:3px 8px!important;white-space:nowrap}
 .hs-circle #list>.hgrp[style],.hs-square #list>.hgrp[style],.hs-dot #list>.hgrp[style]{flex-direction:column!important;justify-content:center!important}
+
+/* ===== SKINS: محرّك المظاهر (7 مظاهر) ===== */
+.hmn{top:auto!important;bottom:4px!important;inset-inline-start:auto!important;inset-inline-end:4px!important;background:rgba(0,0,0,.28)!important;width:24px!important;height:24px!important}
+/* أيقونات بعمق (3D) */
+:root[data-skin] #list .strip .si,:root[data-skin] #list .gcell .gi,:root[data-skin] #list>.hgrp>span:first-child,:root[data-skin] .tile .tIc{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;border-radius:var(--ic-r,14px);background:var(--ic-bg,linear-gradient(145deg,#3b82f6,#1d4ed8));box-shadow:0 8px 16px var(--ic-glow,rgba(0,0,0,.35)),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.22);font-size:22px;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+:root[data-skin] #list>.hgrp{position:relative}
+:root[data-skin] body,:root[data-skin] input,:root[data-skin] select,:root[data-skin] button{font-family:var(--font,Tahoma,Arial,sans-serif)}
+:root[data-skin] #list .strip,:root[data-skin] #list .gcell,:root[data-skin] #list>.hgrp,:root[data-skin] #list>.hsub,:root[data-skin] .st,:root[data-skin] .rc,:root[data-skin] .hxc,:root[data-skin] .tile{border-radius:var(--r,14px);box-shadow:var(--sh,0 2px 8px rgba(0,0,0,.18));background:var(--card);border:1px solid var(--line)}
+:root[data-skin] #list .hgrid.hlist .strip{background:var(--card)}
+:root[data-skin] header,:root[data-skin] #player{background:var(--bar)}
+:root[data-skin] .tabs button.on,:root[data-skin] button:not(.fav):not(.hmn):not(.zmn):not([style*="background"]){background:var(--acc);color:var(--onacc,#fff)}
+:root[data-skin] .tabs button{background:var(--card);color:var(--txt)}
+:root[data-skin] .st.playing{outline:2px solid var(--acc)}
+:root[data-skin] #list .strip.hero{background:var(--hero,linear-gradient(90deg,var(--acc),var(--card)));border:none;color:var(--onacc,#fff)}
+:root[data-skin] #list .hgrp:not(.fold){border-color:var(--acc)!important;background:var(--cardon,var(--card))!important}
+
+/* A — زجاج عميق */
+:root[data-skin=glass]{--bg:radial-gradient(120% 60% at 50% -10%,#1c3a63 0%,#0b1528 55%,#070d1a 100%);--card:rgba(255,255,255,.07);--card2:rgba(255,255,255,.05);--cardon:rgba(79,140,255,.22);--acc:#2a5bd7;--gold:#ffd166;--txt:#f1f5f9;--mut:#9fb3cc;--bar:rgba(10,20,40,.85);--btn2:rgba(255,255,255,.1);--line:rgba(255,255,255,.14);--side:#0b1528;--r:20px;--sh:0 12px 28px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18);--ic-bg:linear-gradient(145deg,#60a5fa,#2563eb);--ic-glow:rgba(37,99,235,.5);--font:'Cairo',Tahoma,sans-serif}
+:root[data-skin=glass] body{background:#0b1528;background-image:radial-gradient(120% 60% at 50% -10%,#1c3a63 0%,#0b1528 55%,#070d1a 100%);background-attachment:fixed}
+:root[data-skin=glass] #list .strip,:root[data-skin=glass] #list .gcell,:root[data-skin=glass] #list>.hgrp,:root[data-skin=glass] .st{backdrop-filter:blur(8px)}
+/* B — فخامة ذهبية */
+:root[data-skin=gold]{--bg:#0c0d10;--card:linear-gradient(160deg,#1c1a14,#111010);--card2:#141310;--cardon:#1f1b12;--acc:#d4af37;--onacc:#2a1f05;--gold:#f6e7b8;--txt:#f3efe6;--mut:#9a917c;--bar:#0c0d10;--btn2:#232017;--line:#2f2a1a;--side:#0c0d10;--r:18px;--sh:0 14px 30px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,235,170,.12);--ic-bg:radial-gradient(circle at 35% 30%,#ffe9a3,#d4af37 50%,#7a5d10);--ic-glow:rgba(212,175,55,.3);--font:'Tajawal',Tahoma,sans-serif;--hero:linear-gradient(135deg,#1f1b12,#141210)}
+:root[data-skin=gold] #list>.hgrp,:root[data-skin=gold] h1,:root[data-skin=gold] #viewTitle{font-family:'Amiri',serif;color:#f6e7b8}
+:root[data-skin=gold] #list .strip.hero{color:#f6e7b8;border:1px solid #4a3f1e}
+/* C — فاتح ناعم */
+:root[data-skin=soft]{--bg:#eef1f6;--card:#eef1f6;--card2:#e6eaf1;--cardon:#e4f3f1;--acc:#0f766e;--gold:#b45309;--txt:#1e293b;--mut:#64748b;--bar:#eef1f6;--btn2:#dfe4ec;--line:transparent;--side:#eef1f6;--r:22px;--sh:8px 8px 18px #cfd5e0,-8px -8px 18px #ffffff;--ic-bg:linear-gradient(145deg,#2dd4bf,#0d9488);--ic-glow:rgba(13,148,136,.35);--ic-r:50%;--font:'IBM Plex Sans Arabic',Tahoma,sans-serif;--hero:linear-gradient(135deg,#0f766e,#115e59)}
+:root[data-skin=soft] input,:root[data-skin=soft] select{background:#eef1f6;color:#1e293b;box-shadow:inset 4px 4px 10px #cfd5e0,inset -4px -4px 10px #fff;border:none}
+:root[data-skin=soft] header{box-shadow:0 6px 16px rgba(207,213,224,.6)}
+/* E — بطاقات (غامق) */
+:root[data-skin=cards]{--bg:#111214;--card:#1f2023;--card2:#191a1d;--cardon:#26282c;--acc:#16a34a;--gold:#fbbf24;--txt:#ffffff;--mut:#9ca3af;--bar:#111214;--btn2:#2a2b2f;--line:rgba(255,255,255,.06);--side:#111214;--r:18px;--sh:0 10px 22px rgba(0,0,0,.35);--ic-bg:linear-gradient(145deg,#22c55e,#15803d);--ic-glow:rgba(21,128,61,.45);--font:'Cairo',Tahoma,sans-serif;--hero:linear-gradient(135deg,#10b981,#047857)}
+/* E — بطاقات (فاتح) */
+:root[data-skin=cardsLight]{--bg:#f6f7f9;--card:#ffffff;--card2:#eef0f3;--cardon:#e8f7ee;--acc:#15803d;--gold:#b45309;--txt:#111827;--mut:#6b7280;--bar:#f6f7f9;--btn2:#e5e7eb;--line:#e5e7eb;--side:#ffffff;--r:18px;--sh:0 8px 20px rgba(17,24,39,.08);--ic-bg:linear-gradient(145deg,#22c55e,#15803d);--ic-glow:rgba(21,128,61,.3);--font:'Cairo',Tahoma,sans-serif;--hero:linear-gradient(135deg,#10b981,#047857)}
+:root[data-skin=cardsLight] input,:root[data-skin=cardsLight] select{background:#fff;color:#111827;border-color:#e5e7eb}
+/* F — Material 3 */
+:root[data-skin=material]{--bg:#f8f9ff;--card:#e9eef6;--card2:#eef2f8;--cardon:#d7e3f8;--acc:#00639b;--gold:#9a5b00;--txt:#191c20;--mut:#43474e;--bar:#f8f9ff;--btn2:#d7e3f8;--line:transparent;--side:#f8f9ff;--r:20px;--sh:none;--ic-bg:#00639b;--ic-glow:rgba(0,99,155,.25);--font:'Noto Sans Arabic',Tahoma,sans-serif;--hero:#d7e3f8}
+:root[data-skin=material] #list .strip.hero{color:#191c20}
+:root[data-skin=material] input,:root[data-skin=material] select{background:#e9eef6;color:#191c20;border:none;border-radius:28px}
+:root[data-skin=material] #list .strip .si,:root[data-skin=material] #list .gcell .gi,:root[data-skin=material] #list>.hgrp>span:first-child{box-shadow:none;text-shadow:none;background:#d7e3f8}
+/* G — أنغامي */
+:root[data-skin=anghami]{--bg:#0d0d0f;--card:#1c1c22;--card2:#151519;--cardon:#241f33;--acc:#8b5cf6;--gold:#c4b5fd;--txt:#ffffff;--mut:#9a9aa5;--bar:#0d0d0f;--btn2:#2a2a33;--line:#1f1f25;--side:#0d0d0f;--r:16px;--sh:0 8px 18px rgba(0,0,0,.4);--ic-bg:linear-gradient(145deg,#8b5cf6,#5b21b6);--ic-glow:rgba(139,92,246,.4);--font:'Tajawal',Tahoma,sans-serif;--hero:linear-gradient(120deg,#5b21b6 0%,#8b5cf6 60%,#c4b5fd 100%)}
+:root[data-skin=anghami] #player{border-top:2px solid #8b5cf6}
+:root[data-skin=anghami] #list .strip.hero{min-height:120px;align-items:flex-end;box-shadow:0 16px 32px rgba(139,92,246,.35)}
+/* معاينات المظاهر في الإعدادات */
+.skinGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.skinCard{border-radius:14px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:var(--card)}
+.skinCard.on{border-color:var(--acc)}
+.skinCard .sp{height:92px;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;align-content:start}
+.skinCard .sp i{display:block;height:36px;border-radius:9px}
+.skinCard .sp b{grid-column:1/-1;display:block;height:10px;border-radius:5px;opacity:.6}
+.skinCard .sn{padding:8px 10px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.skinCard .sn small{font-weight:normal;color:var(--mut);font-size:11px}
+
+
+/* المظاهر تتفوّق على أشكال المربعات/الدوائر */
+:root[data-skin] :is(.hs-square,.hs-circle,.hs-dot,.hs-pill) #list#list>:is(.hgrp,.hsub){border:1px solid var(--line)!important;background:var(--card)!important;box-shadow:var(--sh)!important;color:var(--txt)}
+:root[data-skin] :is(.hs-square,.hs-circle,.hs-dot,.hs-pill) #list#list>:is(.hgrp,.hsub):not(.fold){border-color:var(--acc)!important;background:var(--cardon,var(--card))!important}
+:root[data-skin] :is(.hs-square,.hs-circle,.hs-dot,.hs-pill) #list#list>.strip .si,:root[data-skin] :is(.hs-square,.hs-circle,.hs-dot) .hgrid.hlist .strip .si{background:var(--ic-bg)!important;border:none!important;box-shadow:0 8px 16px var(--ic-glow),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.22)!important;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+:root[data-skin] .hmn{background:var(--btn2)!important;color:var(--txt)!important;border:1px solid var(--line)!important}
 </style>
 </head>
 <body>
@@ -3042,6 +3100,47 @@ const _s=showHome;showHome=function(){_s();
 try{const nav=$('tAll').parentNode;const b=document.createElement('button');b.id='tArab';b.textContent='🕌 عربي';b.onclick=()=>{navPush();arabPage()};nav.insertBefore(b,$('tAll'));
   const w=document.createElement('button');w.id='tWorld';w.textContent='🌍 العالم';w.onclick=()=>{navPush();worldPage()};nav.insertBefore(w,$('tAll'))}catch{}
 if(view==='home')showHome();
+})();
+
+
+// ===== 13) محرّك المظاهر: 7 مظاهر + الافتراضي (أنغامي) + ترحيل لمرة واحدة + رجوع للافتراضي =====
+(function(){
+const SKINS=[
+ ['anghami','أسلوب عصري (الافتراضي)','أسود + بنفسجي · الأكثر حيوية','#0d0d0f',['#8b5cf6','#059669','#2563eb','#d97706'],'#fff'],
+ ['cards','بطاقات ملوّنة (غامق)','مألوف لمستخدمي Spotify','#111214',['#10b981','#3b82f6','#f59e0b','#ef4444'],'#fff'],
+ ['cardsLight','بطاقات ملوّنة (فاتح)','نفس الشكل بخلفية فاتحة','#f6f7f9',['#10b981','#3b82f6','#f59e0b','#ef4444'],'#111'],
+ ['material','Material 3','شكل جوجل · أوضح وأبسط','#f8f9ff',['#d7e3f8','#d3f3e5','#ffe6c2','#ffdad6'],'#191c20'],
+ ['glass','زجاج عميق','كحلي بشفافية وعمق','#0b1528',['#4f8cff','#34d399','#fbbf24','#f472b6'],'#fff'],
+ ['gold','فخامة ذهبية','أسود وذهبي كلاسيكي','#0c0d10',['#d4af37','#1c1a14','#d4af37','#1c1a14'],'#f6e7b8'],
+ ['soft','فاتح ناعم','ظلال ناعمة مريحة نهارًا','#eef1f6',['#2dd4bf','#60a5fa','#fbbf24','#f472b6'],'#1e293b']
+];
+const DEF='anghami', LIGHT=new Set(['cardsLight','material','soft']);
+window.SKINS=SKINS;
+let fontsLoaded=false;
+function loadFonts(){if(fontsLoaded)return;fontsLoaded=true;const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Tajawal:wght@400;500;700;800&family=Amiri:wght@700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap';document.head.appendChild(l)}
+window.applySkin=function(s){
+  s=SKINS.some(x=>x[0]===s)?s:DEF;
+  document.documentElement.dataset.skin=s;
+  document.documentElement.dataset.theme=LIGHT.has(s)?'light':'dark';
+  loadFonts();
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=SKINS.find(x=>x[0]===s)[3];
+};
+// ترحيل لمرة واحدة: كل المستخدمين يتحوّلوا للافتراضي الجديد مرة واحدة، وبعدها اختيارهم محفوظ
+if(!ls.get('skinMig1',false)){ls.set('skin',DEF);ls.set('skinMig1',true);try{localStorage.setItem('hx_themeX',JSON.stringify(''))}catch{}}
+applySkin(ls.get('skin',DEF));
+// صفحة المظهر في الإعدادات (تستبدل القديمة)
+if(window.HX){
+  HX.theme=function(){const cur=ls.get('skin',DEF);
+    hxPage('🎨 المظهر',`<div class="hxc"><div class="m">اختار شكل التطبيق. اختيارك بيتحفظ على جهازك، وتقدر ترجع للافتراضي في أي وقت.</div>
+    <div class="skinGrid">${SKINS.map(([id,name,sub,bg,cols,fg])=>`<div class="skinCard ${id===cur?'on':''}" data-hx="skinset" data-s="${id}" style="background:${bg};color:${fg}"><div class="sp">${cols.map(c=>`<i style="background:${c}"></i>`).join('')}<b style="background:${fg}"></b></div><div class="sn"><span>${name}${id===cur?' ✓':''}</span><small style="color:${fg};opacity:.7">${sub}</small></div></div>`).join('')}</div>
+    ${hxBtn('skindef','↩ رجوع للتصميم الافتراضي')}</div>`)};
+  HX.skinset=function(el){ls.set('skin',el.dataset.s);applySkin(el.dataset.s);toast('اتغيّر المظهر ✔');HX.theme()};
+  HX.skindef=function(){ls.set('skin',DEF);applySkin(DEF);toast('رجعت للتصميم الافتراضي ✔');HX.theme()};
+  HX.themeset=function(el){HX.theme()};
+  HX.applyTheme=function(){applySkin(ls.get('skin',DEF))};
+}
+// الزرار القديم ☀️/🌙 يبدّل بين النسخة الفاتحة والغامقة من نفس العائلة
+const tb=$('themeB');if(tb){tb.onclick=()=>{const s=ls.get('skin',DEF);const pair={cards:'cardsLight',cardsLight:'cards',anghami:'material',material:'anghami',glass:'soft',soft:'glass',gold:'cardsLight'};const n=pair[s]||DEF;ls.set('skin',n);applySkin(n);toast('المظهر: '+SKINS.find(x=>x[0]===n)[1])}}
 })();
 
 </script>
