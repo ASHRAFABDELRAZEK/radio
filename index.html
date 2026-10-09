@@ -325,6 +325,9 @@ body.nodel .st .rmx{display:none!important}
 #mnSheet button{background:var(--btn2,#1e3a5f);color:#fff;border:0;border-radius:12px;padding:12px 8px;font-size:15px}
 #mnSheet button.dg{background:#7f1d1d}
 #mnBack{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.45)}
+
+/* HX29: صف أنضف — الخيارات كلها في ⋯ */
+.st .laterB,.st .grpSet{display:none!important}
 </style>
 </head>
 <body>
@@ -2472,6 +2475,22 @@ HX.archre=function(el){const a=[...arch()],x=a.splice(+el.dataset.i,1)[0];if(!x)
 HX.archdel=function(el){const a=[...arch()];a.splice(+el.dataset.i,1);hxSet('arch',a);HX.archv()};
 const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false))return h;
  return h.replace(/(<div class="strip one" data-hx="sthide">)/,`<div class="strip one" data-hx="archv"><span class="si">🗄</span><div class="st2"><b>الأرشيف (محطات مؤرشفة)</b></div></div>$1`)};
+})();
+
+/* HX28: تذكّر مكان الوقوف في أي ملف مسجّل (حتى بعد الريفريش) */
+(function(){
+const fin=()=>isFinite(au.duration)&&au.duration>0&&current;
+const key='hxPos';
+const P=()=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return{}}};
+const savePos=()=>{if(!fin())return;const t=au.currentTime;if(!(t>0))return;const m=P();m[current.stationuuid]=Math.floor(t);const k=Object.keys(m);if(k.length>150)k.slice(0,k.length-150).forEach(x=>delete m[x]);try{localStorage.setItem(key,JSON.stringify(m))}catch{}
+ try{ls.set('radioLast',{item:slim(current),t:Math.floor(t)})}catch{}};
+saveLast=function(t){if(!current)return;if(fin()){savePos();return}ls.set('radioLast',{item:slim(current),t:0})};
+let last=0;au.addEventListener('timeupdate',()=>{if(Date.now()-last>3000){last=Date.now();savePos()}});
+au.addEventListener('pause',savePos);
+['pagehide','beforeunload'].forEach(e=>window.addEventListener(e,savePos));
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')savePos()});
+au.addEventListener('ended',()=>{if(!current)return;const m=P();delete m[current.stationuuid];try{localStorage.setItem(key,JSON.stringify(m))}catch{}});
+au.addEventListener('loadedmetadata',()=>{if(!fin())return;const p=P()[current.stationuuid];if(p>5&&p<au.duration-10&&au.currentTime<3){au.currentTime=p;toast('كمّلت من '+fmt(p))}});
 })();
 </script>
 </body>
