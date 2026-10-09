@@ -1686,7 +1686,7 @@ if(hxGet('guest',false))document.body.classList.add('guest');
 (function(){const o=ls.get('listenStats',{});})();
 
 // ===== HX3: فحص المفضلة، أوفلاين، نسخة احتياطية، قفل، ذاكرة الدراسة، ثيمات، ترتيب الرئيسية، اختصارات، سورة/آية اليوم، مناسبات =====
-const HGRP=['🎵 استمع','🧭 تصفّح','🛠 أدوات','🧰 النظام','🕘 سمعتهم مؤخرًا'];
+const HGRP=['⭐ أقسامي','🎵 استمع','🧭 تصفّح','🛠 أدوات','🧰 النظام','🕘 سمعتهم مؤخرًا'];
 const VERSES=[['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','البقرة 201'],['فَإِنَّ مَعَ الْعُسْرِ يُسْرًا إِنَّ مَعَ الْعُسْرِ يُسْرًا','الشرح 5-6'],['وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ','الطلاق 3'],['أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ','الرعد 28'],['رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي','طه 25-26'],['وَقُل رَّبِّ زِدْنِي عِلْمًا','طه 114'],['لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا','البقرة 286'],['فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ','البقرة 152'],['وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ','هود 115'],['رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا','البقرة 286'],['رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ','القصص 24'],['حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ','آل عمران 173'],['رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا','الفرقان 74'],['رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً إِنَّكَ أَنتَ الْوَهَّابُ','آل عمران 8'],['لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ','الأنبياء 87']];
 const DAYSUR=[[55,'الرحمن'],[56,'الواقعة'],[19,'مريم'],[67,'الملك'],[44,'الدخان'],[18,'الكهف'],[36,'يس']];// الأحد..السبت (للتدبّر)
 const dayOfYear=()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)};
@@ -1753,6 +1753,7 @@ HX.gstart=function(){const p=$('gP').value;if(!/^\d{4}$/.test(p))return toast('�
  if(hxGet('guest',false))return;
  const ne=nextEvent(),mt=$('list').querySelector('[data-act="modes"]');if(ne&&ne.i<=30&&mt&&ne.i>0)mt.insertAdjacentHTML('afterend',`<div class="strip one" data-hx="today"><span class="si">${ne.e[3]}</span><div class="st2"><b>باقي ${ne.i} يوم على ${ne.e[2]}</b></div></div>`);
  {const hb=$('list').querySelector('#hsBox'),cl=(a,i,l)=>`<div class="gcell" data-hx="${a}"><span class="gi">${i}</span><span class="gl">${l}</span></div>`;if(hb)hb.insertAdjacentHTML('beforebegin',`<div class="hgrp">🧰 النظام</div><div class="hgrid">${cl('today','📜','آية اليوم')}${cl('favcheck','🩺','فحص المفضلة')}${cl('offline','📥','بدون نت')}${cl('backup','💾','نسخة احتياطية')}${cl('lock','🔐','قفل')}${cl('theme','🎨','المظهر')}${cl('order','↕','ترتيب')}</div>`)}
+ {const fg=$('list').querySelector('.hgrp'),P=mySecs.map((x,i)=>[x,i]).filter(([x])=>x.pin);if(fg&&P.length)fg.insertAdjacentHTML('beforebegin',`<div class="hgrp">⭐ أقسامي</div><div class="hgrid">${P.map(([x,i])=>`<div class="gcell" data-mysec="${i}"><span class="gi">${esc(x.ic||'⭐')}</span><span class="gl">${esc(x.name)}</span></div>`).join('')}<div class="gcell" data-act="mysecMgr"><span class="gi">⚙</span><span class="gl">إدارة</span></div></div>`)}
  const hid=hxGet('hhid',[]),ord=hxGet('hord',HGRP),L=$('list'),kids=[...L.children],blocks=[];let cur=null;
  kids.forEach(n=>{if(n.classList&&n.classList.contains('hgrp')){cur={g:n.textContent.replace(/\s*🗑.*$/,'').trim(),nodes:[n]};blocks.push(cur)}else if(cur&&(n.classList.contains('hgrid')||n.classList.contains('rrow')))cur.nodes.push(n);else cur=null});
  const gk=g=>g.replace(/^\S+\s*/,'').slice(0,4);blocks.forEach(b=>{if(hid.some(h=>gk(h)===gk(b.g)))b.nodes.forEach(n=>n.remove())});
@@ -1925,6 +1926,35 @@ async function hxArcNext(){const c=hxA(),scope=c.scope;
   hxArcNext().then(ok=>{if(!ok)_o(el)})}}
 // اظهار الخيارات في «الآن يعمل»
 setInterval(()=>{hxArcUI()},2000);
+
+// ===== HX7: أقسامي — اختيار من الأقسام الموجودة + تثبيت على الرئيسية =====
+function openMySec(i){const s=mySecs[i];if(!s)return;loadSet((s.ic||'⭐')+' '+s.name,s.kw.flatMap(k=>/^cc:/.test(k)?[q('countrycode='+k.slice(3))]:[q('tag='+encq(k)),q('name='+encq(k))]),{})}
+function hxPickSec(cb){let d=$('pkDlg');if(d)d.remove();d=document.createElement('div');d.id='pkDlg';d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;display:flex;align-items:center;justify-content:center;padding:14px';
+ const sel=new Map(),chip=(k,ic,n,kw)=>`<span class="chip pkc" data-k="${esc(k)}" data-ic="${esc(ic)}" data-n="${esc(n)}" data-kw="${esc(kw.join('|'))}">${ic} ${esc(n)}</span>`;
+ d.innerHTML=`<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;width:min(440px,100%);max-height:88vh;overflow:auto;color:var(--txt)"><b>➕ اختار من الأقسام الموجودة</b><div class="m" style="margin:4px 0 8px">اضغط على أي قسم (أو أكتر) وهنضيف محتواه لقسمك.</div>
+ <div class="hgrp">🎧 أوضاع</div><div style="display:flex;flex-wrap:wrap;gap:6px">${MODES.map((m,i)=>chip('m'+i,m[0],m[1],m[3])).join('')}</div>
+ <div class="hgrp">🎼 أنواع موسيقى</div><div style="display:flex;flex-wrap:wrap;gap:6px">${GENRES.map((g,i)=>chip('g'+i,g[0],g[1],[g[2]])).join('')}</div>
+ <div class="hgrp">🌍 دول</div><div style="display:flex;flex-wrap:wrap;gap:6px">${CCS.map((c,i)=>chip('c'+i,c[0],c[1],['cc:'+c[2]])).join('')}</div>
+ <div style="display:flex;gap:8px;margin-top:14px"><button id="pkOk" style="flex:1">✔ إضافة</button><button id="pkX" style="background:var(--btn2)">إلغاء</button></div></div>`;
+ d.querySelectorAll('.pkc').forEach(c=>c.onclick=()=>{const k=c.dataset.k;if(sel.has(k)){sel.delete(k);c.style.outline=''}else{sel.set(k,c);c.style.outline='2px solid var(--gold)'}});
+ $('pkX')&&0;document.body.appendChild(d);d.querySelector('#pkX').onclick=()=>d.remove();
+ d.querySelector('#pkOk').onclick=()=>{const cs=[...sel.values()];d.remove();if(!cs.length)return;const kw=[...new Set(cs.flatMap(c=>c.dataset.kw.split('|')))];cb({kw,name:cs.length===1?cs[0].dataset.n:cs.slice(0,2).map(c=>c.dataset.n).join(' + '),ic:cs[0].dataset.ic})}}
+function mysecMgr(){let d=$('mysecDlg');if(d)d.remove();d=document.createElement('div');d.id='mysecDlg';d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;display:flex;align-items:center;justify-content:center;padding:14px';
+ const kwLabel=k=>{if(/^cc:/.test(k)){const c=CCS.find(x=>x[2]===k.slice(3));return c?c[0]+' '+c[1]:k}return k};
+ const draw=()=>{d.innerHTML=`<div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;width:min(440px,100%);max-height:88vh;overflow:auto;color:var(--txt)"><b>⭐ أقسامي</b><div class="m" style="margin:4px 0 10px">اعمل قسمك من الأقسام الموجودة أو بكلمات بحثك، وثبّته على الرئيسية لو عايزه قدّامك.</div>
+  ${mySecs.map((s,i)=>`<div style="border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:8px"><div style="display:flex;gap:6px;margin-bottom:6px"><input data-ms="ic" data-i="${i}" value="${esc(s.ic||'')}" placeholder="😀" style="width:52px;text-align:center"><input data-ms="name" data-i="${i}" value="${esc(s.name)}" placeholder="اسم القسم" style="flex:1;min-width:0"><button data-msd="${i}" style="background:#7c2d12;padding:6px 10px">🗑</button></div><div class="m" style="margin-bottom:6px">${s.kw.map(kwLabel).map(esc).join('، ')}</div><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button data-mspk="${i}" style="background:var(--btn2);padding:6px 10px">➕ من الأقسام</button><button data-mskw="${i}" style="background:var(--btn2);padding:6px 10px">✏ الكلمات</button><label style="margin-inline-start:auto"><input type="checkbox" data-mspin="${i}" ${s.pin?'checked':''}> 📌 على الرئيسية</label></div></div>`).join('')}
+  <div style="border:1px dashed var(--line);border-radius:12px;padding:8px"><div style="display:flex;gap:6px;margin-bottom:6px"><input id="msIc" placeholder="😀" style="width:52px;text-align:center"><input id="msName" placeholder="اسم قسم جديد" style="flex:1;min-width:0"></div><input id="msKw" placeholder="كلمات البحث: jazz, piano (اختياري)" style="width:100%;margin-bottom:6px"><button id="msPk" style="width:100%;background:var(--btn2);margin-bottom:6px">➕ اختار من الأقسام الموجودة</button><label style="display:block;margin-bottom:6px"><input type="checkbox" id="msPin" checked> 📌 ثبّته على الرئيسية</label><button id="msAdd" style="width:100%">✔ إنشاء القسم</button></div>
+  <div style="text-align:center;margin-top:12px"><button id="msX" style="background:var(--btn2);padding:8px 24px">تم</button></div></div>`;
+  const save=()=>ls.set('mySecs',mySecs);
+  d.querySelectorAll('[data-ms]').forEach(e=>e.onchange=()=>{const s=mySecs[+e.dataset.i];if(!s)return;s[e.dataset.ms]=e.value.trim();if(!s.name)s.name='قسم';save()});
+  d.querySelectorAll('[data-msd]').forEach(b=>b.onclick=()=>{if(!confirm('حذف القسم؟'))return;mySecs.splice(+b.dataset.msd,1);save();draw()});
+  d.querySelectorAll('[data-mspin]').forEach(c=>c.onchange=()=>{mySecs[+c.dataset.mspin].pin=c.checked;save();toast(c.checked?'📌 اتثبّت على الرئيسية':'اتشال من الرئيسية')});
+  d.querySelectorAll('[data-mspk]').forEach(b=>b.onclick=()=>hxPickSec(r=>{const s=mySecs[+b.dataset.mspk];s.kw=[...new Set([...s.kw,...r.kw])];save();draw()}));
+  d.querySelectorAll('[data-mskw]').forEach(b=>b.onclick=()=>{const s=mySecs[+b.dataset.mskw],v=prompt('كلمات البحث (افصل بفاصلة):',s.kw.join(', '));if(v==null)return;const k=v.split(/[,،]/).map(x=>x.trim()).filter(Boolean);if(k.length){s.kw=k;save();draw()}});
+  let picked=null;$('msPk').onclick=()=>hxPickSec(r=>{picked=r;if(!$('msName').value.trim())$('msName').value=r.name;if(!$('msIc').value.trim())$('msIc').value=r.ic;toast('اتضاف: '+r.name+' — اضغط «إنشاء القسم»')});
+  $('msAdd').onclick=()=>{const n=$('msName').value.trim(),own=$('msKw').value.split(/[,،]/).map(x=>x.trim()).filter(Boolean),kw=[...new Set([...(picked?picked.kw:[]),...own])];if(!n){toast('اكتب اسم القسم');return}mySecs.push({name:n,ic:$('msIc').value.trim()||(picked?picked.ic:''),kw:kw.length?kw:[n],pin:$('msPin').checked});save();picked=null;if($('msPin').checked)toast('📌 اتثبّت على الرئيسية');draw()};
+  $('msX').onclick=()=>{d.remove();if($('hsBox'))showHome();else if($('list').querySelector('.mdet'))modesPage();else showHome()}};
+ document.body.appendChild(d);draw()}
 </script>
 </body>
 </html>
