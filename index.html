@@ -612,6 +612,8 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 :root[data-skin] #npBox .chip:not(.on){opacity:.85}
 .npVol{display:flex;align-items:center;gap:8px;width:min(520px,92vw);margin:6px auto 0;direction:ltr}.npVol input{flex:1;accent-color:var(--acc);height:28px}
 .npVol #vol{display:block!important;width:auto!important}.npVol{display:flex!important}
+.npVol2{display:flex!important;align-items:center;gap:8px;width:min(520px,92vw);margin:8px auto 0;direction:ltr;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;order:2}.npVol2 input{flex:1;accent-color:var(--acc);height:28px;display:block!important;margin:0}.npVol2 b{min-width:40px;font-size:12px;text-align:center}
+:root[data-skin] .npIn>.npVol2{order:2}
 </style>
 </head>
 <body>
@@ -3567,6 +3569,19 @@ const _sp=window.settingsPage;window.settingsPage=function(){_sp();const on=safe
   $('safeA').onclick=()=>{ls.set('safeAudio',!on);toast(!on?'اتفعّل وضع الصوت الآمن — أعد تشغيل المحطة':'اتقفل وضع الصوت الآمن');settingsPage()};
 };
 })();
+
+
+// شريط صوت مستقل داخل شاشة يعمل الآن (تحت شريط التقديم مباشرة)
+(function(){try{
+  const np=document.getElementById('npBox'),inn=np.querySelector('.npIn');
+  const old=inn.querySelector('.npVol');if(old)old.remove();
+  const box=document.createElement('div');box.className='npVol2';box.innerHTML='<span>🔈</span><input type="range" id="npVolR" min="0" max="1" step="0.02" aria-label="مستوى الصوت"><span>🔊</span><b id="npVolT"></b>';
+  const sb=$('seekBox');(sb&&sb.parentElement===inn?sb:inn.querySelector('.npCtl')).insertAdjacentElement('afterend',box);
+  const r=box.querySelector('#npVolR'),t=box.querySelector('#npVolT');
+  const show=()=>{r.value=au.volume;t.textContent=Math.round(au.volume*100)+'%'};
+  r.addEventListener('input',()=>{const v=+r.value;const vol=$('vol');vol.value=v;vol.dispatchEvent(new Event('input',{bubbles:true}));t.textContent=Math.round(v*100)+'%'});
+  au.addEventListener('volumechange',show);setInterval(()=>{if(np.style.display==='flex')show()},800);show();
+}catch(e){}})();
 
 </script>
 </body>
