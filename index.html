@@ -3584,6 +3584,64 @@ const _sp=window.settingsPage;window.settingsPage=function(){_sp();const on=safe
   au.addEventListener('volumechange',show);setInterval(()=>{if(np.style.display==='flex')show()},800);show();
 }catch(e){}})();
 
+
+// ===== 22) بحث أذكى: تطبيع عربي + مرادفات إنجليزية للقرّاء والفنانين + البحث في بياناتنا المحلية + أرشيف أوسع =====
+(function(){
+const norm=s=>String(s||'').toLowerCase().replace(/[ً-ْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/\s+/g,' ').trim();
+const noAl=s=>norm(s).replace(/(^|\s)ال(?=\S)/g,'$1');
+// مرادفات: عربي ↔ إنجليزي (قرّاء، فنانين، برامج)
+const SYN=[
+ ['عبد الباسط','abdulbasit','abdul basit','abdelbaset','basit'],['المنشاوي','minshawi','menshawi','minshawy'],['الحصري','husary','hussary','husari','hosary'],
+ ['العفاسي','afasy','alafasy','afasi'],['السديس','sudais','sudes','sudays'],['الشريم','shuraim','shuraym'],['المعيقلي','maher','muaiqly','almuaiqly'],
+ ['الدوسري','dosari','dossari','aldosari'],['الغامدي','ghamdi','ghamadi'],['العجمي','ajmi','ajamy'],['الطبلاوي','tablawi','tablawy'],['الشاطري','shatri','shaatree'],
+ ['القطامي','qatami','qtm'],['ياسر الدوسري','yasser','yasser aldosari'],['سعد الغامدي','saad alghamdi'],['محمد صديق','siddiq','minshawi'],['مصطفى اسماعيل','mustafa ismail'],
+ ['عبد الرحمن السديس','sudais'],['خالد الجليل','jaleel','jalil'],['ناصر القطامي','nasser alqatami'],['فارس عباد','fares abbad'],['احمد العجمي','ahmad alajmi'],
+ ['ام كلثوم','umm kulthum','oum kalthoum','om kalsoum'],['عبد الحليم','abdel halim','abdelhalim','halim'],['فيروز','fairuz','fairouz','feiruz'],['عبد الوهاب','abdel wahab','abdelwahab'],
+ ['فريد الاطرش','farid al atrash','farid'],['وردة','warda'],['صباح','sabah'],['نجاة','nagat'],['شادية','shadia'],['محمد فوزي','fawzi'],['طرب','tarab','classic arabic'],
+ ['فؤاد المهندس','fouad el mohandes'],['عادل امام','adel imam'],['محمد صبحي','sobhi'],['سمير غانم','samir ghanem'],['مسرحية','play','theatre'],['مسلسل','series','drama'],
+ ['قران','quran','koran','قرآن'],['اذاعة القران','quran radio'],['بي بي سي','bbc'],['مونت كارلو','monte carlo','mc doualiya'],['سوا','sawa'],['الجزيرة','aljazeera','al jazeera'],['العربية','alarabiya'],
+ ['اخبار','news'],['رياضة','sport'],['اطفال','kids','children'],['كلاسيك','classical'],['جاز','jazz'],['هدوء','relax','chill']
+];
+function expand(q){const n=norm(q),out=new Set([q,n,noAl(q)]);for(const g of SYN){if(g.some(w=>n.includes(norm(w))||noAl(w).length>2&&noAl(q).includes(noAl(w))))g.forEach(w=>out.add(w))}return [...out].filter(Boolean)}
+const localCache={};
+async function localAll(){if(localCache.all)return localCache.all;const files=['arabic.json','professional.json',...['spirit','learn','lang','kids','zaman','drama','biz','sport','relax','classic','health'].map(k=>'sections/'+k+'.json')];
+  const arrs=await Promise.all(files.map(f=>fetch('data/'+f+'?v='+DATA_V).then(r=>r.json()).catch(()=>[])));const seen=new Set(),all=[];
+  arrs.flat().forEach(s=>{if(s&&s.url&&!seen.has(s.url)){seen.add(s.url);all.push({stationuuid:s.id,name:s.name,country:s.country_ar||'',tags:s.tags||'',favicon:s.logo||'',url_resolved:s.url,url:s.url,bitrate:s.bitrate,_n:norm(s.name+' '+(s.tags||'')+' '+(s.country_ar||''))})}});
+  return localCache.all=all}
+window.smartTerms=expand;
+const _g=gSearch;
+gSearch=async function(){
+  const q=$('gq').value.trim();if(!q)return;
+  await _g();
+  const run=async()=>{
+  const terms=expand(q).map(norm).filter(t=>t.length>=2);
+  // 1) بياناتنا المحلية
+  try{const all=await localAll();const hits=all.filter(s=>terms.some(t=>s._n.includes(t)||noAl(s._n).includes(noAl(t))));
+    if(hits.length){gRes.st=[...hits,...(gRes.st||[]).filter(x=>!hits.some(h=>h.url_resolved===x.url_resolved))]}}catch{}
+  // 2) الـ API بالمرادفات الإنجليزية لو النتائج قليلة
+  try{const en=expand(q).filter(t=>/^[a-z0-9 .'-]+$/i.test(t)&&t.length>=3).slice(0,3);
+    for(const t of en){const r=await fetch(API+'/json/stations/byname/'+encodeURIComponent(t)+'?hidebroken=true&order=clickcount&reverse=true&limit=40').then(r=>r.json()).catch(()=>[]);
+      const add=r.filter(x=>/^https:/.test(x.url_resolved)&&!EXCL(x)&&!(gRes.st||[]).some(y=>y.stationuuid===x.stationuuid));gRes.st=[...(gRes.st||[]),...add]}}catch{}
+  // 3) الأرشيف: بحث أوسع (العنوان + الوصف + المنشئ) بكل المرادفات
+  try{const ors=expand(q).slice(0,6).map(t=>'"'+t.replace(/"/g,'')+'"').join(' OR ');
+    const qq=`(title:(${ors}) OR description:(${ors}) OR creator:(${ors}) OR subject:(${ors})) AND mediatype:(audio OR movies)`;
+    const d=await fetch(`https://archive.org/advancedsearch.php?q=${encodeURIComponent(qq)}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=item_size&sort[]=downloads+desc&rows=60&output=json`).then(r=>r.json());
+    const arc=d.response.docs.map(x=>({id:x.identifier,name:Array.isArray(x.title)?x.title[0]:x.title,country:x.mediatype==='movies'?'فيديو':'صوت',tags:gb(+x.item_size||0)}));
+    const seen=new Set((gRes.arc||[]).map(x=>x.id));gRes.arc=[...(gRes.arc||[]),...arc.filter(x=>!seen.has(x.id))]}catch{}
+  if(view==='search'){const old=$('list').onclick;$('gq').value=q;
+    // إعادة الرسم بنفس أسلوب الصفحة
+    const card=(x,k,i,ic)=>`<div class="st" data-g="${k}:${i}" data-u="${esc(x.stationuuid||'')}"><div style="font-size:24px">${ic}</div><div class="i"><div class="n">${esc(x.name)}</div><div class="m">${esc([x.country,x.tags&&String(x.tags).slice(0,40),x.bitrate?x.bitrate+'kbps':''].filter(Boolean).join(' · '))}</div></div></div>`;
+    const sec=(t,arr,k,ic)=>`<div class="secT">${t} (${arr.length})</div>`+(arr.length?arr.map((x,i)=>card(x,k,i,ic)).join(''):'<div class="m" style="grid-column:1/-1">مفيش نتائج — جرّب كلمة تانية أو بالإنجليزي</div>');
+    const hint=expand(q).filter(t=>t!==q&&t!==norm(q)).slice(0,5);
+    $('list').innerHTML=(hint.length?`<div class="m" style="grid-column:1/-1">بحثت كمان عن: ${hint.map(esc).join(' · ')}</div>`:'')+
+      (gRes.mine.length?sec('⭐ عندك (المفضلة والسجل وماسبيرو)',gRes.mine,'mine','⭐'):'')+sec('📻 المحطات',gRes.st||[],'st','📻')+sec('📼 أرشيف زمان',gRes.arc||[],'arc','🎭')+
+      `<div class="secT">🌐 ابحث برا البرنامج</div><div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap"><a class="ext" target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}">YouTube</a><a class="ext" target="_blank" href="https://archive.org/search?query=${encodeURIComponent(q)}">Internet Archive</a></div>`;
+    $('list').onclick=old;markPlaying()}
+  };
+  await run();setTimeout(()=>{if(view==='search'&&$('gq').value.trim()===q)run()},3500);
+};
+})();
+
 </script>
 </body>
 </html>
