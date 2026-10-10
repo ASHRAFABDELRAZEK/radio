@@ -607,6 +607,9 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 .palCard{border-radius:12px;overflow:hidden;border:2px solid transparent;background:var(--card);cursor:pointer}.palCard.on{border-color:var(--txt)}
 .palSw{height:54px;position:relative}.palSw i{position:absolute;right:8px;bottom:8px;width:26px;height:26px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.4)}
 .palN{padding:6px 8px;font-size:12px;font-weight:700;text-align:center}
+:root[data-skin] #npBox .chip.on,:root[data-skin] .chip.on,:root[data-skin] .hxb.on,:root[data-skin] [data-hx].on{background:var(--acc)!important;color:var(--onacc,#fff)!important;border-color:var(--acc)!important;box-shadow:0 0 0 2px var(--acc) inset,0 6px 14px rgba(0,0,0,.25);font-weight:800}
+:root[data-skin] .chip.on::before{content:"✓ ";font-weight:900}
+:root[data-skin] #npBox .chip:not(.on){opacity:.85}
 </style>
 </head>
 <body>
