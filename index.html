@@ -3561,6 +3561,7 @@ try{const d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'volume')
   $('vol').addEventListener('input',()=>{userSet=true;setTimeout(()=>userSet=false,50)},true);$('vol').addEventListener('change',()=>{userSet=true;setTimeout(()=>userSet=false,50)},true);
   Object.defineProperty(au,'volume',{get(){return d.get.call(au)},set(v){if(safeAudio()&&!userSet&&v<1&&!window._volInit){return}d.set.call(au,v)},configurable:true});
   window._volInit=true;d.set.call(au,+ls.get('radioVol',1));window._volInit=false;
+  window.setUserVolume=v=>{userSet=true;try{d.set.call(au,Math.max(0,Math.min(1,+v)))}finally{setTimeout(()=>userSet=false,50)}};
 }catch{}
 // خيار في الإعدادات
 const _sp=window.settingsPage;window.settingsPage=function(){_sp();const on=safeAudio();
@@ -3574,12 +3575,12 @@ const _sp=window.settingsPage;window.settingsPage=function(){_sp();const on=safe
 // شريط صوت مستقل داخل شاشة يعمل الآن (تحت شريط التقديم مباشرة)
 (function(){try{
   const np=document.getElementById('npBox'),inn=np.querySelector('.npIn');
-  const old=inn.querySelector('.npVol');if(old)old.remove();
+  const old=inn.querySelector('.npVol');if(old){const v=old.querySelector('#vol');if(v)$('player').appendChild(v);old.remove()}
   const box=document.createElement('div');box.className='npVol2';box.innerHTML='<span>🔈</span><input type="range" id="npVolR" min="0" max="1" step="0.02" aria-label="مستوى الصوت"><span>🔊</span><b id="npVolT"></b>';
   const sb=$('seekBox');(sb&&sb.parentElement===inn?sb:inn.querySelector('.npCtl')).insertAdjacentElement('afterend',box);
   const r=box.querySelector('#npVolR'),t=box.querySelector('#npVolT');
   const show=()=>{r.value=au.volume;t.textContent=Math.round(au.volume*100)+'%'};
-  r.addEventListener('input',()=>{const v=+r.value;const vol=$('vol');vol.value=v;vol.dispatchEvent(new Event('input',{bubbles:true}));t.textContent=Math.round(v*100)+'%'});
+  r.addEventListener('input',()=>{const v=+r.value;(window.setUserVolume||(x=>au.volume=x))(v);const vol=$('vol');if(vol)vol.value=v;ls.set('radioVol',v);t.textContent=Math.round(v*100)+'%'});
   au.addEventListener('volumechange',show);setInterval(()=>{if(np.style.display==='flex')show()},800);show();
 }catch(e){}})();
 
