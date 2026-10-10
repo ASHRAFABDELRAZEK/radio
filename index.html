@@ -581,6 +581,27 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 #mini .mBtn{width:40px;height:40px;border-radius:50%;border:0;padding:0;display:flex;align-items:center;justify-content:center;flex:none;background:var(--btn2)!important;color:var(--txt)!important}
 #mini .mPP{background:var(--acc)!important;color:var(--onacc,#fff)!important}#mini .mX{width:30px;height:30px;font-size:13px;opacity:.7}
 :root[data-skin=anghami] #mini{border-top:2px solid var(--acc)}
+
+#mini{flex-wrap:wrap}
+#mini .mSeek{display:none;flex:1 1 100%;align-items:center;gap:8px;font-size:11px;color:var(--mut);direction:ltr;margin-top:2px}
+#mini.hasSeek .mSeek{display:flex}
+#mini .mRange{flex:1;accent-color:var(--acc);height:22px;margin:0}
+#npBox #seekBox.npSeek{display:flex!important;width:min(520px,92vw);margin:10px auto 0;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
+#npBox #seekBox.npSeek #seek{flex:1 1 100%;accent-color:var(--acc);height:28px}
+
+/* شاشة يعمل الآن حسب المظهر */
+:root[data-skin] #npBox{background:var(--bg);color:var(--txt);align-items:flex-start;overflow-y:auto;padding:70px 0 40px}
+:root[data-skin] .npIn{margin:0 auto;gap:10px}
+:root[data-skin] #npArt{background:var(--ic-bg);color:#fff;border:1px solid var(--line);box-shadow:0 24px 48px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.25);font-size:80px}
+:root[data-skin] #npName{font-size:20px;font-weight:800;line-height:1.3}
+:root[data-skin] #npSub{display:none}
+:root[data-skin] .npCtl button{background:var(--card)!important;color:var(--txt)!important;border:1px solid var(--line);width:64px;height:64px;font-size:24px}
+:root[data-skin] .npCtl #npPP{background:var(--acc)!important;color:var(--onacc,#fff)!important;width:84px;height:84px;font-size:32px;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+:root[data-skin] .npCtl2 button,:root[data-skin] #npBox .hxb,:root[data-skin] #npBox .chip{background:var(--card)!important;color:var(--txt)!important;border:1px solid var(--line)}
+:root[data-skin] .npX{background:var(--card)!important;color:var(--txt)!important;border:1px solid var(--line);right:auto;left:14px}
+:root[data-skin] #npBox #seekBox.npSeek{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+:root[data-skin] #npBox .npIn > *{max-width:100%}
+:root[data-skin] .npIn>*{order:3}:root[data-skin] .npIn>.npX,:root[data-skin] .npIn>#npArt,:root[data-skin] .npIn>#npName,:root[data-skin] .npIn>#npSub,:root[data-skin] .npIn>#npStatus{order:0}:root[data-skin] .npIn>.npCtl{order:1}:root[data-skin] .npIn>#seekBox.npSeek{order:2}
 </style>
 </head>
 <body>
@@ -3384,7 +3405,7 @@ if(view==='home')showHome();
 // ===== 16) المشغّل الصغير: يظهر فقط عند وجود تشغيل، والضغط عليه يفتح شاشة «يعمل الآن» الكاملة =====
 (function(){
 const mini=document.createElement('div');mini.id='mini';
-mini.innerHTML=`<div class="mBar"><i class="mProg"></i></div><div class="mArt"></div><div class="mTxt"><b class="mName"></b><span class="mSub m"></span></div><button class="mBtn mPP" aria-label="تشغيل/إيقاف">${gsvg('play',22)}</button><button class="mBtn mNext" aria-label="التالي"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button><button class="mBtn mX" aria-label="إغلاق المشغّل">✕</button>`;
+mini.innerHTML=`<div class="mBar"><i class="mProg"></i></div><div class="mArt"></div><div class="mTxt"><b class="mName"></b><span class="mSub m"></span></div><button class="mBtn mPP" aria-label="تشغيل/إيقاف">${gsvg('play',22)}</button><button class="mBtn mNext" aria-label="التالي"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button><button class="mBtn mX" aria-label="إغلاق المشغّل">✕</button><div class="mSeek"><span class="mT1">0:00</span><input type="range" class="mRange" min="0" max="1000" value="0" aria-label="تقديم وتأخير"><span class="mT2">0:00</span></div>`;
 document.body.appendChild(mini);
 const PAUSE='<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
 function art(){const a=mini.querySelector('.mArt');if(!current)return;const isIA=String(current.stationuuid).startsWith('ia:');
@@ -3395,8 +3416,15 @@ function upd(){
   mini.querySelector('.mName').textContent=current.name;
   const st=$('status').textContent;mini.querySelector('.mSub').textContent=(current.country?current.country+' · ':'')+(st||'');
   mini.querySelector('.mPP').innerHTML=au.paused?gsvg('play',22):PAUSE;
-  const p=mini.querySelector('.mProg');p.style.width=isFinite(au.duration)&&au.duration>0?(au.currentTime/au.duration*100)+'%':'0';
+  const p=mini.querySelector('.mProg');const fin=isFinite(au.duration)&&au.duration>0;p.style.width=fin?(au.currentTime/au.duration*100)+'%':'0';
+  mini.classList.toggle('hasSeek',fin);
+  if(fin&&!seeking){mini.querySelector('.mRange').value=Math.round(au.currentTime/au.duration*1000);mini.querySelector('.mT1').textContent=fmt(au.currentTime);mini.querySelector('.mT2').textContent=fmt(au.duration)}
 }
+let seeking=false;const rng=mini.querySelector('.mRange');
+rng.addEventListener('click',e=>e.stopPropagation());rng.addEventListener('pointerdown',e=>{seeking=true;e.stopPropagation()});
+rng.addEventListener('input',e=>{e.stopPropagation();if(isFinite(au.duration))mini.querySelector('.mT1').textContent=fmt(au.duration*rng.value/1000)});
+rng.addEventListener('change',e=>{e.stopPropagation();if(isFinite(au.duration))au.currentTime=au.duration*rng.value/1000;seeking=false});
+mini.querySelector('.mSeek').addEventListener('click',e=>e.stopPropagation());
 let lastName='';
 setInterval(()=>{if(current&&current.name!==lastName){lastName=current.name;art()}upd()},700);
 ['playing','pause','ended','timeupdate','error'].forEach(ev=>au.addEventListener(ev,upd));
@@ -3405,7 +3433,7 @@ mini.querySelector('.mNext').onclick=e=>{e.stopPropagation();$('nextB').click()}
 mini.querySelector('.mX').onclick=e=>{e.stopPropagation();au.pause();try{au.src=''}catch{}current=null;$('now').textContent='اختر محطة للاستماع';$('status').textContent='';document.body.classList.remove('miniOn');if(typeof markPlaying==='function')markPlaying()};
 mini.onclick=()=>{if(current)npOpen()};
 // أدوات التشغيل الكاملة داخل شاشة «يعمل الآن»
-try{const np=document.getElementById('npBox');const inn=np.querySelector('.npIn');const pl=$('player');inn.appendChild(pl);pl.classList.add('inNP');
+try{const np=document.getElementById('npBox');const inn=np.querySelector('.npIn');const pl=$('player');inn.appendChild(pl);pl.classList.add('inNP');const sb=$('seekBox');const ctl=$('npPP')&&$('npPP').closest('.npCtl');if(sb&&ctl)ctl.insertAdjacentElement('afterend',sb);sb.classList.add('npSeek');
   const _open=window.npOpen;window.npOpen=()=>{_open();document.body.classList.add('npOn')};
   const obs=new MutationObserver(()=>document.body.classList.toggle('npOn',np.style.display==='flex'));obs.observe(np,{attributes:true,attributeFilter:['style']});
 }catch{}
