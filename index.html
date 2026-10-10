@@ -3645,6 +3645,27 @@ gSearch=async function(){
 };
 })();
 
+
+// ===== 23) تحديث الرابط تلقائيًا: لو محطة محلية فشلت نجيب رابطها الحالي من Radio Browser ونحفظه على الجهاز =====
+(function(){
+const FIX=ls.get('urlFix',{});
+// تطبيق الروابط المصحّحة المحفوظة على أي عنصر قبل التشغيل
+const _pm=playMedia;playMedia=function(it){try{const f=it&&FIX[it.stationuuid];if(f&&f.url&&(Date.now()-f.t)<1000*3600*24*30){it.url_resolved=f.url;it.url=f.url}}catch{}_pm(it)};
+let busy=null;
+async function refresh(s){
+  const id=s&&s.stationuuid;if(!id||!/^[0-9a-f-]{30,}$/i.test(id)||busy===id)return false;busy=id;
+  try{const r=await fetch(API+'/json/stations/byuuid/'+id,{signal:AbortSignal.timeout(8000)});const a=await r.json();const n=a&&a[0];
+    const u=n&&(n.url_resolved||n.url);
+    if(u&&/^https:/.test(u)&&u!==(s.url_resolved||s.url)){FIX[id]={url:u,t:Date.now()};ls.set('urlFix',FIX);s.url_resolved=u;s.url=u;toast('🔄 اتحدّث رابط المحطة وجاري التشغيل');_pm(s);return true}
+  }catch{}finally{busy=null}
+  return false;
+}
+// عند الفشل: جرّب التحديث مرة واحدة
+let tried=new Set();
+au.addEventListener('error',()=>{if(current&&!tried.has(current.stationuuid)){tried.add(current.stationuuid);refresh(current)}});
+const _mb=window.markBad;if(typeof markBad==='function'){window.markBad=function(s,on){if(on&&s&&!tried.has(s.stationuuid)){tried.add(s.stationuuid);refresh(s).then(ok=>{if(!ok)_mb(s,on)});return}_mb(s,on)}}
+})();
+
 </script>
 </body>
 </html>
