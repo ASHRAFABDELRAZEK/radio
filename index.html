@@ -610,6 +610,7 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 :root[data-skin] #npBox .chip.on,:root[data-skin] .chip.on,:root[data-skin] .hxb.on,:root[data-skin] [data-hx].on{background:var(--acc)!important;color:var(--onacc,#fff)!important;border-color:var(--acc)!important;box-shadow:0 0 0 2px var(--acc) inset,0 6px 14px rgba(0,0,0,.25);font-weight:800}
 :root[data-skin] .chip.on::before{content:"✓ ";font-weight:900}
 :root[data-skin] #npBox .chip:not(.on){opacity:.85}
+.npVol{display:flex;align-items:center;gap:8px;width:min(520px,92vw);margin:6px auto 0;direction:ltr}.npVol input{flex:1;accent-color:var(--acc);height:28px}
 </style>
 </head>
 <body>
@@ -752,7 +753,7 @@ au.onpause=()=>$('pp').textContent='▶';
 au.onerror=()=>$('status').textContent='المحطة لا تعمل، جرّب غيرها';
 $('pp').onclick=()=>au.paused?au.play():au.pause();
 $('vol').oninput=e=>{au.volume=e.target.value;ls.set('radioVol',e.target.value)};
-au.volume=$('vol').value=ls.get('radioVol',0.8);
+au.volume=$('vol').value=ls.get('radioVol',1);
 $('go').onclick=search;$('q').onkeydown=e=>e.key==='Enter'&&search();
 ['country','lang','tag'].forEach(id=>$(id).onchange=search);
 $('tAll').onclick=()=>{view='all';$('tAll').classList.add('on');$('tFav').classList.remove('on');render(results)};
@@ -3446,7 +3447,7 @@ mini.querySelector('.mNext').onclick=e=>{e.stopPropagation();$('nextB').click()}
 mini.querySelector('.mX').onclick=e=>{e.stopPropagation();au.pause();try{au.src=''}catch{}current=null;$('now').textContent='اختر محطة للاستماع';$('status').textContent='';document.body.classList.remove('miniOn');if(typeof markPlaying==='function')markPlaying()};
 mini.onclick=()=>{if(current)npOpen()};
 // أدوات التشغيل الكاملة داخل شاشة «يعمل الآن»
-try{const np=document.getElementById('npBox');const inn=np.querySelector('.npIn');const pl=$('player');inn.appendChild(pl);pl.classList.add('inNP');const sb=$('seekBox');const ctl=$('npPP')&&$('npPP').closest('.npCtl');if(sb&&ctl)ctl.insertAdjacentElement('afterend',sb);sb.classList.add('npSeek');
+try{const np=document.getElementById('npBox');const inn=np.querySelector('.npIn');const pl=$('player');inn.appendChild(pl);pl.classList.add('inNP');try{const v=$('vol');const vb=document.createElement('div');vb.className='npVol';vb.innerHTML='<span>🔈</span>';vb.appendChild(v);vb.insertAdjacentHTML('beforeend','<span>🔊</span>');pl.insertAdjacentElement('beforebegin',vb)}catch{}const sb=$('seekBox');const ctl=$('npPP')&&$('npPP').closest('.npCtl');if(sb&&ctl)ctl.insertAdjacentElement('afterend',sb);sb.classList.add('npSeek');
   const _open=window.npOpen;window.npOpen=()=>{_open();document.body.classList.add('npOn')};
   const obs=new MutationObserver(()=>document.body.classList.toggle('npOn',np.style.display==='flex'));obs.observe(np,{attributes:true,attributeFilter:['style']});
 }catch{}
