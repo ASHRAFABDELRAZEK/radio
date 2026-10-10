@@ -7,7 +7,7 @@
 <meta name="author" content="ASHRAF FATHY">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png?v=2">
 <meta name="theme-color" content="var(--bar)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <!-- راديو العالم | إعداد وتصميم: ASHRAF FATHY | جميع الحقوق محفوظة © 2026 -->
@@ -506,6 +506,35 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 :root[data-skin] :is(.hs-square,.hs-circle,.hs-dot,.hs-pill) #list#list>:is(.hgrp,.hsub):not(.fold){border-color:var(--acc)!important;background:var(--cardon,var(--card))!important}
 :root[data-skin] :is(.hs-square,.hs-circle,.hs-dot,.hs-pill) #list#list>.strip .si,:root[data-skin] :is(.hs-square,.hs-circle,.hs-dot) .hgrid.hlist .strip .si{background:var(--ic-bg)!important;border:none!important;box-shadow:0 8px 16px var(--ic-glow),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.22)!important;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
 :root[data-skin] .hmn{background:var(--btn2)!important;color:var(--txt)!important;border:1px solid var(--line)!important}
+
+/* ===== الرئيسية العصرية (G) ===== */
+#list .gHome{grid-column:1/-1;display:flex;flex-direction:column;gap:12px;padding:2px 2px 90px;max-width:560px;margin:0 auto;width:100%}
+.gHead{display:flex;align-items:center;gap:10px}
+.gLogo{width:40px;height:40px;border-radius:12px;background:linear-gradient(145deg,#8b5cf6,#5b21b6);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 16px rgba(139,92,246,.4),inset 0 2px 0 rgba(255,255,255,.35)}
+.gTitle{flex:1;font-size:21px;font-weight:800;line-height:1}.gTitle small{display:block;font-size:11px;font-weight:normal;color:var(--mut);margin-top:3px}
+.gib{width:40px;height:40px;border-radius:50%;border:none;background:var(--card)!important;color:var(--txt)!important;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.gib.dim{background:transparent!important;color:var(--mut)!important}
+.gHero{position:relative;overflow:hidden;min-height:150px;border-radius:18px;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;color:#fff;background:var(--hero,linear-gradient(120deg,#5b21b6,#8b5cf6 60%,#c4b5fd));box-shadow:0 16px 32px rgba(139,92,246,.35);cursor:pointer}
+.gHero i{position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}.gHero .c1{left:-30px;top:-30px;width:170px;height:170px}.gHero .c2{left:30px;top:20px;width:90px;height:90px;background:rgba(255,255,255,.1)}
+.gHero .gk{font-size:11px;font-weight:700;opacity:.9;letter-spacing:.4px}.gHero .gt{font-size:20px;font-weight:800;line-height:1.2}.gHero .gs{font-size:12px;opacity:.9}
+.gplay{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 14px;border-radius:999px;background:#fff;color:#5b21b6;font-size:12px;font-weight:800}
+.gSec{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px}.gSec span{font-size:17px;font-weight:800}.gSec a{font-size:12px;color:var(--acc);text-decoration:none;font-weight:700}
+.gRow{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}.gRow::-webkit-scrollbar{display:none}
+.gTile{width:88px;flex:0 0 auto;text-align:center;cursor:pointer}
+.gIc{height:88px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.22);position:relative;overflow:hidden}
+.gIc.sm{width:52px;height:52px;border-radius:12px;flex:none}.gIc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gTile .gn{font-size:12px;font-weight:700;margin-top:6px;line-height:1.25}
+.gRc{width:108px;flex:0 0 auto;cursor:pointer}.gRc .gIc{height:108px}.gRc b{display:block;font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gRc .m{font-size:11px;color:var(--mut)}
+.gList{display:flex;flex-direction:column}
+.gRowItem,.gCont{display:flex;align-items:center;gap:12px;padding:8px 0;cursor:pointer}
+.gCont{padding:10px 12px;border-radius:14px;background:var(--card)}
+.gRowItem .gi,.gCont .gi{flex:1;min-width:0}.gRowItem b,.gCont b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gRowItem .m,.gCont .m{font-size:12px;color:var(--mut)}
+.gNav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:space-around;padding:6px 0 10px;background:var(--bar);border-top:1px solid var(--line)}
+.gNav a{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;text-decoration:none;color:var(--mut)}.gNav a.on{color:var(--acc)}
+:root[data-skin=anghami] body.gnavOn #player{bottom:58px}
+:root[data-skin=anghami] body:not(.gnavOn) .gNav{display:none}
+:root[data-skin=anghami] header .tabs{display:none}
+
 </style>
 </head>
 <body>
@@ -3106,10 +3135,10 @@ if(view==='home')showHome();
 // ===== 13) محرّك المظاهر: 7 مظاهر + الافتراضي (أنغامي) + ترحيل لمرة واحدة + رجوع للافتراضي =====
 (function(){
 const SKINS=[
- ['anghami','أسلوب عصري (الافتراضي)','أسود + بنفسجي · الأكثر حيوية','#0d0d0f',['#8b5cf6','#059669','#2563eb','#d97706'],'#fff'],
- ['cards','بطاقات ملوّنة (غامق)','مألوف لمستخدمي Spotify','#111214',['#10b981','#3b82f6','#f59e0b','#ef4444'],'#fff'],
+ ['anghami','أسلوب عصري (الافتراضي)','أسود وبنفسجي · بانر ومجموعات','#0d0d0f',['#8b5cf6','#059669','#2563eb','#d97706'],'#fff'],
+ ['cards','بطاقات ملوّنة (غامق)','بطاقات كبيرة بألوان واضحة','#111214',['#10b981','#3b82f6','#f59e0b','#ef4444'],'#fff'],
  ['cardsLight','بطاقات ملوّنة (فاتح)','نفس الشكل بخلفية فاتحة','#f6f7f9',['#10b981','#3b82f6','#f59e0b','#ef4444'],'#111'],
- ['material','Material 3','شكل جوجل · أوضح وأبسط','#f8f9ff',['#d7e3f8','#d3f3e5','#ffe6c2','#ffdad6'],'#191c20'],
+ ['material','بسيط وواضح','خط أكبر وأزرار أوضح','#f8f9ff',['#d7e3f8','#d3f3e5','#ffe6c2','#ffdad6'],'#191c20'],
  ['glass','زجاج عميق','كحلي بشفافية وعمق','#0b1528',['#4f8cff','#34d399','#fbbf24','#f472b6'],'#fff'],
  ['gold','فخامة ذهبية','أسود وذهبي كلاسيكي','#0c0d10',['#d4af37','#1c1a14','#d4af37','#1c1a14'],'#f6e7b8'],
  ['soft','فاتح ناعم','ظلال ناعمة مريحة نهارًا','#eef1f6',['#2dd4bf','#60a5fa','#fbbf24','#f472b6'],'#1e293b']
@@ -3141,6 +3170,81 @@ if(window.HX){
 }
 // الزرار القديم ☀️/🌙 يبدّل بين النسخة الفاتحة والغامقة من نفس العائلة
 const tb=$('themeB');if(tb){tb.onclick=()=>{const s=ls.get('skin',DEF);const pair={cards:'cardsLight',cardsLight:'cards',anghami:'material',material:'anghami',glass:'soft',soft:'glass',gold:'cardsLight'};const n=pair[s]||DEF;ls.set('skin',n);applySkin(n);toast('المظهر: '+SKINS.find(x=>x[0]===n)[1])}}
+})();
+
+
+// ===== 14) الرئيسية العصرية (هيكل التصميم G) — تظهر مع مظهر «أسلوب عصري» =====
+(function(){
+const I={
+ mosque:'<path d="M3 21h18M5 21v-7h14v7M12 4c3 2 5 4 5 7H7c0-3 2-5 5-7zM4 14v-3M20 14v-3M12 14v7"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+ brief:'<rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a3 3 0 0 1 6 0v2M3 13h18"/>',
+ mask:'<path d="M4 5c5-2 11-2 16 0v6c0 5-4 9-8 9s-8-4-8-9z"/><path d="M8 10c1-1 2-1 3 0M13 10c1-1 2-1 3 0M9 15c2 1 4 1 6 0"/>',
+ flag:'<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
+ tower:'<path d="M12 10v11M8 21h8M12 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM7.5 3.5a7 7 0 0 0 0 9M16.5 3.5a7 7 0 0 1 0 9"/>',
+ star:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.4 22 12 18.3 5.6 22l1.7-7.7L2 9.6 9 9z"/>',
+ head:'<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="7" rx="2"/><rect x="17" y="13" width="4" height="7" rx="2"/>',
+ radio:'<rect x="3" y="8" width="18" height="12" rx="3"/><circle cx="16" cy="14" r="2.5"/><path d="M7 13h4M7 16h3M5 8l11-5"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+ bell:'<path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3zM10 20a2 2 0 0 0 4 0"/>',
+ play:'<path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/>',
+ grid:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ book:'<path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/>',
+ dots:'<circle cx="12" cy="5" r="2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="2" fill="currentColor" stroke="none"/>'
+};
+const svg=(k,s=24,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
+window.gsvg=svg;
+const TILES=[
+ ['arabw','mosque','محطات عربية','linear-gradient(145deg,#059669,#064e3b)'],
+ ['world','globe','اكتشف العالم','linear-gradient(145deg,#2563eb,#1e3a8a)'],
+ ['pro','brief','محطات مهنية','linear-gradient(145deg,#d97706,#78350f)'],
+ ['arc','mask','أرشيف زمان','linear-gradient(145deg,#ea580c,#7c2d12)'],
+ ['eg','flag','محطات مصر','linear-gradient(145deg,#dc2626,#7f1d1d)'],
+ ['masp','tower','ماسبيرو','linear-gradient(145deg,#0891b2,#164e63)'],
+ ['fav','star','المفضلة','linear-gradient(145deg,#db2777,#831843)'],
+ ['modes','head','الأجواء والأقسام','linear-gradient(145deg,#7c3aed,#4c1d95)']
+];
+const PAL=['linear-gradient(145deg,#166534,#14532d)','linear-gradient(145deg,#be123c,#881337)','linear-gradient(145deg,#b45309,#78350f)','linear-gradient(145deg,#1e3a8a,#172554)','linear-gradient(145deg,#5b21b6,#3b0764)'];
+const toSt=s=>({stationuuid:s.id,name:s.name,country:s.country_ar||'',tags:s.tags||'',favicon:s.logo||'',url_resolved:s.url,url:s.url,bitrate:s.bitrate});
+let topEG=null;
+async function loadTop(){if(topEG)return topEG;try{const r=await fetch('data/world/EG.json',{cache:'force-cache'});const d=await r.json();topEG=d.filter(s=>/^https:/.test(s.url)).slice(0,5).map(toSt)}catch{topEG=[]}return topEG}
+function hero(){
+  let t='محطات عربية مُنتقاة',s='501 محطة · قرآن · أخبار · طرب',act='arabw';
+  try{const di=typeof dailyIdx==='function'?dailyIdx():null;if(di!=null&&window.MODES&&MODES[di]){t=MODES[di][1];s=MODES[di][2]||'';act='daily'}}catch{}
+  try{const o=typeof occFor==='function'?occFor(new Date()):[];if(o&&o.length){t=o[0].t;s=o[0].s||'';act='occ'}}catch{}
+  return `<div class="gHero" data-g="${act}"><i class="c1"></i><i class="c2"></i><div class="gk">مقترح اليوم</div><div class="gt">${esc(t)}</div><div class="gs">${esc(s)}</div><span class="gplay">${svg('play',12)} شغّل</span></div>`;
+}
+window.homeG=async function(){
+  setTab('home');window.updBack&&setTimeout(updBack,0);
+  const last=ls.get('radioLast',null);
+  const rec=(window.recent||[]).slice(0,8);
+  let h=`<div class="gHead"><div class="gLogo">${svg('radio',20,2.2)}</div><div class="gTitle">راديو العالم<small>إعداد: ASHRAF FATHY</small></div><button class="gib" data-g="search" aria-label="بحث">${svg('search',22,2.2)}</button><button class="gib" data-g="classic" aria-label="كل الأقسام">${svg('grid',22,2.2)}</button></div>`;
+  h+=hero();
+  h+=`<div class="gSec"><span>الأقسام</span><a href="#" data-g="classic">عرض الكل</a></div><div class="gRow">${TILES.map(([a,ic,n,bg])=>`<div class="gTile" data-g="${a}"><div class="gIc" style="background:${bg}">${svg(ic,34,1.8)}</div><div class="gn">${n}</div></div>`).join('')}</div>`;
+  if(last)h+=`<div class="gCont" data-g="resume"><div class="gIc sm" style="background:${PAL[3]}">${svg('play',22)}</div><div class="gi"><b>كمّل: ${esc(last.item.name)}</b><div class="m">${esc(last.item.country||'')}</div></div></div>`;
+  h+=`<div class="gSec"><span>الأكثر استماعًا في مصر</span><a href="#" data-g="egmore">المزيد</a></div><div class="gList" id="gTop"><div class="m" style="padding:6px 0">جاري التحميل…</div></div>`;
+  if(rec.length)h+=`<div class="gSec"><span>تابع الاستماع</span><a href="#" data-g="rec">الكل</a></div><div class="gRow">${rec.map((r,i)=>`<div class="gRc" data-ri="${i}"><div class="gIc" style="background:${PAL[i%PAL.length]}">${svg(String(r.stationuuid).startsWith('ia:')?'mask':'radio',30,1.8)}</div><b>${esc(r.name)}</b><div class="m">${esc(r.country||'')}</div></div>`).join('')}</div>`;
+  h+=`<div class="gNav"><a href="#" data-g="home" class="on">${svg('radio',22)}<span>الرئيسية</span></a><a href="#" data-g="classic">${svg('grid',22)}<span>الأقسام</span></a><a href="#" data-g="arabw">${svg('mosque',22)}<span>عربي</span></a><a href="#" data-g="world">${svg('globe',22)}<span>العالم</span></a><a href="#" data-g="fav">${svg('book',22)}<span>مكتبتي</span></a></div>`;
+  $('list').innerHTML=`<div class="gHome">${h}</div>`;document.body.classList.add('gnavOn');
+  const top=await loadTop();const box=$('gTop');if(box){box.innerHTML=top.length?top.map((s,i)=>`<div class="gRowItem" data-gi="${i}"><div class="gIc sm" style="background:${PAL[i%PAL.length]}">${s.favicon?`<img src="${esc(s.favicon)}" onerror="this.remove()">`:''}${svg('radio',22)}</div><div class="gi"><b>${esc(s.name)}</b><div class="m">${esc(s.tags).split(',').slice(0,2).join(' · ')||'إذاعة'}</div></div><button class="gib dim" aria-label="خيارات">${svg('dots',18)}</button></div>`).join(''):'<div class="m">غير متاح الآن</div>'}
+  if(typeof markPlaying==='function')markPlaying();
+};
+$('list').addEventListener('click',e=>{
+  const home=e.target.closest('.gHome');if(!home)return;
+  const gi=e.target.closest('[data-gi]');if(gi){e.stopImmediatePropagation();playlist=topEG;playMedia(topEG[+gi.dataset.gi]);return}
+  const ri=e.target.closest('[data-ri]');if(ri){e.stopImmediatePropagation();playlist=recent;playMedia(recent[+ri.dataset.ri]);return}
+  const t=e.target.closest('[data-g]');if(!t)return;e.preventDefault();e.stopImmediatePropagation();
+  const a=t.dataset.g;if(a!=='home')navPush();
+  const map={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),arc:()=>{setTab('arc');arcCats()},eg:()=>$('eg').click(),masp:()=>countryPage?countryPage('EG','مصر'):0,fav:()=>{setTab('fav');render(favs)},rec:()=>{setTab('rec');render(recent)},modes:()=>modesPage(),resume:()=>resume(),egmore:()=>countryPage('EG','مصر'),classic:()=>showHomeClassic(),home:()=>homeG(),search:()=>{const q=$('gq')||$('q');q&&q.focus()},
+    daily:()=>{const el=document.createElement('div');el.dataset.act='daily';$('list').appendChild(el);el.click();el.remove()},occ:()=>{const el=document.createElement('div');el.dataset.occ='0';$('list').appendChild(el);el.click();el.remove()}};
+  if(a==='masp'){document.body.classList.add('sideOpen');const d=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#masp'));if(d){d.open=true;d.scrollIntoView()}return}
+  (map[a]||(()=>{}))();
+},true);
+window.showHomeClassic=showHome;
+const _st=setTab;setTab=function(t){_st(t);if(t!=='home')document.body.classList.remove('gnavOn')};
+showHome=function(){if((document.documentElement.dataset.skin||'')==='anghami')homeG();else showHomeClassic()};
+if(view==='home')showHome();
 })();
 
 </script>
