@@ -705,7 +705,7 @@ async function pickServer(){
 async function loadCountries(){
   const r=await fetch(API+'/json/countries?order=stationcount&reverse=true&hidebroken=true');
   const c=await r.json();
-  $('country').innerHTML+=c.filter(x=>x.stationcount>20).map(x=>`<option value="${x.iso_3166_1}">${x.name} (${x.stationcount})</option>`).join('');
+  $('country').innerHTML+=c.filter(x=>x.stationcount>20&&x.iso_3166_1!=='IL').map(x=>`<option value="${x.iso_3166_1}">${x.name} (${x.stationcount})</option>`).join('');
 }
 async function search(){
   setTab('all');
@@ -719,7 +719,9 @@ async function search(){
   catch(e){$('list').innerHTML='<p>تعذر الاتصال بالخادم، تأكد من الإنترنت.</p>'}
 }
 const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const EXCL=s=>s&&(s.countrycode==='IL'||/hebrew|israel/i.test((s.language||'')+' '+(s.country||'')));
 function render(arr){
+  arr=arr.filter(s=>!EXCL(s));
   if(!arr.length){$('list').innerHTML='<p>لا توجد محطات.</p>';return}
   $('list').innerHTML=arr.map((s,i)=>`<div class="st ${current&&current.stationuuid===s.stationuuid?'playing':''}" data-i="${i}" data-u="${esc(s.stationuuid)}">
     <img src="${esc(s.favicon)}" onerror="this.style.visibility='hidden'">
