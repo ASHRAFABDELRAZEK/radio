@@ -557,6 +557,13 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 :root[data-skin] #now{text-decoration:none!important;font-weight:700;font-size:14px;line-height:1.3;white-space:normal;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
 :root[data-skin] #status{font-size:12px}
 :root[data-skin] #player{box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+
+/* الأقسام الموضوعية: شبكة ثابتة عمودين — نفس المكان دايمًا */
+#list .gHome .gRow.gHubs{display:grid;grid-template-columns:1fr 1fr;overflow:visible;gap:10px}
+#list .gHome .gHubs .gTile{width:auto;display:flex;align-items:center;gap:10px;text-align:start;background:var(--card);padding:10px;border-radius:16px;box-shadow:var(--sh);border:1px solid var(--line)}
+#list .gHome .gHubs .gTile .gIc{width:50px;height:50px;flex:none;border-radius:14px}
+#list .gHome .gHubs .gTile .gn{margin:0;font-size:14px}
+.gTools{display:flex;flex-wrap:wrap;gap:8px}.gTools .hxb{margin:0;padding:8px 12px;border-radius:999px;font-size:13px}
 </style>
 </head>
 <body>
@@ -3243,7 +3250,7 @@ window.homeG=async function(){
   const rec=(window.recent||[]).slice(0,8);
   let h=`<div class="gHead"><div class="gLogo">${svg('radio',20,2.2)}</div><div class="gTitle">راديو العالم<small>إعداد: ASHRAF FATHY</small></div><button class="gib" data-g="search" aria-label="بحث">${svg('search',22,2.2)}</button><button class="gib" data-g="classic" aria-label="كل الأقسام">${svg('grid',22,2.2)}</button></div>`;
   h+=hero();
-  h+=`<div class="gSec"><span>الأقسام</span><a href="#" data-g="classic">عرض الكل</a></div><div class="gRow gTiles">${TILES.map(([a,ic,n,bg])=>`<div class="gTile" data-g="${a}"><div class="gIc" style="background:${bg}">${svg(ic,34,1.8)}</div><div class="gn">${n}</div></div>`).join('')}</div>`;
+  h+=`<div class="gSec"><span>الأقسام</span><a href="#" data-g="classic">كل الأدوات</a></div><div class="gRow gTiles gHubs">${typeof hubTiles==='function'?hubTiles():''}</div><div class="gSec"><span>استكشاف المحطات</span></div><div class="gRow">${[["arabw","mosque","محطات عربية","linear-gradient(145deg,#059669,#064e3b)"],["world","globe","العالم بالدولة","linear-gradient(145deg,#2563eb,#1e3a8a)"],["eg","flag","محطات مصر","linear-gradient(145deg,#dc2626,#7f1d1d)"],["masp","tower","ماسبيرو","linear-gradient(145deg,#0891b2,#164e63)"],["arc","mask","أرشيف زمان","linear-gradient(145deg,#ea580c,#7c2d12)"],["fav","star","المفضلة","linear-gradient(145deg,#db2777,#831843)"]].map(([a,ic,n,bg])=>`<div class="gTile" data-g="${a}"><div class="gIc" style="background:${bg}">${svg(ic,30,1.8)}</div><div class="gn">${n}</div></div>`).join('')}</div>`;
   if(last)h+=`<div class="gCont" data-g="resume"><div class="gIc sm" style="background:${PAL[3]}">${svg('play',22)}</div><div class="gi"><b>كمّل: ${esc(last.item.name)}</b><div class="m">${esc(last.item.country||'')}</div></div></div>`;
   h+=`<div class="gSec"><span>الأكثر استماعًا في مصر</span><a href="#" data-g="egmore">المزيد</a></div><div class="gList" id="gTop"><div class="m" style="padding:6px 0">جاري التحميل…</div></div>`;
   if(rec.length)h+=`<div class="gSec"><span>تابع الاستماع</span><a href="#" data-g="rec">الكل</a></div><div class="gRow">${rec.map((r,i)=>`<div class="gRc" data-ri="${i}"><div class="gIc" style="background:${PAL[i%PAL.length]}">${svg(String(r.stationuuid).startsWith('ia:')?'mask':'radio',30,1.8)}</div><b>${esc(r.name)}</b><div class="m">${esc(r.country||'')}</div></div>`).join('')}</div>`;
@@ -3266,12 +3273,78 @@ window.showHomeClassic=showHome;
 const _st=setTab;setTab=function(t){_st(t);if(t!=='home'){document.body.classList.remove('gnavOn');gnavMark(t==='fav'||t==='rec'?'fav':'')}};
 // شريط تنقل سفلي دائم (كل المظاهر)
 const nav=document.createElement('nav');nav.id='gNav';nav.className='gNav';
-nav.innerHTML=`<a href="#" data-g="home">${svg('radio',22)}<span>الرئيسية</span></a><a href="#" data-g="classic">${svg('grid',22)}<span>الأقسام</span></a><a href="#" data-g="arabw">${svg('mosque',22)}<span>عربي</span></a><a href="#" data-g="world">${svg('globe',22)}<span>العالم</span></a><a href="#" data-g="fav">${svg('book',22)}<span>مكتبتي</span></a>`;
+nav.innerHTML=`<a href="#" data-g="home">${svg('radio',22)}<span>الرئيسية</span></a><a href="#" data-g="arabw">${svg('mosque',22)}<span>عربي</span></a><a href="#" data-g="world">${svg('globe',22)}<span>العالم</span></a><a href="#" data-g="arc">${svg('mask',22)}<span>الأرشيف</span></a><a href="#" data-g="fav">${svg('book',22)}<span>مكتبتي</span></a>`;
 document.body.appendChild(nav);document.body.classList.add('hasNav');
 window.gnavMark=k=>nav.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.g===k));
 nav.addEventListener('click',e=>{const t=e.target.closest('[data-g]');if(!t)return;e.preventDefault();const a=t.dataset.g;navPush();gnavMark(a);
-  ({home:()=>homeG(),classic:()=>showHomeClassic(),arabw:()=>arabPage(),world:()=>worldPage(),fav:()=>{setTab('fav');render(favs);gnavMark('fav')}})[a]()});
+  ({home:()=>homeG(),classic:()=>showHomeClassic(),arabw:()=>arabPage(),world:()=>worldPage(),arc:()=>{setTab('arc');arcCats()},fav:()=>{setTab('fav');render(favs);gnavMark('fav')}})[a]()});
 showHome=function(){homeG()};
+if(view==='home')showHome();
+})();
+
+
+// ===== 15) الأقسام الموضوعية (Hubs): كل موضوع في مكان واحد — عربي + عالمي + أرشيف + أدوات =====
+(function(){
+const HUBS=[
+ {k:'spirit',ic:'mosque',name:'روحانيات',sub:'قرآن · أذكار · تلاوات',bg:'linear-gradient(145deg,#059669,#064e3b)',arcat:['قرآن وديني'],world:['spirit'],tools:[['wird','📖 الورد اليومي'],['adh','🤲 الأذكار'],['tasbeeh','📿 المسبحة'],['qibla','🧭 القبلة']]},
+ {k:'learn',ic:'brief',name:'تعليم ولغات',sub:'محاضرات · ثقافة · تعلّم لغة',bg:'linear-gradient(145deg,#2563eb,#1e3a8a)',arcat:['تعليمي'],world:['learn','lang'],tools:[['lang','🗣 تعلّم لغة بالراديو'],['pomo','🍅 جلسة تركيز']],pro:true},
+ {k:'zaman',ic:'mask',name:'زمن الفن الجميل',sub:'طرب · مسرحيات · مسلسلات قديمة',bg:'linear-gradient(145deg,#b45309,#78350f)',arcat:['طرب وكلاسيكيات'],world:['zaman','drama'],archive:true},
+ {k:'kids',ic:'star',name:'أطفال وأسرة',sub:'حواديت · أناشيد · برامج عائلية',bg:'linear-gradient(145deg,#db2777,#831843)',arcat:['أطفال'],world:['kids'],arcq:'title:(أطفال OR اطفال OR حواديت OR حدوتة)'},
+ {k:'biz',ic:'globe',name:'أخبار وأعمال',sub:'أخبار · اقتصاد · حوارات',bg:'linear-gradient(145deg,#475569,#1e293b)',arcat:['أخبار وحوار'],world:['biz'],pro:true},
+ {k:'sport',ic:'flag',name:'رياضة',sub:'مباريات · تحليل · إذاعات رياضية',bg:'linear-gradient(145deg,#dc2626,#7f1d1d)',arcat:['رياضة'],world:['sport']},
+ {k:'relax',ic:'head',name:'استرخاء ونوم',sub:'هدوء · طبيعة · تأمل',bg:'linear-gradient(145deg,#0891b2,#164e63)',arcat:[],world:['relax'],modes:[1,2]},
+ {k:'classic',ic:'tower',name:'موسيقى وكلاسيك',sub:'كلاسيك · بيانو · تركيز',bg:'linear-gradient(145deg,#7c3aed,#4c1d95)',arcat:['عام ومنوعات'],world:['classic'],modes:[0]}
+];
+window.HUBS=HUBS;
+const cache={};
+async function jget(f){if(cache[f])return cache[f];try{const r=await fetch('data/'+f,{cache:'force-cache'});if(!r.ok)throw 0;return cache[f]=await r.json()}catch{return cache[f]=[]}}
+const toSt=s=>({stationuuid:s.id,name:s.name,country:s.country_ar||'',tags:s.tags||'',favicon:s.logo||'',url_resolved:s.url,url:s.url,bitrate:s.bitrate,_lang:s.lang});
+const PAL=['linear-gradient(145deg,#166534,#14532d)','linear-gradient(145deg,#be123c,#881337)','linear-gradient(145deg,#b45309,#78350f)','linear-gradient(145deg,#1e3a8a,#172554)','linear-gradient(145deg,#5b21b6,#3b0764)'];
+const LN={arabic:'عربي',english:'إنجليزي',french:'فرنسي',spanish:'إسباني',german:'ألماني',turkish:'تركي',urdu:'أوردو',italian:'إيطالي',russian:'روسي',persian:'فارسي',farsi:'فارسي',hindi:'هندي',indonesian:'إندونيسي',malay:'ماليزي'};
+const lists={};
+const row=(s,key,i)=>`<div class="gRowItem" data-hp="${key}" data-i="${i}"><div class="gIc sm" style="background:${PAL[i%PAL.length]}">${s.favicon?`<img src="${esc(s.favicon)}" onerror="this.remove()">`:''}${gsvg('radio',22)}</div><div class="gi"><b>${esc(s.name)}</b><div class="m">${esc(s.country||'')}${s._lang?' · '+(LN[s._lang]||s._lang):''}</div></div></div>`;
+const sec=(t,more)=>`<div class="gSec"><span>${t}</span>${more?`<a href="#" ${more}>المزيد</a>`:''}</div>`;
+window.hubPage=async function(k){
+  const H=HUBS.find(h=>h.k===k);if(!H)return;
+  setTab('all');$('viewTitle').textContent=H.name;document.body.classList.remove('gnavOn');
+  $('list').innerHTML=`<div class="gHome"><div class="gHero" style="background:${H.bg};min-height:110px;cursor:default"><i class="c1"></i><div class="gk">قسم</div><div class="gt">${H.name}</div><div class="gs">${H.sub}</div></div><div class="m">جاري التحميل…</div></div>`;
+  const [ar,...worlds]=await Promise.all([jget('arabic.json'),...H.world.map(w=>jget('sections/'+w+'.json'))]);
+  const okName=s=>s.name&&s.name.replace(/[^\p{L}\p{N}]/gu,'').length>=3&&!/^[\W_]/.test(s.name);
+  const arab=ar.filter(s=>H.arcat.includes(s.cat)&&s.status!=='unverified'&&okName(s)&&!(H.k==='zaman'&&/تفسير|quran|قرآن|سيرة|الصحابة/i.test(s.name+s.tags))).map(toSt);
+  let world=[].concat(...worlds).map(toSt);const seen=new Set();world=world.filter(s=>!seen.has(s.url_resolved)&&seen.add(s.url_resolved));
+  lists[k+':ar']=arab;lists[k+':w']=world;
+  let h=`<div class="gHero" style="background:${H.bg};min-height:110px;cursor:default"><i class="c1"></i><div class="gk">قسم</div><div class="gt">${H.name}</div><div class="gs">${H.sub}</div></div>`;
+  if(H.tools)h+=`<div class="gTools">${H.tools.map(([a,l])=>`<button data-hx="${a}" class="hxb">${l}</button>`).join('')}</div>`;
+  if(H.modes)h+=`<div class="gTools">${H.modes.map(i=>`<button data-hmode="${i}" class="hxb">${MODES[i][0]} ${MODES[i][1]}</button>`).join('')}</div>`;
+  if(H.pro)h+=`<div class="gTools"><button data-hgo="pro" class="hxb">💼 محطات مهنية (أخبار وأعمال بالإنجليزية)</button></div>`;
+  if(arab.length)h+=sec('🇸🇦 محطات عربية',`data-hmore="${k}:ar"`)+`<div class="gList">${arab.slice(0,5).map((s,i)=>row(s,k+':ar',i)).join('')}</div>`;
+  if(H.archive)h+=sec('🎭 من أرشيف زمان')+`<div class="gTools">${CATS.map((c,i)=>`<button data-harc="${i}" class="hxb">${c[0]} ${c[1]}</button>`).join('')}</div>`;
+  if(H.arcq)h+=sec('🎭 من أرشيف زمان')+`<div class="gTools"><button data-harcq="${esc(H.arcq)}" class="hxb">🔎 حواديت وبرامج أطفال قديمة</button></div>`;
+  if(world.length){const langs={};world.forEach(s=>{if(s._lang)langs[s._lang]=(langs[s._lang]||0)+1});
+    h+=sec('🌍 محطات من العالم ('+world.length+')',`data-hmore="${k}:w"`)+`<div class="gTools">${Object.entries(langs).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([l,n])=>`<button data-hlang="${k}|${l}" class="hxb" style="background:var(--card);color:var(--txt)">${LN[l]||l} <small>${n}</small></button>`).join('')}</div><div class="gList">${world.slice(0,6).map((s,i)=>row(s,k+':w',i)).join('')}</div>`}
+  $('list').innerHTML=`<div class="gHome">${h}</div>`;
+  if(typeof markPlaying==='function')markPlaying();
+};
+window.hubList=function(key,title,filterLang){
+  let items=lists[key]||[];if(filterLang)items=items.filter(s=>s._lang===filterLang);
+  setTab('all');$('viewTitle').textContent=title;results=items;playlist=items;render(items);
+  $('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${esc(title)} <span class="m">${items.length} محطة</span><button data-hback="${key.split(':')[0]}" style="background:var(--btn2);font-size:13px;padding:5px 10px">↩ رجوع للقسم</button></div>`);
+};
+$('list').addEventListener('click',e=>{
+  const t=e.target.closest('[data-hp],[data-hmore],[data-hlang],[data-hmode],[data-harc],[data-harcq],[data-hgo],[data-hback],[data-hub]');if(!t)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(t.dataset.hub){navPush();hubPage(t.dataset.hub);return}
+  if(t.dataset.hp){const L=lists[t.dataset.hp];playlist=L;playMedia(L[+t.dataset.i]);return}
+  if(t.dataset.hmore){navPush();const [k,w]=t.dataset.hmore.split(':');const H=HUBS.find(h=>h.k===k);hubList(t.dataset.hmore,H.name+' — '+(w==='ar'?'محطات عربية':'من العالم'));return}
+  if(t.dataset.hlang){navPush();const [k,l]=t.dataset.hlang.split('|');const H=HUBS.find(h=>h.k===k);hubList(k+':w',H.name+' — '+(LN[l]||l),l);return}
+  if(t.dataset.hback){navPush();hubPage(t.dataset.hback);return}
+  if(t.dataset.hmode!=null){navPush();const el=document.createElement('div');el.dataset.mode=t.dataset.hmode;$('list').appendChild(el);el.click();el.remove();return}
+  if(t.dataset.harc!=null){navPush();const c=CATS[+t.dataset.harc];$('aq').value=c[2];$('amt').value=c[3];arcSearch();return}
+  if(t.dataset.harcq){navPush();$('aq').value=t.dataset.harcq;$('amt').value='audio';arcSearch();return}
+  if(t.dataset.hgo==='pro'){navPush();proPage();return}
+},true);
+// الرئيسية: الأقسام الموضوعية بدل الأيقونات المتفرقة
+window.hubTiles=()=>HUBS.map(H=>`<div class="gTile" data-hub="${H.k}"><div class="gIc" style="background:${H.bg}">${gsvg(H.ic,34,1.8)}</div><div class="gn">${H.name}</div></div>`).join('');
 if(view==='home')showHome();
 })();
 
