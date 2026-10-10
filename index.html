@@ -565,6 +565,22 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 #list .gHome .gHubs .gTile .gIc{width:50px;height:50px;flex:none;border-radius:14px}
 #list .gHome .gHubs .gTile .gn{margin:0;font-size:14px}
 .gTools{display:flex;flex-wrap:wrap;gap:8px}.gTools .hxb{margin:0;padding:8px 12px;border-radius:999px;font-size:13px}
+
+/* ===== المشغّل الصغير ===== */
+:root[data-skin] #player:not(.inNP){display:none!important}
+:root[data-skin] #player.inNP{position:static;width:100%;margin-top:14px;border-radius:16px;border:1px solid var(--line);background:var(--card);padding:12px;box-shadow:none;bottom:auto}
+:root[data-skin] #player.inNP #now,:root[data-skin] #player.inNP #status,:root[data-skin] #player.inNP #pp,:root[data-skin] #player.inNP #prevB,:root[data-skin] #player.inNP #nextB{display:none}
+:root[data-skin] #player.inNP #seekBox{flex:1 1 100%}
+#mini{position:fixed;left:10px;right:10px;bottom:64px;z-index:7;display:none;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:var(--card);border:1px solid var(--line);box-shadow:0 10px 24px rgba(0,0,0,.4);cursor:pointer;overflow:hidden}
+:root[data-skin] body.miniOn:not(.npOn) #mini{display:flex}
+:root[data-skin] body.miniOn #list{padding-bottom:160px}
+#mini .mBar{position:absolute;left:0;right:0;top:0;height:3px;background:rgba(128,128,128,.2)}#mini .mProg{display:block;height:100%;background:var(--acc);width:0;transition:width .5s linear}
+#mini .mArt{width:44px;height:44px;border-radius:10px;background:var(--ic-bg);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;position:relative;overflow:hidden}
+#mini .mArt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#mini .mTxt{flex:1;min-width:0;display:flex;flex-direction:column}#mini .mName{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#mini .mSub{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mini .mBtn{width:40px;height:40px;border-radius:50%;border:0;padding:0;display:flex;align-items:center;justify-content:center;flex:none;background:var(--btn2)!important;color:var(--txt)!important}
+#mini .mPP{background:var(--acc)!important;color:var(--onacc,#fff)!important}#mini .mX{width:30px;height:30px;font-size:13px;opacity:.7}
+:root[data-skin=anghami] #mini{border-top:2px solid var(--acc)}
 </style>
 </head>
 <body>
@@ -3362,6 +3378,40 @@ $('list').addEventListener('click',e=>{
 // الرئيسية: الأقسام الموضوعية بدل الأيقونات المتفرقة
 window.hubTiles=()=>HUBS.map(H=>`<div class="gTile" data-hub="${H.k}"><div class="gIc" style="background:${H.bg}">${gsvg(H.ic,34,1.8)}</div><div class="gn">${H.name}</div></div>`).join('');
 if(view==='home')showHome();
+})();
+
+
+// ===== 16) المشغّل الصغير: يظهر فقط عند وجود تشغيل، والضغط عليه يفتح شاشة «يعمل الآن» الكاملة =====
+(function(){
+const mini=document.createElement('div');mini.id='mini';
+mini.innerHTML=`<div class="mBar"><i class="mProg"></i></div><div class="mArt"></div><div class="mTxt"><b class="mName"></b><span class="mSub m"></span></div><button class="mBtn mPP" aria-label="تشغيل/إيقاف">${gsvg('play',22)}</button><button class="mBtn mNext" aria-label="التالي"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button><button class="mBtn mX" aria-label="إغلاق المشغّل">✕</button>`;
+document.body.appendChild(mini);
+const PAUSE='<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+function art(){const a=mini.querySelector('.mArt');if(!current)return;const isIA=String(current.stationuuid).startsWith('ia:');
+  a.innerHTML=current.favicon?`<img src="${esc(current.favicon)}" onerror="this.remove()">`:'';a.insertAdjacentHTML('beforeend',gsvg(isIA?'mask':current.masp?'tower':'radio',22));}
+function upd(){
+  if(!current){document.body.classList.remove('miniOn');return}
+  document.body.classList.add('miniOn');
+  mini.querySelector('.mName').textContent=current.name;
+  const st=$('status').textContent;mini.querySelector('.mSub').textContent=(current.country?current.country+' · ':'')+(st||'');
+  mini.querySelector('.mPP').innerHTML=au.paused?gsvg('play',22):PAUSE;
+  const p=mini.querySelector('.mProg');p.style.width=isFinite(au.duration)&&au.duration>0?(au.currentTime/au.duration*100)+'%':'0';
+}
+let lastName='';
+setInterval(()=>{if(current&&current.name!==lastName){lastName=current.name;art()}upd()},700);
+['playing','pause','ended','timeupdate','error'].forEach(ev=>au.addEventListener(ev,upd));
+mini.querySelector('.mPP').onclick=e=>{e.stopPropagation();$('pp').click();setTimeout(upd,200)};
+mini.querySelector('.mNext').onclick=e=>{e.stopPropagation();$('nextB').click()};
+mini.querySelector('.mX').onclick=e=>{e.stopPropagation();au.pause();try{au.src=''}catch{}current=null;$('now').textContent='اختر محطة للاستماع';$('status').textContent='';document.body.classList.remove('miniOn');if(typeof markPlaying==='function')markPlaying()};
+mini.onclick=()=>{if(current)npOpen()};
+// أدوات التشغيل الكاملة داخل شاشة «يعمل الآن»
+try{const np=document.getElementById('npBox');const inn=np.querySelector('.npIn');const pl=$('player');inn.appendChild(pl);pl.classList.add('inNP');
+  const _open=window.npOpen;window.npOpen=()=>{_open();document.body.classList.add('npOn')};
+  const obs=new MutationObserver(()=>document.body.classList.toggle('npOn',np.style.display==='flex'));obs.observe(np,{attributes:true,attributeFilter:['style']});
+}catch{}
+// اقتراح عند انتهاء القائمة
+au.addEventListener('ended',()=>{setTimeout(()=>{if($('status').textContent==='خلصت القائمة'&&current){$('status').textContent='خلصت — اضغط التالي أو اختر من نفس القسم';upd()}},800)});
+upd();
 })();
 
 </script>
