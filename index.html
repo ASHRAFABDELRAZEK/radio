@@ -757,7 +757,7 @@ au.onerror=()=>$('status').textContent='المحطة لا تعمل، جرّب غ
 $('pp').onclick=()=>au.paused?au.play():au.pause();
 $('vol').oninput=e=>{au.volume=e.target.value;ls.set('radioVol',e.target.value)};
 au.volume=$('vol').value=ls.get('radioVol',1);
-$('go').onclick=search;$('q').onkeydown=e=>e.key==='Enter'&&search();
+$('go').onclick=search;$('q').onkeydown=e=>{if(e.key==='Enter')search()};
 ['country','lang','tag'].forEach(id=>$(id).onchange=search);
 $('tAll').onclick=()=>{view='all';$('tAll').classList.add('on');$('tFav').classList.remove('on');render(results)};
 $('tAll').addEventListener('click',()=>setTab('all'));$('tFav').addEventListener('click',()=>setTab('fav'));
@@ -862,7 +862,7 @@ function pickFiles(files){
 const chips=['مسرحية إذاعية','سهرة إذاعية','مسلسل إذاعي','تمثيلية إذاعية','ساعة لقلبك','ألف ليلة وليلة','البرنامج العام','راديو زمان','مسرحية','فيلم عربي قديم'];
 $('chips').innerHTML=chips.map(c=>`<button data-c="${c}" style="background:#6b4423;margin:2px">${c}</button>`).join('');
 $('chips').onclick=e=>{const b=e.target.closest('[data-c]');if(b){$('aq').value=b.dataset.c;arcSearch()}};
-$('ago').onclick=()=>arcSearch();$('aq').onkeydown=e=>e.key==='Enter'&&arcSearch();
+$('ago').onclick=()=>arcSearch();$('aq').onkeydown=e=>{if(e.key==='Enter')arcSearch()};
 function setTab(t){view=t;const T={all:'📻 المحطات',fav:'⭐ المفضلة',arc:'🎭 أرشيف زمان'};if($('viewTitle'))$('viewTitle').textContent=T[t];['tAll','tFav','tArc'].forEach(x=>$(x).classList.toggle('on',x==={all:'tAll',fav:'tFav',arc:'tArc'}[t]));if(t!=='arc')$('selBar').style.display='none'}
 $('tArc').onclick=()=>{setTab('arc');arcCats()};
 
