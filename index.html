@@ -3124,8 +3124,9 @@ fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(c=>{if(
 
 // ===== 12) محطات عربية + اكتشف العالم + محطات مهنية (بيانات مُنتقاة من Radio Browser، ملفات data/) =====
 (function(){
+const DATA_V='20261010b';window.DATA_V=DATA_V;
 const DATA='data/', dcache={};
-async function dget(f){if(dcache[f])return dcache[f];try{const r=await fetch(DATA+f,{cache:'force-cache'});if(!r.ok)throw 0;return dcache[f]=await r.json()}catch{return null}}
+async function dget(f){if(dcache[f])return dcache[f];try{const r=await fetch(DATA+f+'?v='+DATA_V,{cache:'default'});if(!r.ok)throw 0;return dcache[f]=await r.json()}catch{return null}}
 const flag=cc=>/^[A-Z]{2}$/.test(cc||'')?String.fromCodePoint(...[...cc].map(c=>127397+c.charCodeAt(0))):'🌐';
 const toSt=s=>({stationuuid:s.id,name:s.name,country:(s.country_ar||s.cc||'')+(s.status==='unverified'?' · غير مؤكدة':''),tags:s.tags||'',favicon:s.logo||'',url_resolved:s.url,url:s.url,bitrate:s.bitrate,homepage:s.home,_cc:s.cc,_cat:s.cat,_status:s.status});
 const chip=(attr,txt,on)=>`<button ${attr} style="background:${on?'var(--gold,#C9A227)':'var(--btn2)'};color:${on?'#111':''};font-size:13px;padding:5px 11px">${txt}</button>`;
@@ -3287,7 +3288,7 @@ const TILES=[
 const PAL=['linear-gradient(145deg,#166534,#14532d)','linear-gradient(145deg,#be123c,#881337)','linear-gradient(145deg,#b45309,#78350f)','linear-gradient(145deg,#1e3a8a,#172554)','linear-gradient(145deg,#5b21b6,#3b0764)'];
 const toSt=s=>({stationuuid:s.id,name:s.name,country:s.country_ar||'',tags:s.tags||'',favicon:s.logo||'',url_resolved:s.url,url:s.url,bitrate:s.bitrate});
 let topEG=null;
-async function loadTop(){if(topEG)return topEG;try{const r=await fetch('data/world/EG.json',{cache:'force-cache'});const d=await r.json();topEG=d.filter(s=>/^https:/.test(s.url)).slice(0,5).map(toSt)}catch{topEG=[]}return topEG}
+async function loadTop(){if(topEG)return topEG;try{const r=await fetch('data/world/EG.json?v='+DATA_V,{cache:'default'});const d=await r.json();topEG=d.filter(s=>/^https:/.test(s.url)).slice(0,5).map(toSt)}catch{topEG=[]}return topEG}
 function hero(){
   let t='محطات عربية مُنتقاة',s='501 محطة · قرآن · أخبار · طرب',act='arabw';
   try{const di=typeof dailyIdx==='function'?dailyIdx():null;if(di!=null&&window.MODES&&MODES[di]){t=MODES[di][1];s=MODES[di][2]||'';act='daily'}}catch{}
@@ -3362,7 +3363,7 @@ const HUBS=[
 ];
 window.HUBS=HUBS;
 const cache={};
-async function jget(f){if(cache[f])return cache[f];try{const r=await fetch('data/'+f,{cache:'force-cache'});if(!r.ok)throw 0;return cache[f]=await r.json()}catch{return cache[f]=[]}}
+async function jget(f){if(cache[f])return cache[f];try{const r=await fetch('data/'+f+'?v='+DATA_V,{cache:'default'});if(!r.ok)throw 0;return cache[f]=await r.json()}catch{return cache[f]=[]}}
 const toSt=s=>({stationuuid:s.id,name:s.name,country:s.country_ar||'',tags:s.tags||'',favicon:s.logo||'',url_resolved:s.url,url:s.url,bitrate:s.bitrate,_lang:s.lang});
 const PAL=['linear-gradient(145deg,#166534,#14532d)','linear-gradient(145deg,#be123c,#881337)','linear-gradient(145deg,#b45309,#78350f)','linear-gradient(145deg,#1e3a8a,#172554)','linear-gradient(145deg,#5b21b6,#3b0764)'];
 const LN={arabic:'عربي',english:'إنجليزي',french:'فرنسي',spanish:'إسباني',german:'ألماني',turkish:'تركي',urdu:'أوردو',italian:'إيطالي',russian:'روسي',persian:'فارسي',farsi:'فارسي',hindi:'هندي',indonesian:'إندونيسي',malay:'ماليزي'};
