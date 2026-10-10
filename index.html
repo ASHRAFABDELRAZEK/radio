@@ -602,6 +602,11 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 :root[data-skin] #npBox #seekBox.npSeek{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
 :root[data-skin] #npBox .npIn > *{max-width:100%}
 :root[data-skin] .npIn>*{order:3}:root[data-skin] .npIn>.npX,:root[data-skin] .npIn>#npArt,:root[data-skin] .npIn>#npName,:root[data-skin] .npIn>#npSub,:root[data-skin] .npIn>#npStatus{order:0}:root[data-skin] .npIn>.npCtl{order:1}:root[data-skin] .npIn>#seekBox.npSeek{order:2}
+
+.palGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.palCard{border-radius:12px;overflow:hidden;border:2px solid transparent;background:var(--card);cursor:pointer}.palCard.on{border-color:var(--txt)}
+.palSw{height:54px;position:relative}.palSw i{position:absolute;right:8px;bottom:8px;width:26px;height:26px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.4)}
+.palN{padding:6px 8px;font-size:12px;font-weight:700;text-align:center}
 </style>
 </head>
 <body>
@@ -3440,6 +3445,40 @@ try{const np=document.getElementById('npBox');const inn=np.querySelector('.npIn'
 // اقتراح عند انتهاء القائمة
 au.addEventListener('ended',()=>{setTimeout(()=>{if($('status').textContent==='خلصت القائمة'&&current){$('status').textContent='خلصت — اضغط التالي أو اختر من نفس القسم';upd()}},800)});
 upd();
+})();
+
+
+// ===== 17) مجموعات الألوان (مستقلة عن شكل التصميم) =====
+(function(){
+const PALS=[
+ ['auto','ألوان التصميم نفسه','', null],
+ ['violet','بنفسجي عصري','#8b5cf6',{acc:'#8b5cf6',on:'#fff',hero:'linear-gradient(120deg,#5b21b6 0%,#8b5cf6 60%,#c4b5fd 100%)',ic:'linear-gradient(145deg,#a78bfa,#5b21b6)'}],
+ ['emerald','أخضر زمردي','#10b981',{acc:'#10b981',on:'#06281c',hero:'linear-gradient(120deg,#065f46,#10b981 60%,#6ee7b7)',ic:'linear-gradient(145deg,#34d399,#047857)'}],
+ ['burgundy','عنابي','#9f1239',{acc:'#be123c',on:'#fff',hero:'linear-gradient(120deg,#4c0519,#9f1239 60%,#fb7185)',ic:'linear-gradient(145deg,#f43f5e,#881337)'}],
+ ['lime','ليموني','#a3e635',{acc:'#a3e635',on:'#1a2e05',hero:'linear-gradient(120deg,#3f6212,#84cc16 60%,#d9f99d)',ic:'linear-gradient(145deg,#bef264,#4d7c0f)'}],
+ ['gold','أسود وذهبي','#d4af37',{acc:'#d4af37',on:'#2a1f05',hero:'linear-gradient(120deg,#1f1b12,#6b5212 60%,#d4af37)',ic:'radial-gradient(circle at 35% 30%,#ffe9a3,#d4af37 50%,#7a5d10)'}],
+ ['navy','كحلي ملكي','#1e3a8a',{acc:'#3b82f6',on:'#fff',hero:'linear-gradient(120deg,#0f1f4a,#1e3a8a 60%,#60a5fa)',ic:'linear-gradient(145deg,#60a5fa,#1e3a8a)'}],
+ ['teal','تركواز','#0d9488',{acc:'#14b8a6',on:'#042f2e',hero:'linear-gradient(120deg,#134e4a,#0d9488 60%,#5eead4)',ic:'linear-gradient(145deg,#2dd4bf,#0f766e)'}],
+ ['copper','نحاسي','#c2410c',{acc:'#ea580c',on:'#fff',hero:'linear-gradient(120deg,#431407,#c2410c 60%,#fdba74)',ic:'linear-gradient(145deg,#fb923c,#9a3412)'}],
+ ['rose','وردي راقي','#db2777',{acc:'#ec4899',on:'#fff',hero:'linear-gradient(120deg,#831843,#db2777 60%,#f9a8d4)',ic:'linear-gradient(145deg,#f472b6,#9d174d)'}],
+ ['slate','رمادي فحمي','#64748b',{acc:'#94a3b8',on:'#0f172a',hero:'linear-gradient(120deg,#1e293b,#475569 60%,#cbd5e1)',ic:'linear-gradient(145deg,#94a3b8,#334155)'}]
+];
+window.PALS=PALS;
+window.applyPalette=function(k){
+  const r=document.documentElement.style;['--acc','--onacc','--hero','--ic-bg','--ic-glow','--gold'].forEach(v=>r.removeProperty(v));
+  const P=PALS.find(p=>p[0]===k);if(!P||!P[3])return;
+  const c=P[3];r.setProperty('--acc',c.acc);r.setProperty('--onacc',c.on);r.setProperty('--hero',c.hero);r.setProperty('--ic-bg',c.ic);r.setProperty('--ic-glow',c.acc+'66');r.setProperty('--gold',c.acc);
+};
+applyPalette(ls.get('palette','auto'));
+const _as=window.applySkin;window.applySkin=function(s){_as(s);applyPalette(ls.get('palette','auto'))};
+if(window.HX){
+  const _t=HX.theme;HX.theme=function(){_t();const cur=ls.get('palette','auto');
+    const box=document.querySelector('.hxp .hxc');if(!box)return;
+    box.insertAdjacentHTML('beforeend',`<div style="font-weight:800;margin-top:10px">🎨 مجموعة الألوان</div><div class="m">الألوان مستقلة عن شكل التصميم — اختار الشكل من فوق واللون من هنا.</div>
+    <div class="palGrid">${PALS.map(([id,name,sw,c])=>`<div class="palCard ${id===cur?'on':''}" data-hx="palset" data-p="${id}"><div class="palSw" style="background:${c?c.hero:'linear-gradient(120deg,var(--card),var(--acc))'}"><i style="background:${c?c.ic:'var(--ic-bg)'}"></i></div><div class="palN">${name}</div></div>`).join('')}</div>`)};
+  HX.palset=function(el){ls.set('palette',el.dataset.p);applyPalette(el.dataset.p);toast('اتغيّرت الألوان ✔');HX.theme()};
+  const _d=HX.skindef;HX.skindef=function(){ls.set('palette','auto');_d()};
+}
 })();
 
 </script>
