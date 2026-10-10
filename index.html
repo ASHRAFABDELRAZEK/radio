@@ -3547,6 +3547,26 @@ const _onEnd=onEnd;onEnd=async function(el){
 au.removeEventListener&&0;
 })();
 
+
+// ===== 21) وضع الصوت الآمن: لا معالجة صوت داخل الصفحة ولا تغيير تلقائي لمستوى الصوت =====
+(function(){
+window.safeAudio=()=>ls.get('safeAudio',true);
+const RealAC=window.AudioContext||window.webkitAudioContext;
+if(RealAC){const Guard=function(...a){if(safeAudio())throw new Error('safe-audio');return new RealAC(...a)};Guard.prototype=RealAC.prototype;window.AudioContext=Guard;window.webkitAudioContext=Guard}
+// حماية مستوى الصوت: أي تغيير تلقائي (غير من شريط الصوت) يُتجاهل في الوضع الآمن
+try{const d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'volume');let userSet=false;
+  $('vol').addEventListener('input',()=>{userSet=true;setTimeout(()=>userSet=false,50)},true);$('vol').addEventListener('change',()=>{userSet=true;setTimeout(()=>userSet=false,50)},true);
+  Object.defineProperty(au,'volume',{get(){return d.get.call(au)},set(v){if(safeAudio()&&!userSet&&v<1&&!window._volInit){return}d.set.call(au,v)},configurable:true});
+  window._volInit=true;d.set.call(au,+ls.get('radioVol',1));window._volInit=false;
+}catch{}
+// خيار في الإعدادات
+const _sp=window.settingsPage;window.settingsPage=function(){_sp();const on=safeAudio();
+  const row=document.querySelector('.gHome');if(!row)return;
+  row.insertAdjacentHTML('beforeend',`<div class="gSec"><span>الصوت</span></div><div class="gCont" id="safeA" style="cursor:pointer"><div class="gIc sm" style="background:var(--ic-bg)">${gsvg('head',22)}</div><div class="gi"><b>وضع الصوت الآمن ${on?'✓ مفعّل':'— متوقف'}</b><div class="m">يمنع الإيكوالايزر ودقّة الساعة وأي تغيير تلقائي للصوت — جرّبه لو أزرار الصوت ما بتستجيبش مع البلوتوث</div></div></div>`);
+  $('safeA').onclick=()=>{ls.set('safeAudio',!on);toast(!on?'اتفعّل وضع الصوت الآمن — أعد تشغيل المحطة':'اتقفل وضع الصوت الآمن');settingsPage()};
+};
+})();
+
 </script>
 </body>
 </html>
