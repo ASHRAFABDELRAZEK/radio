@@ -6,7 +6,7 @@
 <title>راديو العالم — ASHRAF FATHY</title>
 <meta name="author" content="ASHRAF FATHY">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json?v=3">
 <link rel="apple-touch-icon" href="icon-192.png?v=2">
 <meta name="theme-color" content="var(--bar)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -531,9 +531,28 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 .gRowItem .gi,.gCont .gi{flex:1;min-width:0}.gRowItem b,.gCont b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gRowItem .m,.gCont .m{font-size:12px;color:var(--mut)}
 .gNav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:space-around;padding:6px 0 10px;background:var(--bar);border-top:1px solid var(--line)}
 .gNav a{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;text-decoration:none;color:var(--mut)}.gNav a.on{color:var(--acc)}
-:root[data-skin=anghami] body.gnavOn #player{bottom:58px}
-:root[data-skin=anghami] body:not(.gnavOn) .gNav{display:none}
-:root[data-skin=anghami] header .tabs{display:none}
+:root[data-skin] body.hasNav #player{bottom:58px}
+:root[data-skin] body.hasNav #list{padding-bottom:250px}
+:root[data-skin] body.gnavOn header .tabs{display:none}
+.gNav a.on{color:var(--acc)}
+/* تنويعات الهيكل حسب المظهر */
+:root[data-skin=cards] .gRow.gTiles,:root[data-skin=cardsLight] .gRow.gTiles,:root[data-skin=material] .gRow.gTiles,:root[data-skin=soft] .gRow.gTiles{display:grid;grid-template-columns:1fr 1fr;overflow:visible;gap:12px}
+:root[data-skin=cards] .gTile,:root[data-skin=cardsLight] .gTile,:root[data-skin=material] .gTile,:root[data-skin=soft] .gTile{width:auto;display:flex;align-items:center;gap:10px;text-align:start;background:var(--card);padding:10px;border-radius:16px;box-shadow:var(--sh)}
+:root[data-skin=cards] .gTile .gIc,:root[data-skin=cardsLight] .gTile .gIc,:root[data-skin=material] .gTile .gIc,:root[data-skin=soft] .gTile .gIc{width:50px;height:50px;flex:none;border-radius:14px}
+:root[data-skin=cards] .gTile .gn,:root[data-skin=cardsLight] .gTile .gn,:root[data-skin=material] .gTile .gn,:root[data-skin=soft] .gTile .gn{margin:0;font-size:14px}
+:root[data-skin=material] .gTile .gIc{background:#d7e3f8!important;color:#00639b;box-shadow:none}
+:root[data-skin=material] .gHero{box-shadow:none;color:#191c20}:root[data-skin=material] .gplay{background:#00639b;color:#fff}
+:root[data-skin=material] .gNav a.on span{background:#d7e3f8;border-radius:12px;padding:1px 8px}
+:root[data-skin=soft] .gTile{box-shadow:6px 6px 14px #cfd5e0,-6px -6px 14px #fff}:root[data-skin=soft] .gTile .gIc{border-radius:50%}
+:root[data-skin=soft] .gNav{box-shadow:0 -8px 20px rgba(207,213,224,.6)}
+:root[data-skin=gold] .gTile .gIc,:root[data-skin=gold] .gIc{background:radial-gradient(circle at 35% 30%,#ffe9a3,#d4af37 50%,#7a5d10)!important;color:#2a1f05;box-shadow:0 8px 16px rgba(212,175,55,.3),inset 0 -3px 5px rgba(0,0,0,.35)}
+:root[data-skin=gold] .gHero{background:linear-gradient(135deg,#1f1b12,#141210);border:1px solid #4a3f1e;color:#f6e7b8;box-shadow:0 20px 40px rgba(0,0,0,.6)}:root[data-skin=gold] .gplay{background:#d4af37;color:#2a1f05}
+:root[data-skin=gold] .gTitle,:root[data-skin=gold] .gSec span,:root[data-skin=gold] .gHero .gt{font-family:'Amiri',serif}
+:root[data-skin=gold] .gLogo{background:radial-gradient(circle at 35% 30%,#ffe9a3,#d4af37 50%,#7a5d10);color:#2a1f05}
+:root[data-skin=glass] .gTile .gIc,:root[data-skin=glass] .gCont,:root[data-skin=glass] .gHero{backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18)}
+:root[data-skin=glass] .gHero{background:linear-gradient(135deg,rgba(79,140,255,.35),rgba(20,40,80,.45))}
+:root[data-skin=glass] .gLogo,:root[data-skin=cards] .gLogo,:root[data-skin=cardsLight] .gLogo{background:var(--ic-bg)}
+:root[data-skin=cards] .gplay,:root[data-skin=cardsLight] .gplay{color:#047857}:root[data-skin=soft] .gplay{color:#0f766e}
 
 </style>
 </head>
@@ -3221,12 +3240,11 @@ window.homeG=async function(){
   const rec=(window.recent||[]).slice(0,8);
   let h=`<div class="gHead"><div class="gLogo">${svg('radio',20,2.2)}</div><div class="gTitle">راديو العالم<small>إعداد: ASHRAF FATHY</small></div><button class="gib" data-g="search" aria-label="بحث">${svg('search',22,2.2)}</button><button class="gib" data-g="classic" aria-label="كل الأقسام">${svg('grid',22,2.2)}</button></div>`;
   h+=hero();
-  h+=`<div class="gSec"><span>الأقسام</span><a href="#" data-g="classic">عرض الكل</a></div><div class="gRow">${TILES.map(([a,ic,n,bg])=>`<div class="gTile" data-g="${a}"><div class="gIc" style="background:${bg}">${svg(ic,34,1.8)}</div><div class="gn">${n}</div></div>`).join('')}</div>`;
+  h+=`<div class="gSec"><span>الأقسام</span><a href="#" data-g="classic">عرض الكل</a></div><div class="gRow gTiles">${TILES.map(([a,ic,n,bg])=>`<div class="gTile" data-g="${a}"><div class="gIc" style="background:${bg}">${svg(ic,34,1.8)}</div><div class="gn">${n}</div></div>`).join('')}</div>`;
   if(last)h+=`<div class="gCont" data-g="resume"><div class="gIc sm" style="background:${PAL[3]}">${svg('play',22)}</div><div class="gi"><b>كمّل: ${esc(last.item.name)}</b><div class="m">${esc(last.item.country||'')}</div></div></div>`;
   h+=`<div class="gSec"><span>الأكثر استماعًا في مصر</span><a href="#" data-g="egmore">المزيد</a></div><div class="gList" id="gTop"><div class="m" style="padding:6px 0">جاري التحميل…</div></div>`;
   if(rec.length)h+=`<div class="gSec"><span>تابع الاستماع</span><a href="#" data-g="rec">الكل</a></div><div class="gRow">${rec.map((r,i)=>`<div class="gRc" data-ri="${i}"><div class="gIc" style="background:${PAL[i%PAL.length]}">${svg(String(r.stationuuid).startsWith('ia:')?'mask':'radio',30,1.8)}</div><b>${esc(r.name)}</b><div class="m">${esc(r.country||'')}</div></div>`).join('')}</div>`;
-  h+=`<div class="gNav"><a href="#" data-g="home" class="on">${svg('radio',22)}<span>الرئيسية</span></a><a href="#" data-g="classic">${svg('grid',22)}<span>الأقسام</span></a><a href="#" data-g="arabw">${svg('mosque',22)}<span>عربي</span></a><a href="#" data-g="world">${svg('globe',22)}<span>العالم</span></a><a href="#" data-g="fav">${svg('book',22)}<span>مكتبتي</span></a></div>`;
-  $('list').innerHTML=`<div class="gHome">${h}</div>`;document.body.classList.add('gnavOn');
+  $('list').innerHTML=`<div class="gHome">${h}</div>`;document.body.classList.add('gnavOn');gnavMark('home');
   const top=await loadTop();const box=$('gTop');if(box){box.innerHTML=top.length?top.map((s,i)=>`<div class="gRowItem" data-gi="${i}"><div class="gIc sm" style="background:${PAL[i%PAL.length]}">${s.favicon?`<img src="${esc(s.favicon)}" onerror="this.remove()">`:''}${svg('radio',22)}</div><div class="gi"><b>${esc(s.name)}</b><div class="m">${esc(s.tags).split(',').slice(0,2).join(' · ')||'إذاعة'}</div></div><button class="gib dim" aria-label="خيارات">${svg('dots',18)}</button></div>`).join(''):'<div class="m">غير متاح الآن</div>'}
   if(typeof markPlaying==='function')markPlaying();
 };
@@ -3242,8 +3260,15 @@ $('list').addEventListener('click',e=>{
   (map[a]||(()=>{}))();
 },true);
 window.showHomeClassic=showHome;
-const _st=setTab;setTab=function(t){_st(t);if(t!=='home')document.body.classList.remove('gnavOn')};
-showHome=function(){if((document.documentElement.dataset.skin||'')==='anghami')homeG();else showHomeClassic()};
+const _st=setTab;setTab=function(t){_st(t);if(t!=='home'){document.body.classList.remove('gnavOn');gnavMark(t==='fav'||t==='rec'?'fav':'')}};
+// شريط تنقل سفلي دائم (كل المظاهر)
+const nav=document.createElement('nav');nav.id='gNav';nav.className='gNav';
+nav.innerHTML=`<a href="#" data-g="home">${svg('radio',22)}<span>الرئيسية</span></a><a href="#" data-g="classic">${svg('grid',22)}<span>الأقسام</span></a><a href="#" data-g="arabw">${svg('mosque',22)}<span>عربي</span></a><a href="#" data-g="world">${svg('globe',22)}<span>العالم</span></a><a href="#" data-g="fav">${svg('book',22)}<span>مكتبتي</span></a>`;
+document.body.appendChild(nav);document.body.classList.add('hasNav');
+window.gnavMark=k=>nav.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.g===k));
+nav.addEventListener('click',e=>{const t=e.target.closest('[data-g]');if(!t)return;e.preventDefault();const a=t.dataset.g;navPush();gnavMark(a);
+  ({home:()=>homeG(),classic:()=>showHomeClassic(),arabw:()=>arabPage(),world:()=>worldPage(),fav:()=>{setTab('fav');render(favs);gnavMark('fav')}})[a]()});
+showHome=function(){homeG()};
 if(view==='home')showHome();
 })();
 
