@@ -442,6 +442,7 @@ body.hdgo{user-select:none;-webkit-user-select:none}
 /* HX45: ⋯ ودبابيس الاكتشافات + إصلاح دايرة تابع الاستماع */
 .zmn{margin-inline-start:auto;flex:none;background:rgba(255,255,255,.1);border:none;color:inherit;border-radius:50%;width:32px;height:32px;font-size:17px;line-height:1;padding:0}
 #zAuto .strip.one{align-items:center}
+.zHomeBox{display:flex!important;flex-direction:column;gap:6px;margin-bottom:14px}.zHomeBox .zsr input{padding:10px 12px;border-radius:12px;font-size:15px}.zHomeBox .strip.one{display:flex;gap:10px;padding:8px 10px;border-radius:12px;background:var(--card,#1c1c22)}
 .zpins{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
 .zpins .chip{background:rgba(201,162,39,.18);border:1px solid var(--gold,#C9A227);border-radius:999px;padding:5px 10px;font-size:13px;cursor:pointer}
 .zpins .chip b{margin-inline-start:6px;opacity:.7;padding:0 4px}
@@ -2551,6 +2552,8 @@ const _t=hxToolStrips;hxToolStrips=function(){let h=_t();if(hxGet('guest',false)
  const c=hxGet('zauto',null);if(c&&c.items&&!ITEMS.length)ITEMS=c.items;setTimeout(()=>fill(false),50);
  return h.replace('<div class="hgrp">🕰 زمن الفن الجميل</div>',`<div class="hgrp">${ZG}</div><div id="zAuto" class="hgrid hlist" style="grid-column:1/-1">${html(ITEMS)}</div><div class="hgrp">🕰 زمن الفن الجميل</div>`)};
 const ZG='🆕 اكتشافات اليوم (تلقائي)';
+window.zBlock=function(){const c=hxGet('zauto',null);if(c&&c.items&&!ITEMS.length&&!LASTQ)ITEMS=c.items;if(!ITEMS.length&&!LASTQ)setTimeout(()=>fill(false),50);return html(ITEMS)};
+setTimeout(()=>{if(document.getElementById('zAuto'))paint()},300);
 if(!HGRP.includes(ZG)){const k=HGRP.indexOf('🕰 زمن الفن الجميل');HGRP.splice(k<0?HGRP.length:k,0,ZG)}
 {const o=hxGet('hord',null);if(o&&!o.includes(ZG)){const k=o.indexOf('🕰 زمن الفن الجميل');o.splice(k<0?o.length:k,0,ZG);hxSet('hord',o)}
  if(!hxGet('zafold',false)){hxSet('zafold',true);const f=hxGet('hfold',[]);if(!f.includes(ZG))hxSet('hfold',[...f,ZG])}}
@@ -3250,6 +3253,7 @@ window.homeG=async function(){
   const rec=(window.recent||[]).slice(0,8);
   let h=`<div class="gHead"><div class="gLogo">${svg('radio',20,2.2)}</div><div class="gTitle">راديو العالم<small>إعداد: ASHRAF FATHY</small></div><button class="gib" data-g="search" aria-label="بحث">${svg('search',22,2.2)}</button><button class="gib" data-g="classic" aria-label="كل الأقسام">${svg('grid',22,2.2)}</button></div>`;
   h+=hero();
+  if(typeof window.zBlock==='function')h+=`<div class="gSec" id="gArcS"><span>🔎 دوّر على القديم — أرشيف وبودكاست</span></div><div class="gHint m" style="margin:-4px 0 8px">اكتب اسم فنان أو مسرحية أو برنامج قديم (مثلًا: أمين الهنيدي) — ولو عجبتك النتايج ثبّتها 📌 كقسم دايم وهيبلّغك لما ينزل جديد</div><div id="zAuto" class="hgrid hlist zHomeBox">${window.zBlock()}</div>`;
   h+=`<div class="gSec"><span>الأقسام</span><a href="#" data-g="classic">كل الأدوات</a></div><div class="gRow gTiles gHubs">${typeof hubTiles==='function'?hubTiles():''}</div><div class="gSec"><span>استكشاف المحطات</span></div><div class="gRow">${[["arabw","mosque","محطات عربية","linear-gradient(145deg,#059669,#064e3b)"],["world","globe","العالم بالدولة","linear-gradient(145deg,#2563eb,#1e3a8a)"],["eg","flag","محطات مصر","linear-gradient(145deg,#dc2626,#7f1d1d)"],["masp","tower","ماسبيرو","linear-gradient(145deg,#0891b2,#164e63)"],["arc","mask","أرشيف زمان","linear-gradient(145deg,#ea580c,#7c2d12)"],["fav","star","المفضلة","linear-gradient(145deg,#db2777,#831843)"]].map(([a,ic,n,bg])=>`<div class="gTile" data-g="${a}"><div class="gIc" style="background:${bg}">${svg(ic,30,1.8)}</div><div class="gn">${n}</div></div>`).join('')}</div>`;
   if(last)h+=`<div class="gCont" data-g="resume"><div class="gIc sm" style="background:${PAL[3]}">${svg('play',22)}</div><div class="gi"><b>كمّل: ${esc(last.item.name)}</b><div class="m">${esc(last.item.country||'')}</div></div></div>`;
   h+=`<div class="gSec"><span>الأكثر استماعًا في مصر</span><a href="#" data-g="egmore">المزيد</a></div><div class="gList" id="gTop"><div class="m" style="padding:6px 0">جاري التحميل…</div></div>`;
@@ -3264,7 +3268,7 @@ $('list').addEventListener('click',e=>{
   const ri=e.target.closest('[data-ri]');if(ri){e.stopImmediatePropagation();playlist=recent;playMedia(recent[+ri.dataset.ri]);return}
   const t=e.target.closest('[data-g]');if(!t)return;e.preventDefault();e.stopImmediatePropagation();
   const a=t.dataset.g;if(a!=='home')navPush();
-  const map={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),arc:()=>{setTab('arc');arcCats()},eg:()=>$('eg').click(),masp:()=>countryPage?countryPage('EG','مصر'):0,fav:()=>{setTab('fav');render(favs)},rec:()=>{setTab('rec');render(recent)},modes:()=>modesPage(),resume:()=>resume(),egmore:()=>countryPage('EG','مصر'),classic:()=>showHomeClassic(),home:()=>homeG(),search:()=>{const q=$('gq')||$('q');q&&q.focus()},
+  const map={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),arc:()=>{setTab('arc');arcCats()},eg:()=>$('eg').click(),masp:()=>countryPage?countryPage('EG','مصر'):0,fav:()=>{setTab('fav');render(favs)},rec:()=>{setTab('rec');render(recent)},modes:()=>modesPage(),resume:()=>resume(),egmore:()=>countryPage('EG','مصر'),classic:()=>showHomeClassic(),home:()=>homeG(),search:()=>{const q=$('zQ')||$('gq')||$('q');if(q){q.scrollIntoView({block:'center'});q.focus()}},
     daily:()=>{const el=document.createElement('div');el.dataset.act='daily';$('list').appendChild(el);el.click();el.remove()},occ:()=>{const el=document.createElement('div');el.dataset.occ='0';$('list').appendChild(el);el.click();el.remove()}};
   if(a==='masp'){document.body.classList.add('sideOpen');const d=[...document.querySelectorAll('#side details')].find(d=>d.querySelector('#masp'));if(d){d.open=true;d.scrollIntoView()}return}
   (map[a]||(()=>{}))();
