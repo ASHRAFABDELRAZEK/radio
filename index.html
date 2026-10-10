@@ -3520,6 +3520,32 @@ $('list').addEventListener('click',e=>{
   else if(a==='stats')statsPage();else if(a==='recap'&&HX.recap)HX.recap();
 },true);
 
+
+// ===== 20) إكمال الحلقات تلقائيًا: لو الحلقة من الأرشيف والقائمة ما فيهاش باقي الحلقات، نجيب الحلقات ونكمّل =====
+(function(){
+const seriesOf=it=>String(it&&it.stationuuid||'').startsWith('ia:')?it.id:null;
+let loading=null;
+async function ensureSeries(it){
+  const id=seriesOf(it);if(!id)return false;
+  const sib=playlist.filter(x=>x.id===id);
+  if(sib.length>1&&playlist.length===sib.length)return true;
+  if(loading===id)return false;loading=id;
+  try{const items=await getItems(id,it.country||'');if(items&&items.length>1){const i=items.findIndex(x=>x.stationuuid===it.stationuuid);playlist=items;if(i>=0)playCtx={id,title:it.country||''};return true}}catch{}
+  finally{loading=null}
+  return false;
+}
+const _pm=playMedia;playMedia=function(it){_pm(it);if(seriesOf(it))setTimeout(()=>ensureSeries(it),300)};
+const _onEnd=onEnd;onEnd=async function(el){
+  const m=$('endMode').value,i=curIdx();
+  if(m!=='stop'&&m!=='inf'&&m!=='n'&&current&&seriesOf(current)&&(i<0||i>=playlist.length-1)){
+    const ok=await ensureSeries(current);const j=curIdx();
+    if(ok&&j>=0&&j<playlist.length-1){playAt(j+1);return}
+  }
+  _onEnd(el);
+};
+au.removeEventListener&&0;
+})();
+
 </script>
 </body>
 </html>
