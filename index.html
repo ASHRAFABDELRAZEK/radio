@@ -1144,7 +1144,7 @@ async function gSearch(){
 // --- إيقاف الأغاني وقت الصلاة ---
 const PN={Fajr:'الفجر',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
 let pCfg=Object.assign({on:true,scope:'music',before:10,dur:30,resume:true,city:'',country:'',lat:null,lon:null},ls.get('prayerCfg',{}));
-let pTimes=ls.get('prayerTimes',null),pPaused=false,pWin=null;
+let pTimes=ls.get('prayerTimes',null),pPaused=false,pWin=null;if(!prTimesOk()){pTimes=null;try{ls.set('prayerTimes',null)}catch{}}
 const isQuran=s=>{if(!s)return false;if(s.masp)return s.masp===7;if(s.stationuuid==='quran-cairo')return true;
   return /quran|qur'an|koran|قرآن|القران|القرآن|قران/i.test((s.tags||'')+' '+s.name+' '+(s.country||''))};
 async function loadPrayer(force){
@@ -1153,12 +1153,14 @@ async function loadPrayer(force){
     const d=(await (await fetch(u)).json()).data;pTimes={day:today,t:{},where:pCfg.lat!=null?'موقعك الحالي':pCfg.city};Object.keys(PN).forEach(k=>pTimes.t[k]=d.timings[k].slice(0,5));ls.set('prayerTimes',pTimes)}catch{}
   showPrayer();
 }
+function prTimesOk(){return !!(pTimes&&pTimes.t&&Object.keys(PN).every(k=>/^\d{1,2}:\d{2}/.test(String(pTimes.t[k]||''))))}
 function prayerWindow(){
-  if(!pTimes)return null;const now=new Date();
+  if(!prTimesOk()){if(pTimes){pTimes=null;try{ls.set('prayerTimes',null);loadPrayer(true)}catch{}}return null}const now=new Date();
   for(const k of Object.keys(PN)){const [h,m]=pTimes.t[k].split(':').map(Number);const t=new Date();t.setHours(h,m,0,0);
     const a=+t-pCfg.before*60000,b=a+pCfg.dur*60000;if(+now>=a&&+now<b)return{k,end:new Date(b)}}return null}
 function blocked(s){return pCfg.on&&pWin&&(pCfg.scope==='all'||!isQuran(s))}
-function prayerCheck(){
+function prayerCheck(){try{prayerCheck0()}catch(e){pWin=null;console.error(e)}}
+function prayerCheck0(){
   if(!pCfg.on){pWin=null;return}
   if(pTimes&&pTimes.day!==new Date().toDateString())loadPrayer();
   const w=prayerWindow(),hm=d=>d.toTimeString().slice(0,5);
@@ -1269,7 +1271,7 @@ function prayerTile(){
    <div id="alarmInfo" style="font-size:13px;color:var(--mut);margin-top:8px"></div>`;
   const desc=a=>a?(a.k?`بعد ${PN[a.k]} بـ ${a.off} دقيقة (${a.time||'—'})`:`الساعة ${a.time}`)+` على: ${a.st.name}${a.daily===false?' (مرة واحدة)':''}`:'غير مفعّل';
   const show=()=>{$('alarmInfo').textContent=desc(alarm);$('alarmBtn').textContent=alarm?'⏰ '+(alarm.time||''):'⏰ منبّه'};
-  const calc=()=>{if(alarm&&alarm.k&&pTimes){const [h,m]=pTimes.t[alarm.k].split(':').map(Number);const t=new Date();t.setHours(h,m+alarm.off,0,0);alarm.time=t.toTimeString().slice(0,5)}};
+  const calc=()=>{if(alarm&&alarm.k&&prTimesOk()){const [h,m]=pTimes.t[alarm.k].split(':').map(Number);const t=new Date();t.setHours(h,m+alarm.off,0,0);alarm.time=t.toTimeString().slice(0,5)}};
   $('alarmMode').onchange=e=>{const p=e.target.value!=='time';$('alarmT').style.display=p?'none':'';$('alarmO').style.display=p?'':'none'};
   $('alarmSet').onclick=()=>{if(!current){alert('شغّل المحطة اللي عايزها للمنبّه الأول');return}
     const m=$('alarmMode').value;
