@@ -3711,6 +3711,65 @@ HX.nosound=function(){const d=mk();const L=[];
 const _tb=[...document.querySelectorAll('#topBar button')].find(b=>(b.title||'').startsWith('أدوات'));
 if(_tb){const o=_tb.onclick;_tb.onclick=function(){o&&o.apply(this,arguments);const d=document.getElementById('hx47p');if(d&&!d.querySelector('[data-ns]')){const b=document.createElement('button');b.dataset.ns=1;b.style.cssText='display:block;width:100%;margin-top:8px';b.textContent='🔧 مفيش صوت؟';b.onclick=HX.nosound;d.insertBefore(b,d.lastElementChild)}}}
 })();
+
+// ===== HX54: تجميع محطات العالم حسب النوع + البقاء في نفس الصفحة بعد الريفريش =====
+(function(){
+const flag=cc=>/^[A-Z]{2}$/.test(cc||'')?String.fromCodePoint(...[...cc].map(c=>127397+c.charCodeAt(0))):'🌐';
+const WC=[['🗞 أخبار وحوار','news|talk|info|politi|journal|actualit|noticias|nachricht'],['⚽ رياضة','sport|deport|football|soccer'],['📖 ديني','relig|quran|islam|christ|gospel|church|catholic|bible|spiritual'],['🎓 تعليم وثقافة','educat|science|universit|lecture|culture|cultural|knowledge|history|technolog|podcast|book'],['🧒 أطفال','child|kids|kinder'],['🎷 جاز وكلاسيك','jazz|classical|classic|blues|opera|soul|swing|lounge|chill'],['🎸 روك ومتال','rock|metal|punk|alternative|indie|grunge'],['💃 رقص وإلكترونيك','dance|electro|house|techno|trance|edm|club|disco|hip|rap|r&b|rnb|reggae|latin|salsa'],['🎤 بوب وهيتس','pop|hits|top40|top 40|charts|hit|oldies|80s|90s|70s|60s|adult|contemporary'],['🎵 محلية وفولك','folk|local|country|traditional|world|ethnic|regional|schlager|tropical']];
+const WCO='🎶 عام ومنوعات';
+const catOf=s=>{const t=((s.tags||'')+' '+(s.name||'')).toLowerCase();for(const [n,re] of WC)if(new RegExp(re,'i').test(t))return n;return WCO};
+const chip=(attr,txt,on)=>`<button ${attr} style="background:${on?'var(--gold,#C9A227)':'var(--btn2)'};color:${on?'#111':''};font-size:13px;padding:5px 11px">${txt}</button>`;
+const toSt=s=>({stationuuid:s.id||s.stationuuid,name:s.name,country:s.country_ar||s.country||s.cc||'',tags:s.tags||'',favicon:s.logo||s.favicon||'',url_resolved:s.url||s.url_resolved,url:s.url||s.url_resolved,bitrate:s.bitrate,homepage:s.home||s.homepage,_cc:s.cc});
+let sel='',cur=null;
+function show(title,raw,back,extra){
+ cur={title,raw,back,extra};
+ const items=raw.filter(s=>!sel||catOf(s)===sel).map(toSt);
+ const cnt={};raw.forEach(s=>{const c=catOf(s);cnt[c]=(cnt[c]||0)+1});
+ const order=[...WC.map(x=>x[0]),WCO].filter(c=>cnt[c]);
+ setTab('all');$('viewTitle').textContent=title;results=items;playlist=items;
+ if(!items.length)$('list').innerHTML='<p>مفيش محطات في الاختيار ده.</p>';else render(items);
+ const bar=`<div class="secT" style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${title} ${extra||''}${back?`<button data-act="${back}" style="background:var(--btn2);font-size:13px;padding:5px 10px">↩ رجوع</button>`:''}</div>
+ <div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap">${chip('data-wcat=""','كل الأنواع <small>'+raw.length+'</small>',!sel)}${order.map(c=>chip(`data-wcat="${c}"`,c+' <small>'+cnt[c]+'</small>',sel===c)).join('')}</div>
+ <span class="m" style="grid-column:1/-1">${items.length} محطة</span>`;
+ $('list').insertAdjacentHTML('afterbegin',bar);
+}
+window.countryPage=async function(cc,name){
+ sel='';rec({t:'cc',cc,name});
+ setTab('all');$('viewTitle').textContent=flag(cc)+' '+name;$('list').innerHTML='<p>جاري التحميل...</p>';
+ let d=null;try{const r=await fetch('data/world/'+cc+'.json?v='+(window.DATA_V||''));if(r.ok)d=await r.json()}catch{}
+ let raw=d||[];
+ if(!raw.length){try{const r=await fetch(API+'/json/stations/bycountrycodeexact/'+cc+'?hidebroken=true&order=votes&reverse=true&limit=100');raw=(await r.json()).filter(s=>/^https:/.test(s.url_resolved))}catch{}}
+ show(flag(cc)+' '+name,raw,'world',`<button data-wmore="${cc}" style="background:var(--btn2);font-size:13px;padding:5px 10px">➕ كل محطات الدولة (مباشر)</button>`);
+};
+window.langPage=async function(code,name){
+ sel='';rec({t:'lang',code,name});
+ setTab('all');$('viewTitle').textContent='🗣 '+name;$('list').innerHTML='<p>جاري التحميل...</p>';
+ let raw=[];try{const r=await fetch(API+'/json/stations/bylanguage/'+encodeURIComponent(code)+'?hidebroken=true&order=votes&reverse=true&limit=300');raw=(await r.json()).filter(s=>/^https:/.test(s.url_resolved))}catch{}
+ show('🗣 '+name,raw,'world');
+};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-wcat]');if(!t||!cur)return;e.stopImmediatePropagation();e.preventDefault();sel=t.dataset.wcat;show(cur.title,cur.raw,cur.back,cur.extra)},true);
+
+// ---- الاستمرار بعد الريفريش ----
+const K='lastPage';let replaying=false;
+function rec(o){if(replaying||!booted)return;try{ls.set(K,Object.assign({ts:Date.now()},o))}catch{}}
+let booted=false;function clr(){if(booted)try{ls.set(K,null)}catch{}}
+['arabPage','worldPage','proPage','libraryPage','settingsPage','zFindPage'].forEach(n=>{const f=window[n];if(typeof f!=='function')return;const t={arabPage:'arabw',worldPage:'world',proPage:'pro',libraryPage:'lib',settingsPage:'set',zFindPage:'zfind'}[n];window[n]=function(){rec({t});return f.apply(this,arguments)}});
+const _tl=window.topLPage;if(typeof _tl==='function')window.topLPage=function(cc){rec({t:'topl',cc});return _tl.apply(this,arguments)};
+const _sh=showHome;showHome=function(){clr();return _sh.apply(this,arguments)};
+const _st=setTab;setTab=function(t){const r=_st.apply(this,arguments);return r};
+document.addEventListener('click',e=>{const a=e.target.closest('[data-g="arc"],#tArc');if(a)rec({t:'arc'});const h=e.target.closest('[data-g="home"]');if(h)clr()},true);
+const _gs=window.gSearch||gSearch;
+const gqEl=()=>$('gq');
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='gq'){const v=e.target.value.trim();if(v)rec({t:'q',q:v})}},true);
+document.addEventListener('click',e=>{const b=e.target.closest('#gGo,[data-g="search"]');const g=gqEl();if(b&&g&&g.value.trim())rec({t:'q',q:g.value.trim()})},true);
+setTimeout(()=>{try{
+ const o=ls.get(K,null);
+ if(/[?&]s=/.test(location.search)||!o||Date.now()-o.ts>12*3600e3){booted=true;return}
+ replaying=true;
+ const go={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),lib:()=>libraryPage(),set:()=>settingsPage(),zfind:()=>zFindPage(),topl:()=>topLPage(o.cc),cc:()=>countryPage(o.cc,o.name),lang:()=>langPage(o.code,o.name),arc:()=>{setTab('arc');arcCats()},q:()=>{const g=gqEl();if(g){g.value=o.q;gSearch()}}}[o.t];
+ if(go){document.body.classList.add('gnavOn');booted=true;Promise.resolve(go()).catch(()=>{}).finally(()=>{replaying=false;try{ls.set(K,o)}catch{}})}else{replaying=false;booted=true}
+}catch(e){replaying=false;booted=true;console.error(e)}},1800);
+})();
 </script>
 </body>
 </html>
