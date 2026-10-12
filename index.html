@@ -2993,6 +2993,7 @@ HX.nosound=function(){const d=mk();const L=[];
 const _tb=[...document.querySelectorAll('#topBar button')].find(b=>(b.title||'').startsWith('أدوات'));
 if(_tb){const o=_tb.onclick;_tb.onclick=function(){o&&o.apply(this,arguments);const d=document.getElementById('hx47p');if(d&&!d.querySelector('[data-ns]')){const b=document.createElement('button');b.dataset.ns=1;b.style.cssText='display:block;width:100%;margin-top:8px';b.textContent='🔧 مفيش صوت؟';b.onclick=HX.nosound;d.insertBefore(b,d.lastElementChild)}}}
 })();
+
 </script>
 </body>
 </html>
