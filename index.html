@@ -3749,6 +3749,45 @@ window.langPage=async function(code,name){
 };
 document.addEventListener('click',e=>{const t=e.target.closest('[data-wcat]');if(!t||!cur)return;e.stopImmediatePropagation();e.preventDefault();sel=t.dataset.wcat;show(cur.title,cur.raw,cur.back,cur.extra)},true);
 
+
+// ---- أيقونة الرئيسية: تجميع حسب النوع (عربي / أجنبي / الكل) ----
+const FC=['US','GB','FR','DE','ES','IT','TR','BR','RU','IN','NL','CA','AU','JP','MX','PK','ID'];
+const ARM={'قرآن وديني':'📖 ديني','أخبار وحوار':'🗞 أخبار وحوار','طرب وكلاسيكيات':'🎼 طرب وكلاسيكيات','تعليمي':'🎓 تعليم وثقافة','رياضة':'⚽ رياضة','أطفال':'🧒 أطفال'};
+const TARAB='🎼 طرب وكلاسيكيات';
+let tScope=ls.get('typesScope','all'),tSel='',tAll=null,tCache={};
+async function tLoad(sc){
+ if(tCache[sc])return tCache[sc];
+ const V='?v='+(window.DATA_V||'');
+ const J=async f=>{try{const r=await fetch('data/'+f+V);return r.ok?await r.json():[]}catch{return[]}};
+ let out=[];
+ if(sc!=='foreign'){const d=await J('arabic.json');out=out.concat(d.filter(x=>x.status!=='unverified').map(x=>Object.assign({},x,{_g:ARM[x.cat]||catOf(x),_ar:1})))}
+ if(sc!=='ar'){const L=await Promise.all(FC.map(c=>J('world/'+c+'.json')));L.forEach(a=>a.forEach(x=>out.push(Object.assign({},x,{_g:catOf(x)}))))}
+ const seen=new Set();out=out.filter(x=>x.url&&/^https:/.test(x.url)&&!seen.has(x.url)&&seen.add(x.url));
+ out.sort((a,b)=>(b.votes||0)-(a.votes||0));
+ return tCache[sc]=out;
+}
+window.typesPage=async function(){
+ rec({t:'types'});
+ setTab('all');$('viewTitle').textContent='🎚 حسب النوع';$('list').innerHTML='<p>جاري التحميل...</p>';
+ const raw=await tLoad(tScope);
+ const cnt={};raw.forEach(x=>cnt[x._g]=(cnt[x._g]||0)+1);
+ const order=[...WC.map(x=>x[0]),TARAB,WCO].filter(c=>cnt[c]);
+ if(tSel&&!cnt[tSel])tSel='';
+ const all=raw.filter(x=>!tSel||x._g===tSel);const items=all.slice(0,300).map(toSt);
+ results=items;playlist=items;
+ if(!items.length)$('list').innerHTML='<p>مفيش محطات في الاختيار ده.</p>';else render(items);
+ const sc=[['ar','🕌 عربي'],['foreign','🌍 أجنبي'],['all','🔀 كل اللغات']];
+ $('list').insertAdjacentHTML('afterbegin',`<div class="secT" style="grid-column:1/-1">🎚 المحطات حسب النوع</div>
+ <div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap">${sc.map(([k,t])=>chip(`data-tsc="${k}"`,t,tScope===k)).join('')}</div>
+ <div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap">${chip('data-tg=""','كل الأنواع <small>'+raw.length+'</small>',!tSel)}${order.map(c=>chip(`data-tg="${c}"`,c+' <small>'+cnt[c]+'</small>',tSel===c)).join('')}</div>
+ <span class="m" style="grid-column:1/-1">${all.length} محطة${all.length>300?' · بعرض أعلى 300 تصويتًا':''}</span>`);
+};
+document.addEventListener('click',e=>{
+ const sc=e.target.closest('[data-tsc]');if(sc){e.stopImmediatePropagation();e.preventDefault();tScope=sc.dataset.tsc;ls.set('typesScope',tScope);tSel='';typesPage();return}
+ const g=e.target.closest('[data-tg]');if(g){e.stopImmediatePropagation();e.preventDefault();tSel=g.dataset.tg;typesPage();return}
+ const h=e.target.closest('[data-g="types"]');if(h){e.stopImmediatePropagation();e.preventDefault();try{navPush()}catch{}typesPage()}
+},true);
+(function(){const _h=window.homeG;window.homeG=async function(){const r=await _h.apply(this,arguments);try{const row=$('list').querySelector('[data-g="zfind"]');if(row&&!$('list').querySelector('[data-g="types"]'))row.insertAdjacentHTML('beforebegin','<div class="gTile" data-g="types"><div class="gIc" style="background:linear-gradient(145deg,#0d9488,#134e4a);font-size:30px">🎚</div><div class="gn">حسب النوع</div></div>')}catch{}return r}})();
 // ---- الاستمرار بعد الريفريش ----
 const K='lastPage';let replaying=false;
 function rec(o){if(replaying||!booted)return;try{ls.set(K,Object.assign({ts:Date.now()},o))}catch{}}
@@ -3766,7 +3805,7 @@ setTimeout(()=>{try{
  const o=ls.get(K,null);
  if(/[?&]s=/.test(location.search)||!o||Date.now()-o.ts>12*3600e3){booted=true;return}
  replaying=true;
- const go={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),lib:()=>libraryPage(),set:()=>settingsPage(),zfind:()=>zFindPage(),topl:()=>topLPage(o.cc),cc:()=>countryPage(o.cc,o.name),lang:()=>langPage(o.code,o.name),arc:()=>{setTab('arc');arcCats()},q:()=>{const g=gqEl();if(g){g.value=o.q;gSearch()}}}[o.t];
+ const go={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),lib:()=>libraryPage(),set:()=>settingsPage(),zfind:()=>zFindPage(),types:()=>typesPage(),topl:()=>topLPage(o.cc),cc:()=>countryPage(o.cc,o.name),lang:()=>langPage(o.code,o.name),arc:()=>{setTab('arc');arcCats()},q:()=>{const g=gqEl();if(g){g.value=o.q;gSearch()}}}[o.t];
  if(go){document.body.classList.add('gnavOn');booted=true;Promise.resolve(go()).catch(()=>{}).finally(()=>{replaying=false;try{ls.set(K,o)}catch{}})}else{replaying=false;booted=true}
 }catch(e){replaying=false;booted=true;console.error(e)}},1800);
 })();
