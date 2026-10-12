@@ -2920,7 +2920,7 @@ if(new URLSearchParams(location.search).get('go')==='daily')setTimeout(()=>HX.da
 (function(){
 const bar=document.getElementById('topBar'),au=document.getElementById('au');if(!bar||!au)return;
 const ref=document.getElementById('dailyB');
-function panel(html){let d=document.getElementById('hx47p');if(!d){d=document.createElement('div');d.id='hx47p';d.style.cssText='position:fixed;bottom:70px;right:12px;left:12px;max-width:420px;margin:auto;background:var(--card);padding:14px;border-radius:12px;border:1px solid var(--gold);z-index:60;font-size:14px;max-height:70vh;overflow:auto';document.body.appendChild(d)}
+function panel(html){let d=document.getElementById('hx47p');if(!d){d=document.createElement('div');d.id='hx47p';d.style.cssText='position:fixed;bottom:130px;right:12px;left:12px;max-width:420px;margin:auto;background:var(--card);padding:14px;border-radius:12px;border:1px solid var(--gold);z-index:90;font-size:14px;max-height:calc(100vh - 260px);overflow:auto';document.body.appendChild(d)}
  d.innerHTML=html+'<div style="margin-top:10px"><button onclick="this.closest(\'#hx47p\').remove()">إغلاق</button></div>';return d}
 // آخر 3 محطات
 au.addEventListener('playing',()=>{try{if(!current||!current.url_resolved)return;let L=hxGet('last3',[]).filter(x=>x.url_resolved!==current.url_resolved);L.unshift(slim(current));hxSet('last3',L.slice(0,3))}catch{}});
@@ -2971,7 +2971,7 @@ const _pl=play;play=function(s){try{if(au.muted){au.muted=false}if(au.volume<.15
 au.addEventListener('error',()=>{const e=au.error,st=document.getElementById('status');if(!st||!e)return;
  const m={1:'اتلغى التحميل',2:'مشكلة في الشبكة/الاتصال بالمحطة',3:'الصوت تالف أو مش مدعوم',4:'الجهاز/المتصفح مش قادر يشغّل البث ده'}[e.code]||'خطأ';
  st.textContent='المحطة لا تعمل ('+m+') — جرّب غيرها أو اضغط 🧰 ← 🔧 مفيش صوت؟'},true);
-function mk(){let d=document.getElementById('hx47p');if(!d){d=document.createElement('div');d.id='hx47p';d.style.cssText='position:fixed;bottom:70px;right:12px;left:12px;max-width:420px;margin:auto;background:var(--card);padding:14px;border-radius:12px;border:1px solid var(--gold);z-index:60;font-size:14px;max-height:70vh;overflow:auto';document.body.appendChild(d)}return d}
+function mk(){let d=document.getElementById('hx47p');if(!d){d=document.createElement('div');d.id='hx47p';d.style.cssText='position:fixed;bottom:130px;right:12px;left:12px;max-width:420px;margin:auto;background:var(--card);padding:14px;border-radius:12px;border:1px solid var(--gold);z-index:90;font-size:14px;max-height:calc(100vh - 260px);overflow:auto';document.body.appendChild(d)}return d}
 HX.nosound=function(){const d=mk();const L=[];
  let blk=false;try{blk=!!(current&&typeof blocked==='function'&&blocked(current))}catch{}
  const wasMuted=au.muted,vol=au.volume;
