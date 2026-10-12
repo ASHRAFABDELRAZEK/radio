@@ -3245,6 +3245,7 @@ window.applySkin=function(s){
 };
 // ترحيل لمرة واحدة: كل المستخدمين يتحوّلوا للافتراضي الجديد مرة واحدة، وبعدها اختيارهم محفوظ
 if(!ls.get('skinMig1',false)){ls.set('skin',DEF);ls.set('skinMig1',true);try{localStorage.setItem('hx_themeX',JSON.stringify(''))}catch{}}
+if(!ls.get('skinMig2',false)){ls.set('skin',DEF);ls.set('palette','auto');ls.set('skinMig2',true)}
 applySkin(ls.get('skin',DEF));
 // صفحة المظهر في الإعدادات (تستبدل القديمة)
 if(window.HX){
