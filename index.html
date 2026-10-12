@@ -1300,7 +1300,12 @@ async function gSearch(){
       const cs=[...$('country').options].find(o=>o.value&&o.text.toLowerCase().startsWith(ql));
       if(cs){const t=await (await fetch(API+'/json/stations/search?countrycode='+cs.value+'&hidebroken=true&order=clickcount&reverse=true&limit=100')).json().catch(()=>[]);a=[...a,...t.filter(x=>!a.some(y=>y.stationuuid===x.stationuuid))]}
       gRes.st=a}).catch(()=>{});
-  const pArc=fetch(`https://archive.org/advancedsearch.php?q=${encodeURIComponent('('+q+') AND mediatype:(audio OR movies)')}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=item_size&sort[]=downloads+desc&rows=40&output=json`).then(r=>r.json()).then(d=>{gRes.arc=d.response.docs.map(x=>({id:x.identifier,name:Array.isArray(x.title)?x.title[0]:x.title,country:x.mediatype==='movies'?'فيديو':'صوت',tags:gb(+x.item_size||0)}))}).catch(()=>{});
+  const arcQ=async()=>{const base=x=>`https://archive.org/advancedsearch.php?q=${encodeURIComponent(x+' AND mediatype:(audio OR movies)')}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=item_size&sort[]=downloads+desc&rows=40&output=json`;
+    const cl=q.replace(/["()\\:]/g,' ').replace(/\s+/g,' ').trim(),v=[...new Set([cl,cl.replace(/ى/g,'ي'),cl.replace(/ي/g,'ى')])];
+    const ph='('+v.map(x=>'"'+x+'"').join(' OR ')+')';let d=await (await fetch(base('(title:'+ph+' OR creator:'+ph+' OR subject:'+ph+')'))).json();
+    if(!(d.response&&d.response.docs.length)&&cl.includes(' '))d=await (await fetch(base('title:('+cl.split(' ').filter(w=>w.length>1).join(' AND ')+')'))).json();
+    return d};
+  const pArc=arcQ().then(d=>{gRes.arc=d.response.docs.map(x=>({id:x.identifier,name:Array.isArray(x.title)?x.title[0]:x.title,country:x.mediatype==='movies'?'فيديو':'صوت',tags:gb(+x.item_size||0)}))}).catch(()=>{});
   let stDone=false,arcDone=false;
   pSt.finally(()=>{stDone=true;if(view==='search')draw(!stDone,!arcDone)});
   pArc.finally(()=>{arcDone=true;if(view==='search')draw(!stDone,!arcDone)});
@@ -1670,6 +1675,7 @@ function shareStation(s){s=s||current;if(!s)return toast('اختار محطة ا
   else{(navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast('🔗 اتنسخ رابط المحطة')).catch(()=>prompt('انسخ الرابط:',url))}}
 (function(){const n=$('npFav');if(n&&!$('npShare')){n.insertAdjacentHTML('afterend','<button id="npShare">🔗 مشاركة</button>');$('npShare').onclick=()=>shareStation()}})();
 setTimeout(async function(){const id=new URLSearchParams(location.search).get('s');if(!id)return;
+  try{const u=new URL(location.href);u.searchParams.delete('s');history.replaceState(null,'',u.pathname+u.search+u.hash)}catch{}
   let s=null;const hosts=[API,'https://de1.api.radio-browser.info','https://at1.api.radio-browser.info','https://nl1.api.radio-browser.info','https://all.api.radio-browser.info'].filter((x,i,A)=>A.indexOf(x)===i);
   for(const h of hosts){try{const a=await (await fetch(h+'/json/stations/byuuid/'+encodeURIComponent(id),{signal:AbortSignal.timeout(6000)})).json();if(a&&a[0]){s=a[0];break}}catch{}}
   if(!s)return toast('تعذر الوصول للمحطة المُشاركة — اتأكد من الإنترنت وجرّب تاني');
@@ -3633,7 +3639,7 @@ gSearch=async function(){
       const add=r.filter(x=>/^https:/.test(x.url_resolved)&&!EXCL(x)&&!(gRes.st||[]).some(y=>y.stationuuid===x.stationuuid));gRes.st=[...(gRes.st||[]),...add]}}catch{}
   // 3) الأرشيف: بحث أوسع (العنوان + الوصف + المنشئ) بكل المرادفات
   try{const ors=expand(q).slice(0,6).map(t=>'"'+t.replace(/"/g,'')+'"').join(' OR ');
-    const qq=`(title:(${ors}) OR description:(${ors}) OR creator:(${ors}) OR subject:(${ors})) AND mediatype:(audio OR movies)`;
+    const qq=`(title:(${ors}) OR creator:(${ors}) OR subject:(${ors})) AND mediatype:(audio OR movies)`;
     const d=await fetch(`https://archive.org/advancedsearch.php?q=${encodeURIComponent(qq)}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=item_size&sort[]=downloads+desc&rows=60&output=json`).then(r=>r.json());
     const arc=d.response.docs.map(x=>({id:x.identifier,name:Array.isArray(x.title)?x.title[0]:x.title,country:x.mediatype==='movies'?'فيديو':'صوت',tags:gb(+x.item_size||0)}));
     const seen=new Set((gRes.arc||[]).map(x=>x.id));gRes.arc=[...(gRes.arc||[]),...arc.filter(x=>!seen.has(x.id))]}catch{}
