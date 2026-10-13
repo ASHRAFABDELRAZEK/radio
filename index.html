@@ -696,7 +696,7 @@ body.hdgo{user-select:none;-webkit-user-select:none}
   <div style="font-size:12px;color:var(--mut)">البرنامج لازم يفضل مفتوح والجهاز صاحي.</div>
 </div>
 <script>
-(function(){try{const B="b20261012c";window.__BUILD=B;if(location.protocol!=="https:"||sessionStorage.getItem("bchk"))return;sessionStorage.setItem("bchk","1");fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const m=t.match(/window\.__BUILD=B;|const B="([^"]+)"/);const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B){const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
+(function(){try{const B="b20261013b";window.__BUILD=B;if(location.protocol!=="https:"||sessionStorage.getItem("bchk"))return;sessionStorage.setItem("bchk","1");fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const m=t.match(/window\.__BUILD=B;|const B="([^"]+)"/);const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B){const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
 
 const $=id=>document.getElementById(id), au=$('au');
 let API='https://all.api.radio-browser.info', hls=null, current=null, view='all', results=[];
@@ -1894,22 +1894,22 @@ const SURAHS='الفاتحة,البقرة,آل عمران,النساء,الما�
 const RECS=[['مشاري العفاسي','https://server8.mp3quran.net/afs/'],['سعد الغامدي','https://server7.mp3quran.net/shatri/'],['ياسر الدوسري','https://server11.mp3quran.net/yasser/'],['ماهر المعيقلي','https://server12.mp3quran.net/maher/'],['محمود خليل الحصري','https://server13.mp3quran.net/husr/'],['أحمد العجمي','https://server10.mp3quran.net/ajm/'],['ناصر القطامي','https://server6.mp3quran.net/qtm/']];
 const ADH_COMMON=[
 ['آية الكرسي','اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ',1],
-['الإخلاص والفلق والناس','قراءة سور: الإخلاص، الفلق، الناس',3],
+['الإخلاص والفلق والناس','قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ<br><br>قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِنْ شَرِّ مَا خَلَقَ ۝ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ<br><br>قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَهِ النَّاسِ ۝ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ',3],
 ['سيد الاستغفار','اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',1],
 ['الرضا','رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صلى الله عليه وسلم نَبِيًّا',3],
 ['الحفظ من الضرر','بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',3],
-['التسبيح','سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100],
+['اللهم عافني','اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ',3],['الاستعاذة من الكفر والفقر','اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ، وَأَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَهَ إِلَّا أَنْتَ',3],['حسبي الله','حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ',7],['العفو والعافية','اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي، اللَّهُمَّ اسْتُرْ عَوْرَاتِي وَآمِنْ رَوْعَاتِي، اللَّهُمَّ احْفَظْنِي مِنْ بَيْنِ يَدَيَّ وَمِنْ خَلْفِي وَعَنْ يَمِينِي وَعَنْ شِمَالِي وَمِنْ فَوْقِي، وَأَعُوذُ بِعَظَمَتِكَ أَنْ أُغْتَالَ مِنْ تَحْتِي',1],['سبحان الله عدد خلقه','سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ',3],['التسبيح','سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100],
 ['الاستغفار','أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',100],
 ['التهليل','لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',10],
 ['الصلاة على النبي','اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ',10]];
-const ADH={m:[['دعاء الصباح','أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',1],['اللهم بك أصبحنا','اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ',1]],
- e:[['دعاء المساء','أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',1],['اللهم بك أمسينا','اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ',1]]};
+const ADH={m:[['دعاء الصباح','أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',1],['اللهم بك أصبحنا','اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ',1],['فطرة الإسلام','أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صلى الله عليه وسلم، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ',1],['علمًا نافعًا','اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا',1]],
+ e:[['دعاء المساء','أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',1],['اللهم بك أمسينا','اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ',1],['فطرة الإسلام','أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صلى الله عليه وسلم، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ',1],['أعوذ بكلمات الله التامات','أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',3]]};
 const hxSet=(k,v)=>{const o=ls.get('hx',{});o[k]=v;ls.set('hx',o)},hxGet=(k,d)=>ls.get('hx',{})[k]??d;
 const pad3=n=>String(n).padStart(3,'0');
 function hxPage(t,h){setTab('all');$('viewTitle').textContent=t;$('list').innerHTML='<div class="hxp" style="grid-column:1/-1">'+h+'</div>'}
 const hxBtn=(a,l,x)=>`<button class="hxb" data-hx="${a}" ${x||''}>${l}</button>`;
 const hxCell=(a,ic,l)=>`<div class="gcell" data-hx="${a}"><span class="gi">${ic}</span><span class="gl">${l}</span></div>`;
-const hxPart=()=>{const h=new Date().getHours();return h>=4&&h<11?'m':(h>=15&&h<20?'e':null)};
+const hxPart=()=>{const h=new Date().getHours();return h>=4&&h<12?'m':(h>=15&&h<24?'e':null)};
 const HX={
 hub(){const ds=hxGet('dsave',false),bg=hxGet('big',false);
  hxPage('✦ مفيد كل يوم',`<div class="hgrp">🕌 الروحانيات</div><div class="hgrid">${hxCell('wird','📖','الورد اليومي')}${hxCell('adh','🤲','الأذكار')}${hxCell('tasbeeh','📿','المسبحة')}${hxCell('qibla','🧭','القبلة')}</div>
@@ -3810,6 +3810,32 @@ setTimeout(()=>{try{
  const go={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),lib:()=>libraryPage(),set:()=>settingsPage(),zfind:()=>zFindPage(),types:()=>typesPage(),topl:()=>topLPage(o.cc),cc:()=>countryPage(o.cc,o.name),lang:()=>langPage(o.code,o.name),arc:()=>{setTab('arc');arcCats()},q:()=>{const g=gqEl();if(g){g.value=o.q;gSearch()}}}[o.t];
  if(go){document.body.classList.add('gnavOn');booted=true;Promise.resolve(go()).catch(()=>{}).finally(()=>{replaying=false;try{ls.set(K,o)}catch{}})}else{replaying=false;booted=true}
 }catch(e){replaying=false;booted=true;console.error(e)}},1800);
+})();
+
+// ===== HX55: تفاعل الضغط (صوت + اهتزاز) مع إمكانية الإيقاف من الإعدادات =====
+(function(){
+const gs=k=>ls.get(k,true);
+try{const _v=navigator.vibrate&&navigator.vibrate.bind(navigator);if(_v)navigator.vibrate=function(p){return gs('fbVib')?_v(p):false}}catch{}
+let ac=null;
+function tick(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type='sine';o.frequency.setValueAtTime(1400,t);o.frequency.exponentialRampToValueAtTime(700,t+0.03);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.06,t+0.004);g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.06)}catch{}}
+function buzz(){try{navigator.vibrate&&navigator.vibrate(12)}catch{}}
+let last=0;
+document.addEventListener('click',e=>{
+ const t=e.target.closest&&e.target.closest('button,a,[data-g],[data-act],[data-hx],[data-i],[data-gi],[data-ri],.gTile,.gRc,.gRowItem,.tbtn,.tile,.gcell,select,summary,label,input[type=checkbox],input[type=range]');
+ if(!t||t.closest('#hx55p'))return;
+ const n=Date.now();if(n-last<60)return;last=n;
+ if(gs('fbSound'))tick();
+ if(gs('fbVib'))buzz();
+},true);
+const _sp=window.settingsPage;
+window.settingsPage=function(){const r=_sp.apply(this,arguments);try{
+ const h=$('list').querySelector('.gHome');if(!h)return r;
+ h.insertAdjacentHTML('afterbegin',`<div class="gSec"><span>التفاعل عند الضغط</span></div><div id="hx55p" style="display:flex;flex-direction:column;gap:8px;margin:0 0 14px">
+  <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px"><input type="checkbox" id="fbS" ${gs('fbSound')?'checked':''}><span>🔈 صوت نقرة خفيف عند الضغط</span></label>
+  <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px"><input type="checkbox" id="fbV" ${gs('fbVib')?'checked':''}><span>📳 اهتزاز خفيف عند الضغط <small class="m">(أندرويد فقط، الآيفون ما بيدعمهوش)</small></span></label></div>`);
+ $('fbS').onchange=e=>{ls.set('fbSound',e.target.checked);if(e.target.checked)tick()};
+ $('fbV').onchange=e=>{ls.set('fbVib',e.target.checked);if(e.target.checked)buzz()};
+}catch(err){console.error(err)}return r};
 })();
 </script>
 </body>
