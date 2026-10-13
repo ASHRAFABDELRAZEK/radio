@@ -696,7 +696,7 @@ body.hdgo{user-select:none;-webkit-user-select:none}
   <div style="font-size:12px;color:var(--mut)">البرنامج لازم يفضل مفتوح والجهاز صاحي.</div>
 </div>
 <script>
-(function(){window.__errs=[];addEventListener("error",function(e){try{window.__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});addEventListener("unhandledrejection",function(e){try{window.__errs.push("promise: "+(e.reason&&e.reason.message||e.reason))}catch(_){}});try{const B="b20261014a";window.__BUILD=B;if(location.protocol!=="https:")return;fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B&&sessionStorage.getItem("bto")!==mm[1]){sessionStorage.setItem("bto",mm[1]);const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
+(function(){window.__errs=[];addEventListener("error",function(e){try{window.__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});addEventListener("unhandledrejection",function(e){try{window.__errs.push("promise: "+(e.reason&&e.reason.message||e.reason))}catch(_){}});try{const B="b20261014b";window.__BUILD=B;if(location.protocol!=="https:")return;fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B&&sessionStorage.getItem("bto")!==mm[1]){sessionStorage.setItem("bto",mm[1]);const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
 
 const $=id=>document.getElementById(id), au=$('au');
 let API='https://all.api.radio-browser.info', hls=null, current=null, view='all', results=[];
@@ -3793,8 +3793,8 @@ document.addEventListener('click',e=>{
 },true);
 (function(){const _h=window.homeG;window.homeG=async function(){const r=await _h.apply(this,arguments);try{const row=$('list').querySelector('[data-g="zfind"]');if(row&&!$('list').querySelector('[data-g="types"]'))row.insertAdjacentHTML('beforebegin','<div class="gTile" data-g="types"><div class="gIc" style="background:linear-gradient(145deg,#0d9488,#134e4a);font-size:30px">🗂</div><div class="gn">حسب النوع</div></div><div class="gTile" data-hx="today"><div class="gIc" style="background:linear-gradient(145deg,#b45309,#78350f);font-size:30px">📜</div><div class="gn">آية اليوم</div></div>')}catch{}return r}})();
 // ---- الاستمرار بعد الريفريش ----
-const K='lastPage';let replaying=false;
-function rec(o){if(replaying||!booted)return;try{ls.set(K,Object.assign({ts:Date.now()},o))}catch{}}
+const K='lastPage';let replaying=false;const RL=window.__rl=[];const rl=m=>{try{RL.push(m+'@'+(Date.now()-performance.timeOrigin|0))}catch{}};
+function rec(o){if(replaying||!booted){rl('skip rec '+o.t+' rep='+replaying+' boot='+booted);return}rl('rec '+o.t);try{ls.set(K,Object.assign({ts:Date.now()},o))}catch{}}
 let booted=false;function clr(){if(booted)try{ls.set(K,null)}catch{}}
 ['arabPage','worldPage','proPage','libraryPage','settingsPage','zFindPage'].forEach(n=>{const f=window[n];if(typeof f!=='function')return;const t={arabPage:'arabw',worldPage:'world',proPage:'pro',libraryPage:'lib',settingsPage:'set',zFindPage:'zfind'}[n];window[n]=function(){rec({t});return f.apply(this,arguments)}});
 const _tl=window.topLPage;if(typeof _tl==='function')window.topLPage=function(cc){rec({t:'topl',cc});return _tl.apply(this,arguments)};
@@ -3806,11 +3806,11 @@ const gqEl=()=>$('gq');
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='gq'){const v=e.target.value.trim();if(v)rec({t:'q',q:v})}},true);
 document.addEventListener('click',e=>{const b=e.target.closest('#gGo,[data-g="search"]');const g=gqEl();if(b&&g&&g.value.trim())rec({t:'q',q:g.value.trim()})},true);
 setTimeout(()=>{try{
- const o=ls.get(K,null);
+ const o=ls.get(K,null);rl('boot lp='+(o?o.t:'none'));
  if(/[?&]s=/.test(location.search)||!o||Date.now()-o.ts>12*3600e3){booted=true;return}
  replaying=true;
  const go={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),lib:()=>libraryPage(),set:()=>settingsPage(),zfind:()=>zFindPage(),types:()=>typesPage(),topl:()=>topLPage(o.cc),cc:()=>countryPage(o.cc,o.name),lang:()=>langPage(o.code,o.name),arc:()=>{setTab('arc');arcCats()},q:()=>{const g=gqEl();if(g){g.value=o.q;gSearch()}}}[o.t];
- if(go){document.body.classList.add('gnavOn');booted=true;const run=()=>Promise.resolve(go()).catch(()=>{}).finally(()=>{replaying=false;try{ls.set(K,o)}catch{}});run();let touched=false;const tt=()=>{touched=true};document.addEventListener('pointerdown',tt,true);document.addEventListener('keydown',tt,true);[2200,4500,8000].forEach(d=>setTimeout(()=>{if(touched)return;try{if(view==='home'||document.querySelector('.gHome')&&!document.querySelector('.gHome').querySelector('[data-hx55]')&&ls.get(K,null)&&document.getElementById('viewTitle')&&/الرئيسية/.test(document.getElementById('viewTitle').textContent)){replaying=true;run()}}catch{}},d))}else{replaying=false;booted=true}
+ if(go){document.body.classList.add('gnavOn');booted=true;const run=()=>(rl('replay '+o.t+' view='+view),Promise.resolve(go())).catch(()=>{}).finally(()=>{replaying=false;try{ls.set(K,o)}catch{}});run();let touched=false;const tt=()=>{touched=true};document.addEventListener('pointerdown',tt,true);document.addEventListener('keydown',tt,true);[2200,4500,8000].forEach(d=>setTimeout(()=>{if(touched)return;try{if(view==='home'||document.querySelector('.gHome')&&!document.querySelector('.gHome').querySelector('[data-hx55]')&&ls.get(K,null)&&document.getElementById('viewTitle')&&/الرئيسية/.test(document.getElementById('viewTitle').textContent)){replaying=true;run()}}catch{}},d))}else{replaying=false;booted=true}
 }catch(e){replaying=false;booted=true;console.error(e)}},1800);
 })();
 
@@ -3824,8 +3824,8 @@ try{
 const gs=k=>ls.get(k,true);
 try{const _v=navigator.vibrate&&navigator.vibrate.bind(navigator);if(_v)navigator.vibrate=function(p){return gs('fbVib')?_v(p):false}}catch{}
 let ac=null;
-function tick(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type='sine';o.frequency.setValueAtTime(1400,t);o.frequency.exponentialRampToValueAtTime(700,t+0.03);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.06,t+0.004);g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.06)}catch{}}
-function buzz(){try{navigator.vibrate&&navigator.vibrate(12)}catch{}}
+function tick(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type='sine';o.frequency.setValueAtTime(1800,t);o.frequency.exponentialRampToValueAtTime(900,t+0.04);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.35,t+0.004);g.gain.exponentialRampToValueAtTime(0.0001,t+0.07);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.08)}catch{}}
+function buzz(){try{navigator.vibrate&&navigator.vibrate(25)}catch{}}
 let last=0;
 document.addEventListener('click',e=>{
  const t=e.target.closest&&e.target.closest('button,a,[data-g],[data-act],[data-hx],[data-i],[data-gi],[data-ri],.gTile,.gRc,.gRowItem,.tbtn,.tile,.gcell,select,summary,label,input[type=checkbox],input[type=range]');
@@ -3840,7 +3840,7 @@ window.settingsPage=function(){const r=_sp.apply(this,arguments);try{
  h.insertAdjacentHTML('afterbegin',`<div class="gSec"><span>التفاعل عند الضغط</span></div><div id="hx55p" style="display:flex;flex-direction:column;gap:8px;margin:0 0 14px">
   <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px"><input type="checkbox" id="fbS" ${gs('fbSound')?'checked':''}><span>🔈 صوت نقرة خفيف عند الضغط</span></label>
   <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px"><input type="checkbox" id="fbV" ${gs('fbVib')?'checked':''}><span>📳 اهتزاز خفيف عند الضغط <small class="m">(أندرويد فقط، الآيفون ما بيدعمهوش)</small></span></label></div>`);
- try{const er=(window.__errs||[]).slice(-5).join('\n');h.insertAdjacentHTML('beforeend','<div class="m" style="margin:14px 0;font-size:12px;opacity:.8">الإصدار: '+(window.__BUILD||'?')+(er?'<details><summary>أخطاء ('+(window.__errs||[]).length+')</summary><pre style="white-space:pre-wrap;direction:ltr;font-size:11px;user-select:text">'+er.replace(/</g,'&lt;')+'</pre></details>':' · لا أخطاء')+'</div>')}catch{}
+ try{const er=(window.__errs||[]).slice(-5).join('\n');h.insertAdjacentHTML('beforeend','<div class="m" style="margin:14px 0;font-size:12px;opacity:.8">الإصدار: '+(window.__BUILD||'?')+' · lp='+JSON.stringify((ls.get('lastPage',null)||{}).t||null)+' · '+(window.__rl||[]).slice(-6).join(' | ')+(er?'<details><summary>أخطاء ('+(window.__errs||[]).length+')</summary><pre style="white-space:pre-wrap;direction:ltr;font-size:11px;user-select:text">'+er.replace(/</g,'&lt;')+'</pre></details>':' · لا أخطاء')+'</div>')}catch{}
  $('fbS').onchange=e=>{ls.set('fbSound',e.target.checked);if(e.target.checked)tick()};
  $('fbV').onchange=e=>{ls.set('fbVib',e.target.checked);if(e.target.checked)buzz()};
 }catch(err){console.error(err)}return r};
