@@ -696,7 +696,7 @@ body.hdgo{user-select:none;-webkit-user-select:none}
   <div style="font-size:12px;color:var(--mut)">البرنامج لازم يفضل مفتوح والجهاز صاحي.</div>
 </div>
 <script>
-(function(){try{const B="b20261013d";window.__BUILD=B;if(location.protocol!=="https:"||sessionStorage.getItem("bchk"))return;sessionStorage.setItem("bchk","1");fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const m=t.match(/window\.__BUILD=B;|const B="([^"]+)"/);const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B){const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
+(function(){window.__errs=[];addEventListener("error",function(e){try{window.__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});addEventListener("unhandledrejection",function(e){try{window.__errs.push("promise: "+(e.reason&&e.reason.message||e.reason))}catch(_){}});try{const B="b20261014a";window.__BUILD=B;if(location.protocol!=="https:")return;fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B&&sessionStorage.getItem("bto")!==mm[1]){sessionStorage.setItem("bto",mm[1]);const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
 
 const $=id=>document.getElementById(id), au=$('au');
 let API='https://all.api.radio-browser.info', hls=null, current=null, view='all', results=[];
@@ -2135,7 +2135,7 @@ ordhid(el){const g=el.dataset.g,h=hxGet('hhid',[]);hxSet('hhid',h.includes(g)?h.
 ordreset(){hxSet('hord',HGRP);hxSet('hhid',[]);HX.order()},
 // آية/دعاء اليوم + سورة اليوم
 today(){const v=VERSES[dayOfYear()%VERSES.length],wd=new Date().getDay(),s=DAYSUR[wd],ne=nextEvent();
- hxPage('📜 اليوم',`<div class="hxc" style="text-align:center"><div style="font-size:22px;line-height:2.2;font-family:serif">﴿ ${v[0]} ﴾</div><div class="m">${v[1]}</div><input id="vF" maxlength="40" placeholder="تذييل الصورة (اختياري) — اتركه فاضي لو مش عايز" value="${esc(hxGet('vfoot',''))}">${hxBtn('vshare','🖼 شارك كصورة')}</div><div class="hxc"><div class="m">سورة مقترحة للتدبّر اليوم</div><b style="font-size:19px">سورة ${s[1]}</b>${hxBtn('daysur','▶ اسمعها')}</div>${ne?`<div class="hxc"><div class="m">المناسبة الجاية</div><b>${ne.e[3]} ${ne.e[2]}</b> بعد حوالي ${ne.i} يوم<div class="m">التواريخ الهجرية بالحساب الفلكي وممكن تختلف يوم عن الرؤية.</div></div>`:''}`)},
+ hxPage('📜 اليوم',`<div class="hxc" style="text-align:center"><div style="font-size:22px;line-height:2.2;font-family:serif">﴿ ${v[0]} ﴾</div><div class="m">${v[1]}</div><input id="vF" maxlength="40" placeholder="اكتب اسمك — يظهر أسفل الصورة (اختياري)" value="${esc(hxGet('vfoot',''))}"><div class="m" style="margin-top:6px">الاسم بيتحفظ ويظهر في أسفل الصورة</div>${hxBtn('vshare','🖼 شارك آية اليوم كصورة')}</div><div class="hxc"><div class="m">سورة مقترحة للتدبّر اليوم</div><b style="font-size:19px">سورة ${s[1]}</b>${hxBtn('daysur','▶ اسمعها')}</div>${ne?`<div class="hxc"><div class="m">المناسبة الجاية</div><b>${ne.e[3]} ${ne.e[2]}</b> بعد حوالي ${ne.i} يوم<div class="m">التواريخ الهجرية بالحساب الفلكي وممكن تختلف يوم عن الرؤية.</div></div>`:''}`)},
 daysur(){const s=DAYSUR[new Date().getDay()],n=s[0],r=ls.get('wird',{r:0}).r||0,it={stationuuid:'ia:day'+r+'_'+n,name:'القرآن الكريم — سورة '+s[1]+' — '+RECS[r][0],country:'سورة اليوم',tags:'quran',url_resolved:RECS[r][1]+pad3(n)+'.mp3',url:RECS[r][1]+pad3(n)+'.mp3',file:pad3(n)+'.mp3',id:'day'+n};hxPlayAll([it])},
 async vshare(){const v=VERSES[dayOfYear()%VERSES.length],c=document.createElement('canvas');c.width=c.height=1080;const x=c.getContext('2d');
  const g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#0a1628');g.addColorStop(1,'#0F766E');x.fillStyle=g;x.fillRect(0,0,1080,1080);x.strokeStyle='#C9A227';x.lineWidth=6;x.strokeRect(50,50,980,980);
@@ -3713,7 +3713,9 @@ HX.nosound=function(){const d=mk();const L=[];
 const _tb=[...document.querySelectorAll('#topBar button')].find(b=>(b.title||'').startsWith('أدوات'));
 if(_tb){const o=_tb.onclick;_tb.onclick=function(){o&&o.apply(this,arguments);const d=document.getElementById('hx47p');if(d&&!d.querySelector('[data-ns]')){const b=document.createElement('button');b.dataset.ns=1;b.style.cssText='display:block;width:100%;margin-top:8px';b.textContent='🔧 مفيش صوت؟';b.onclick=HX.nosound;d.insertBefore(b,d.lastElementChild)}}}
 })();
-
+</script>
+<script>
+try{
 // ===== HX54: تجميع محطات العالم حسب النوع + البقاء في نفس الصفحة بعد الريفريش =====
 (function(){
 const flag=cc=>/^[A-Z]{2}$/.test(cc||'')?String.fromCodePoint(...[...cc].map(c=>127397+c.charCodeAt(0))):'🌐';
@@ -3789,7 +3791,7 @@ document.addEventListener('click',e=>{
  const g=e.target.closest('[data-tg]');if(g){e.stopImmediatePropagation();e.preventDefault();tSel=g.dataset.tg;typesPage();return}
  const h=e.target.closest('[data-g="types"]');if(h){e.stopImmediatePropagation();e.preventDefault();try{navPush()}catch{}typesPage()}
 },true);
-(function(){const _h=window.homeG;window.homeG=async function(){const r=await _h.apply(this,arguments);try{const row=$('list').querySelector('[data-g="zfind"]');if(row&&!$('list').querySelector('[data-g="types"]'))row.insertAdjacentHTML('beforebegin','<div class="gTile" data-g="types"><div class="gIc" style="background:linear-gradient(145deg,#0d9488,#134e4a);font-size:30px">🗂</div><div class="gn">حسب النوع</div></div>')}catch{}return r}})();
+(function(){const _h=window.homeG;window.homeG=async function(){const r=await _h.apply(this,arguments);try{const row=$('list').querySelector('[data-g="zfind"]');if(row&&!$('list').querySelector('[data-g="types"]'))row.insertAdjacentHTML('beforebegin','<div class="gTile" data-g="types"><div class="gIc" style="background:linear-gradient(145deg,#0d9488,#134e4a);font-size:30px">🗂</div><div class="gn">حسب النوع</div></div><div class="gTile" data-hx="today"><div class="gIc" style="background:linear-gradient(145deg,#b45309,#78350f);font-size:30px">📜</div><div class="gn">آية اليوم</div></div>')}catch{}return r}})();
 // ---- الاستمرار بعد الريفريش ----
 const K='lastPage';let replaying=false;
 function rec(o){if(replaying||!booted)return;try{ls.set(K,Object.assign({ts:Date.now()},o))}catch{}}
@@ -3808,10 +3810,15 @@ setTimeout(()=>{try{
  if(/[?&]s=/.test(location.search)||!o||Date.now()-o.ts>12*3600e3){booted=true;return}
  replaying=true;
  const go={arabw:()=>arabPage(),world:()=>worldPage(),pro:()=>proPage(),lib:()=>libraryPage(),set:()=>settingsPage(),zfind:()=>zFindPage(),types:()=>typesPage(),topl:()=>topLPage(o.cc),cc:()=>countryPage(o.cc,o.name),lang:()=>langPage(o.code,o.name),arc:()=>{setTab('arc');arcCats()},q:()=>{const g=gqEl();if(g){g.value=o.q;gSearch()}}}[o.t];
- if(go){document.body.classList.add('gnavOn');booted=true;Promise.resolve(go()).catch(()=>{}).finally(()=>{replaying=false;try{ls.set(K,o)}catch{}})}else{replaying=false;booted=true}
+ if(go){document.body.classList.add('gnavOn');booted=true;const run=()=>Promise.resolve(go()).catch(()=>{}).finally(()=>{replaying=false;try{ls.set(K,o)}catch{}});run();let touched=false;const tt=()=>{touched=true};document.addEventListener('pointerdown',tt,true);document.addEventListener('keydown',tt,true);[2200,4500,8000].forEach(d=>setTimeout(()=>{if(touched)return;try{if(view==='home'||document.querySelector('.gHome')&&!document.querySelector('.gHome').querySelector('[data-hx55]')&&ls.get(K,null)&&document.getElementById('viewTitle')&&/الرئيسية/.test(document.getElementById('viewTitle').textContent)){replaying=true;run()}}catch{}},d))}else{replaying=false;booted=true}
 }catch(e){replaying=false;booted=true;console.error(e)}},1800);
 })();
 
+
+}catch(e){(window.__errs=window.__errs||[]).push("HX54: "+(e&&e.message))}
+</script>
+<script>
+try{
 // ===== HX55: تفاعل الضغط (صوت + اهتزاز) مع إمكانية الإيقاف من الإعدادات =====
 (function(){
 const gs=k=>ls.get(k,true);
@@ -3833,10 +3840,13 @@ window.settingsPage=function(){const r=_sp.apply(this,arguments);try{
  h.insertAdjacentHTML('afterbegin',`<div class="gSec"><span>التفاعل عند الضغط</span></div><div id="hx55p" style="display:flex;flex-direction:column;gap:8px;margin:0 0 14px">
   <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px"><input type="checkbox" id="fbS" ${gs('fbSound')?'checked':''}><span>🔈 صوت نقرة خفيف عند الضغط</span></label>
   <label style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px"><input type="checkbox" id="fbV" ${gs('fbVib')?'checked':''}><span>📳 اهتزاز خفيف عند الضغط <small class="m">(أندرويد فقط، الآيفون ما بيدعمهوش)</small></span></label></div>`);
+ try{const er=(window.__errs||[]).slice(-5).join('\n');h.insertAdjacentHTML('beforeend','<div class="m" style="margin:14px 0;font-size:12px;opacity:.8">الإصدار: '+(window.__BUILD||'?')+(er?'<details><summary>أخطاء ('+(window.__errs||[]).length+')</summary><pre style="white-space:pre-wrap;direction:ltr;font-size:11px;user-select:text">'+er.replace(/</g,'&lt;')+'</pre></details>':' · لا أخطاء')+'</div>')}catch{}
  $('fbS').onchange=e=>{ls.set('fbSound',e.target.checked);if(e.target.checked)tick()};
  $('fbV').onchange=e=>{ls.set('fbVib',e.target.checked);if(e.target.checked)buzz()};
 }catch(err){console.error(err)}return r};
 })();
+
+}catch(e){(window.__errs=window.__errs||[]).push("HX55: "+(e&&e.message))}
 </script>
 </body>
 </html>
