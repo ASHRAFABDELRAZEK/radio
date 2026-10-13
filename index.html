@@ -696,7 +696,7 @@ body.hdgo{user-select:none;-webkit-user-select:none}
   <div style="font-size:12px;color:var(--mut)">البرنامج لازم يفضل مفتوح والجهاز صاحي.</div>
 </div>
 <script>
-(function(){window.__errs=[];addEventListener("error",function(e){try{window.__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});addEventListener("unhandledrejection",function(e){try{window.__errs.push("promise: "+(e.reason&&e.reason.message||e.reason))}catch(_){}});try{const B="b20261014b";window.__BUILD=B;if(location.protocol!=="https:")return;fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B&&sessionStorage.getItem("bto")!==mm[1]){sessionStorage.setItem("bto",mm[1]);const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
+(function(){window.__errs=[];addEventListener("error",function(e){try{window.__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});addEventListener("unhandledrejection",function(e){try{window.__errs.push("promise: "+(e.reason&&e.reason.message||e.reason))}catch(_){}});try{const B="b20261014c";window.__BUILD=B;if(location.protocol!=="https:")return;fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B&&sessionStorage.getItem("bto")!==mm[1]){sessionStorage.setItem("bto",mm[1]);const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
 
 const $=id=>document.getElementById(id), au=$('au');
 let API='https://all.api.radio-browser.info', hls=null, current=null, view='all', results=[];
@@ -3821,6 +3821,8 @@ setTimeout(()=>{try{
 try{
 // ===== HX55: تفاعل الضغط (صوت + اهتزاز) مع إمكانية الإيقاف من الإعدادات =====
 (function(){
+
+try{const st=document.createElement('style');st.textContent='@media (max-width:700px){#topBar{flex-wrap:wrap!important;overflow:visible!important;row-gap:6px;padding:8px 10px}#topBar>*{flex:0 0 auto}#topBar #viewTitle{order:99;flex:1 1 100%!important;font-size:13px;opacity:.85}#topBar #themeB{margin-inline-start:0}}';document.head.appendChild(st)}catch{}
 const gs=k=>ls.get(k,true);
 try{const _v=navigator.vibrate&&navigator.vibrate.bind(navigator);if(_v)navigator.vibrate=function(p){return gs('fbVib')?_v(p):false}}catch{}
 let ac=null;
