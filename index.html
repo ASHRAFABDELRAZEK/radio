@@ -696,7 +696,7 @@ body.hdgo{user-select:none;-webkit-user-select:none}
   <div style="font-size:12px;color:var(--mut)">البرنامج لازم يفضل مفتوح والجهاز صاحي.</div>
 </div>
 <script>
-(function(){try{const o=JSON.parse(localStorage.getItem('lastPage'));if(o&&Date.now()-o.ts<=12*3600e3&&!/[?&]s=/.test(location.search)){const st=document.createElement('style');st.textContent='html.restoring #list{visibility:hidden}';document.head.appendChild(st);document.documentElement.classList.add('restoring');setTimeout(function(){document.documentElement.classList.remove('restoring')},3000)}}catch(e){}})();(function(){window.__errs=[];addEventListener("error",function(e){try{window.__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});addEventListener("unhandledrejection",function(e){try{window.__errs.push("promise: "+(e.reason&&e.reason.message||e.reason))}catch(_){}});try{const B="b20261015a";window.__BUILD=B;if(location.protocol!=="https:")return;fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B&&sessionStorage.getItem("bto")!==mm[1]){sessionStorage.setItem("bto",mm[1]);const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
+(function(){try{const o=JSON.parse(localStorage.getItem('lastPage'));if(o&&Date.now()-o.ts<=12*3600e3&&!/[?&]s=/.test(location.search)){const st=document.createElement('style');st.textContent='html.restoring #list{visibility:hidden}';document.head.appendChild(st);document.documentElement.classList.add('restoring');setTimeout(function(){document.documentElement.classList.remove('restoring')},3000)}}catch(e){}})();(function(){window.__errs=[];addEventListener("error",function(e){try{window.__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});addEventListener("unhandledrejection",function(e){try{window.__errs.push("promise: "+(e.reason&&e.reason.message||e.reason))}catch(_){}});try{const B="b20261019a";window.__BUILD=B;if(location.protocol!=="https:")return;fetch(location.pathname+"?nc="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{const mm=t.match(/const B="([^"]+)"/);if(mm&&mm[1]!==B&&sessionStorage.getItem("bto")!==mm[1]){sessionStorage.setItem("bto",mm[1]);const u=new URL(location.href);u.searchParams.set("b",mm[1]);location.replace(u.toString())}}).catch(()=>{})}catch(e){}})();
 
 const $=id=>document.getElementById(id), au=$('au');
 let API='https://all.api.radio-browser.info', hls=null, current=null, view='all', results=[];
@@ -3925,6 +3925,84 @@ window.settingsPage=function(){const r=_sp.apply(this,arguments);try{
 })();
 
 }catch(e){(window.__errs=window.__errs||[]).push("HX56: "+(e&&e.message))}
+</script>
+<script>
+try{
+// ===== HX58: المصحف الشريف — نص عثماني (Tanzil v1.1) على صفحات مصحف المدينة (604 صفحة) =====
+(function(){
+let M=null,P=1,fs=26,aSura=null,aAya=null;
+try{fs=+ls.get('mfs',26)||26}catch{}
+const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+function css(){if(document.getElementById('mshCss'))return;
+ const s=document.createElement('style');s.id='mshCss';
+ s.textContent='.mshf{max-width:680px;margin:0 auto;padding:10px 12px 90px}.mbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.mbar button,.mbar select,.mbar input{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font:inherit}.mbar .mi{width:74px;text-align:center}.mbar .grow{flex:1}.mp{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 14px;font-family:"Amiri Quran","KFGQPC Uthmanic Script HAFS","Scheherazade New","Traditional Arabic",serif;line-height:2.55;text-align:justify;text-align-last:center;word-spacing:2px}.mk{color:var(--acc,#c9a227);font-size:.78em;white-space:nowrap;padding:0 3px}.msb{display:block;text-align:center;margin:10px 0 4px;padding:6px;border:1px solid var(--acc,#c9a227);border-radius:10px;font-weight:700;line-height:1.9;text-align-last:center}.mbs{display:block;text-align:center;margin:2px 0 8px;line-height:2.2;text-align-last:center}.mjz{display:block;text-align:center;font-family:inherit;font-size:.6em;color:var(--mut);margin:6px 0;text-align-last:center}.mend{text-align:center;color:var(--mut);font-size:13px;margin:10px 0}.msrc{font-size:12px;color:var(--mut);line-height:1.9;margin-top:14px;text-align:center}.msrc a{color:var(--acc,#c9a227)}';
+ document.head.appendChild(s);
+ if(!document.getElementById('mshFont')){const l=document.createElement('link');l.id='mshFont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap';document.head.appendChild(l)}}
+async function load(){
+ if(M)return M;
+ const r=await fetch('data/mushaf.json?v=1');if(!r.ok)throw new Error('mushaf '+r.status);
+ M=await r.json();
+ aSura=new Uint8Array(6236);aAya=new Uint16Array(6236);let i=0;
+ M.sura.forEach(s=>{for(let a=1;a<=s.a;a++){aSura[i]=s.n;aAya[i]=a;i++}});
+ return M}
+const pRange=p=>[M.pages[p-1],p<604?M.pages[p]:6236];
+const juzAt=i=>{let j=1;for(let k=0;k<30;k++){if(M.juz[k]<=i)j=k+1}return j};
+const pageOfAyah=i=>{let p=1;for(let k=0;k<604;k++){if(M.pages[k]<=i)p=k+1;else break}return p};
+function pageHtml(p){
+ const [a,b]=pRange(p);let h='';
+ for(let i=a;i<b;i++){
+  const s=aSura[i],n=aAya[i],nm=M.sura[s-1].name;
+  const jk=M.juz.indexOf(i);
+  if(jk>=0)h+='<span class="mjz">— بداية الجزء '+AR(jk+1)+' —</span>';
+  if(n===1){h+='<span class="msb">سُورَةُ '+nm+'</span>';
+   if(s!==1&&s!==9)h+='<span class="mbs">'+(M.bismSpecial[s]||M.bism)+'</span>'}
+  h+=M.ayas[i]+' <span class="mk">﴿'+AR(n)+'﴾</span> '}
+ return h}
+function render(){
+ const [a,b]=pRange(P),j=juzAt(a);
+ const L=$('list');
+ const opt=(n,f)=>Array.from({length:n},(_,k)=>f(k+1)).join('');
+ const s0=aSura[a],lastA=aAya[b-1],lastS=aSura[b-1];
+ L.innerHTML='<div class="mshf" data-noi18n>'+
+  '<div class="mbar"><button id="mPrev">◀ السابقة</button><span class="grow" style="text-align:center">صفحة <b>'+AR(P)+'</b> من ٦٠٤ · الجزء '+AR(j)+'</span><button id="mNext">التالية ▶</button></div>'+
+  '<div class="mbar"><input id="mGo" class="mi" type="number" min="1" max="604" value="'+P+'" inputmode="numeric"><button id="mGoB">اذهب</button>'+
+  '<select id="mJ" class="grow"><option value="">الجزء…</option>'+opt(30,k=>'<option value="'+k+'">الجزء '+AR(k)+'</option>')+'</select>'+
+  '<select id="mS" class="grow"><option value="">السورة…</option>'+M.sura.map(s=>'<option value="'+s.n+'">'+AR(s.n)+' · '+s.name+'</option>').join('')+'</select></div>'+
+  '<div class="mbar"><button id="mFm">A−</button><button id="mFp">A+</button><span class="grow"></span></div>'+
+  '<div class="mp" id="mTxt" style="font-size:'+fs+'px">'+pageHtml(P)+'</div>'+
+  '<div class="mend">﴾ نهاية الصفحة '+AR(P)+' — تنتهي بالآية '+AR(lastA)+' من سورة '+M.sura[lastS-1].name+' ﴿</div>'+
+  '<div class="msrc">النص القرآني: مشروع <a href="https://tanzil.net" target="_blank" rel="noopener">تنزيل (Tanzil)</a> — الرسم العثماني، النسخة 1.1 — مراجَع على مصحف المدينة النبوية (مجمع الملك فهد لطباعة المصحف الشريف)، منقول بلا تغيير حسب شروطهم.<br>تقسيم الصفحات (٦٠٤ صفحة) من بيانات Tanzil، وحدود الأجزاء من AlQuran.cloud. الخط: Amiri Quran.</div></div>';
+ $('mPrev').onclick=()=>go(P-1);$('mNext').onclick=()=>go(P+1);
+ $('mGoB').onclick=()=>go(+$('mGo').value);$('mGo').onkeydown=e=>{if(e.key==='Enter')go(+e.target.value)};
+ $('mJ').value='';$('mS').value='';
+ $('mJ').onchange=e=>{if(e.target.value)go(pageOfAyah(M.juz[+e.target.value-1]))};
+ $('mS').onchange=e=>{if(e.target.value){let i=0;for(let k=0;k<+e.target.value-1;k++)i+=M.sura[k].a;go(pageOfAyah(i))}};
+ $('mFm').onclick=()=>fsz(-2);$('mFp').onclick=()=>fsz(2);
+ try{ls.set('mushafLast',P)}catch{}}
+function fsz(d){fs=Math.max(16,Math.min(48,fs+d));try{ls.set('mfs',fs)}catch{}const t=$('mTxt');if(t)t.style.fontSize=fs+'px'}
+function go(p){p=Math.max(1,Math.min(604,Math.round(+p)||1));P=p;render();try{window.scrollTo(0,0);$('list').scrollTop=0}catch{}}
+window.openMushaf=async function(p){
+ try{css();setTab('all');$('viewTitle').textContent='📖 المصحف الشريف';document.body.classList.remove('gnavOn');
+  $('list').innerHTML='<div class="mshf"><div class="mend">جارٍ تحميل المصحف…</div></div>';
+  await load();let q=+p;if(!q){try{q=+ls.get('mushafLast',1)||1}catch{q=1}}P=Math.max(1,Math.min(604,q));render()}
+ catch(e){$('list').innerHTML='<div class="mshf"><div class="mend">تعذّر تحميل المصحف — تأكد من الاتصال وحاول تاني</div></div>';(window.__errs=window.__errs||[]).push('mushaf: '+(e&&e.message))}};
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-mushaf]');if(!t)return;e.stopImmediatePropagation();e.preventDefault();openMushaf(+t.dataset.mushaf||0)},true);
+document.addEventListener('keydown',e=>{if(!document.querySelector('#list .mshf #mTxt'))return;if(/INPUT|SELECT/.test(e.target.tagName))return;if(e.key==='ArrowLeft')go(P+1);else if(e.key==='ArrowRight')go(P-1)});
+let tx=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{if(!document.querySelector('#list .mshf #mTxt'))return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>90){go(dx>0?P+1:P-1)}},{passive:true});
+// نقاط الدخول
+const tile='<div class="gTile" data-mushaf="0"><div class="gIc" style="background:var(--card);border:1px solid var(--line);font-size:30px">📖</div><div class="gn">المصحف</div></div>';
+function addHome(){const h=document.querySelector('#list .gHome');if(!h||h.querySelector('[data-mushaf]'))return;
+ const s=[...h.querySelectorAll(':scope>.gSec')].find(x=>((x.querySelector('span')||{}).textContent||'').trim()==='أدواتي');
+ const r=s&&s.nextElementSibling;if(r)r.insertAdjacentHTML('afterbegin',tile)}
+const _sh=window.showHome;
+window.showHome=function(){const r=_sh.apply(this,arguments);try{Promise.resolve(r).then(()=>{addHome();setTimeout(addHome,200)})}catch{}try{addHome()}catch{}return r};
+try{if(typeof HX!=='undefined'&&HX.hub){const _h=HX.hub;HX.hub=function(){const r=_h.apply(this,arguments);try{const g=[...$('list').querySelectorAll('.hgrp')].find(x=>/الروحانيات/.test(x.textContent));
+ if(g&&!$('list').querySelector('.hgrp ~ * [data-mushaf]')){let n=g.nextElementSibling;while(n&&!n.classList.contains('hgrid')&&!n.classList.contains('hgrp'))n=n.nextElementSibling;
+  if(n&&n.classList.contains('hgrid'))n.insertAdjacentHTML('afterbegin','<div class="strip one" data-mushaf="0"><span class="si">📖</span><div class="st2"><b>المصحف الشريف</b></div></div>')}}catch{}return r}}}catch{}
+})();
+
+}catch(e){(window.__errs=window.__errs||[]).push("HX58: "+(e&&e.message))}
 </script>
 </body>
 </html>
