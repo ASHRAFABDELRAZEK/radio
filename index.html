@@ -3141,7 +3141,7 @@ fetch('config.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(c=>{if(
 
 // ===== 12) محطات عربية + اكتشف العالم + محطات مهنية (بيانات مُنتقاة من Radio Browser، ملفات data/) =====
 (function(){
-const DATA_V='20261010b';window.DATA_V=DATA_V;
+const DATA_V='20261101';window.DATA_V=DATA_V;
 const DATA='data/', dcache={};
 async function dget(f){if(dcache[f])return dcache[f];try{const r=await fetch(DATA+f+'?v='+DATA_V,{cache:'default'});if(!r.ok)throw 0;return dcache[f]=await r.json()}catch{return null}}
 const flag=cc=>/^[A-Z]{2}$/.test(cc||'')?String.fromCodePoint(...[...cc].map(c=>127397+c.charCodeAt(0))):'🌐';

@@ -2,187 +2,202 @@
 {
 "code": "english",
 "ar": "الإنجليزية",
-"n": 10251
+"n": 11073
 },
 {
 "code": "german",
 "ar": "الألمانية",
-"n": 3865
+"n": 3997
 },
 {
 "code": "spanish",
 "ar": "الإسبانية",
-"n": 3646
+"n": 3891
 },
 {
 "code": "french",
 "ar": "الفرنسية",
-"n": 2259
+"n": 2472
 },
 {
 "code": "chinese",
 "ar": "الصينية",
-"n": 1903
+"n": 2039
 },
 {
 "code": "russian",
 "ar": "الروسية",
-"n": 1334
+"n": 1448
 },
 {
 "code": "italian",
 "ar": "الإيطالية",
-"n": 1187
+"n": 1215
 },
 {
 "code": "greek",
 "ar": "اليونانية",
-"n": 976
+"n": 997
 },
 {
 "code": "dutch",
 "ar": "الهولندية",
-"n": 695
-},
-{
-"code": "polish",
-"ar": "البولندية",
-"n": 627
+"n": 730
 },
 {
 "code": "portuguese",
 "ar": "البرتغالية",
-"n": 619
+"n": 728
+},
+{
+"code": "polish",
+"ar": "البولندية",
+"n": 644
 },
 {
 "code": "american english",
 "ar": "",
-"n": 415
+"n": 436
 },
 {
 "code": "brazilian portuguese",
 "ar": "",
-"n": 340
-},
-{
-"code": "romanian",
-"ar": "الرومانية",
-"n": 306
-},
-{
-"code": "hindi",
-"ar": "الهندية",
-"n": 294
-},
-{
-"code": "serbian",
-"ar": "الصربية",
-"n": 271
+"n": 381
 },
 {
 "code": "arabic",
 "ar": "العربية",
-"n": 269
+"n": 360
+},
+{
+"code": "hindi",
+"ar": "الهندية",
+"n": 309
+},
+{
+"code": "romanian",
+"ar": "الرومانية",
+"n": 308
+},
+{
+"code": "serbian",
+"ar": "الصربية",
+"n": 279
 },
 {
 "code": "turkish",
 "ar": "التركية",
-"n": 241
+"n": 257
 },
 {
 "code": "hungarian",
 "ar": "المجرية",
-"n": 226
+"n": 232
 },
 {
 "code": "tamil",
 "ar": "التاميلية",
-"n": 196
+"n": 205
 },
 {
 "code": "español mexico",
 "ar": "",
-"n": 178
+"n": 186
 },
 {
 "code": "czech",
 "ar": "التشيكية",
-"n": 177
-},
-{
-"code": "croatian",
-"ar": "الكرواتية",
-"n": 172
-},
-{
-"code": "indonesian",
-"ar": "الإندونيسية",
-"n": 155
-},
-{
-"code": "bulgarian",
-"ar": "البلغارية",
-"n": 153
+"n": 181
 },
 {
 "code": "ukrainian",
 "ar": "الأوكرانية",
-"n": 152
+"n": 178
 },
 {
-"code": "română",
-"ar": "",
-"n": 145
+"code": "croatian",
+"ar": "الكرواتية",
+"n": 173
 },
 {
-"code": "romania",
-"ar": "",
-"n": 142
+"code": "indonesian",
+"ar": "الإندونيسية",
+"n": 160
 },
 {
-"code": "nepali",
-"ar": "النيبالية",
-"n": 136
+"code": "bulgarian",
+"ar": "البلغارية",
+"n": 160
 },
 {
 "code": "castellano. español",
 "ar": "",
-"n": 133
+"n": 144
+},
+{
+"code": "romania",
+"ar": "",
+"n": 144
+},
+{
+"code": "nepali",
+"ar": "النيبالية",
+"n": 141
+},
+{
+"code": "română",
+"ar": "",
+"n": 135
 },
 {
 "code": "español argentina",
 "ar": "",
-"n": 112
-},
-{
-"code": "swedish",
-"ar": "السويدية",
-"n": 108
-},
-{
-"code": "english uk",
-"ar": "",
-"n": 106
+"n": 116
 },
 {
 "code": "japanese",
 "ar": "اليابانية",
+"n": 113
+},
+{
+"code": "swedish",
+"ar": "السويدية",
+"n": 113
+},
+{
+"code": "english uk",
+"ar": "",
+"n": 109
+},
+{
+"code": "catalan",
+"ar": "الكتالانية",
 "n": 102
 },
 {
 "code": "engilsh",
 "ar": "",
+"n": 102
+},
+{
+"code": "korean",
+"ar": "الكورية",
 "n": 100
+},
+{
+"code": "español internacional",
+"ar": "",
+"n": 97
 },
 {
 "code": "bosnian",
 "ar": "البوسنية",
-"n": 98
+"n": 96
 },
 {
-"code": "catalan",
-"ar": "الكتالانية",
-"n": 97
+"code": "danish",
+"ar": "الدانماركية",
+"n": 96
 },
 {
 "code": "slovak",
@@ -190,29 +205,19 @@
 "n": 95
 },
 {
-"code": "danish",
-"ar": "الدانماركية",
-"n": 95
-},
-{
-"code": "korean",
-"ar": "الكورية",
-"n": 93
-},
-{
-"code": "español internacional",
-"ar": "",
-"n": 91
-},
-{
 "code": "cantonese",
 "ar": "",
-"n": 91
+"n": 90
 },
 {
 "code": "español - latinoamerica",
 "ar": "",
-"n": 84
+"n": 90
+},
+{
+"code": "latvian",
+"ar": "اللاتفية",
+"n": 87
 },
 {
 "code": "português  brasil",
@@ -220,89 +225,94 @@
 "n": 83
 },
 {
-"code": "deutsch fränkisch",
-"ar": "",
-"n": 79
-},
-{
-"code": "slovenian",
-"ar": "السلوفينية",
-"n": 76
+"code": "albanian",
+"ar": "الألبانية",
+"n": 81
 },
 {
 "code": "português (brasil)",
 "ar": "",
-"n": 76
+"n": 81
 },
 {
-"code": "finnish",
-"ar": "الفنلندية",
-"n": 75
+"code": "deutsch fränkisch",
+"ar": "",
+"n": 80
+},
+{
+"code": "slovenian",
+"ar": "السلوفينية",
+"n": 77
 },
 {
 "code": "malayalam",
 "ar": "المالايالامية",
-"n": 73
+"n": 77
+},
+{
+"code": "finnish",
+"ar": "الفنلندية",
+"n": 77
 },
 {
 "code": "british english",
 "ar": "",
-"n": 71
+"n": 74
+},
+{
+"code": "estonian",
+"ar": "الإستونية",
+"n": 70
 },
 {
 "code": "язык: русский",
 "ar": "",
-"n": 67
-},
-{
-"code": "thai",
-"ar": "التايلاندية",
-"n": 65
+"n": 68
 },
 {
 "code": "francaise",
 "ar": "",
+"n": 68
+},
+{
+"code": "thai",
+"ar": "التايلاندية",
+"n": 67
+},
+{
+"code": "portugues do brasil",
+"ar": "",
+"n": 60
+},
+{
+"code": "punjabi",
+"ar": "البنجابية",
 "n": 58
 },
 {
 "code": "akan",
 "ar": "",
-"n": 56
+"n": 58
 },
 {
 "code": "espaňol",
 "ar": "",
-"n": 56
-},
-{
-"code": "punjabi",
-"ar": "البنجابية",
-"n": 55
-},
-{
-"code": "portugues do brasil",
-"ar": "",
-"n": 55
+"n": 58
 },
 {
 "code": "norwegian",
 "ar": "النرويجية",
-"n": 54
+"n": 56
 },
 {
 "code": "bahasa indonesia",
 "ar": "",
-"n": 52
-},
-{
-"code": "latvian",
-"ar": "اللاتفية",
-"n": 52
+"n": 54
 },
 {
 "code": "filipino",
 "ar": "الفلبينية",
-"n": 49
+"n": 52
 },
 {
 "code": "espanish",
@@ -310,79 +320,89 @@
 "n": 48
 },
 {
-"code": "românä",
+"code": "español chile",
 "ar": "",
+"n": 48
+},
+{
+"code": "urdu",
+"ar": "الأوردو",
 "n": 47
 },
 {
 "code": "swiss german",
 "ar": "",
+"n": 46
+},
+{
+"code": "românä",
+"ar": "",
 "n": 45
-},
-{
-"code": "estonian",
-"ar": "الإستونية",
-"n": 45
-},
-{
-"code": "pt-br",
-"ar": "",
-"n": 43
-},
-{
-"code": "urdu",
-"ar": "الأوردو",
-"n": 41
-},
-{
-"code": "español chile",
-"ar": "",
-"n": 41
-},
-{
-"code": "ukranian",
-"ar": "",
-"n": 40
-},
-{
-"code": "español colombia",
-"ar": "",
-"n": 37
-},
-{
-"code": "luganda",
-"ar": "",
-"n": 35
-},
-{
-"code": "hokkien",
-"ar": "",
-"n": 35
-},
-{
-"code": "malay",
-"ar": "الملايوية",
-"n": 32
-},
-{
-"code": "macedonian",
-"ar": "المقدونية",
-"n": 31
-},
-{
-"code": "turkçe",
-"ar": "",
-"n": 31
 },
 {
 "code": "lithuanian",
 "ar": "الليتوانية",
+"n": 43
+},
+{
+"code": "pt-br",
+"ar": "",
+"n": 42
+},
+{
+"code": "ukranian",
+"ar": "",
+"n": 39
+},
+{
+"code": "chichewa",
+"ar": "",
+"n": 39
+},
+{
+"code": "español colombia",
+"ar": "",
+"n": 38
+},
+{
+"code": "luganda",
+"ar": "",
+"n": 37
+},
+{
+"code": "hokkien",
+"ar": "",
+"n": 36
+},
+{
+"code": "turkçe",
+"ar": "",
+"n": 33
+},
+{
+"code": "macedonian",
+"ar": "المقدونية",
+"n": 32
+},
+{
+"code": "swahili",
+"ar": "السواحلية",
 "n": 30
+},
+{
+"code": "azerbaijani",
+"ar": "الأذرية",
+"n": 29
+},
+{
+"code": "malay",
+"ar": "الملايوية",
+"n": 29
 },
 {
 "code": "mandarin",
 "ar": "",
-"n": 30
+"n": 29
 },
 {
 "code": "persian",
@@ -390,13 +410,18 @@
 "n": 28
 },
 {
-"code": "swahili",
-"ar": "السواحلية",
-"n": 27
+"code": "kurdish",
+"ar": "الكردية",
+"n": 28
 },
 {
 "code": "sinhala",
 "ar": "السنهالية",
+"n": 28
+},
+{
+"code": "telugu",
+"ar": "التيلوغوية",
 "n": 26
 },
 {
@@ -405,24 +430,19 @@
 "n": 26
 },
 {
-"code": "kurdish",
-"ar": "الكردية",
-"n": 25
-},
-{
-"code": "telugu",
-"ar": "التيلوغوية",
-"n": 25
-},
-{
-"code": "azerbaijani",
-"ar": "الأذرية",
-"n": 24
-},
-{
 "code": "português (br)",
 "ar": "",
+"n": 25
+},
+{
+"code": "afrikaans",
+"ar": "الأفريكانية",
 "n": 24
+},
+{
+"code": "mongolian",
+"ar": "",
+"n": 23
 },
 {
 "code": "flemish",
@@ -430,33 +450,18 @@
 "n": 23
 },
 {
-"code": "afrikaans",
-"ar": "الأفريكانية",
-"n": 21
-},
-{
-"code": "mongolian",
-"ar": "",
-"n": 21
-},
-{
 "code": "kannada",
 "ar": "الكانادية",
+"n": 22
+},
+{
+"code": "montenegro",
+"ar": "",
 "n": 21
 },
 {
 "code": "basque",
 "ar": "",
-"n": 20
-},
-{
-"code": "montenegro",
-"ar": "",
-"n": 20
-},
-{
-"code": "albanian",
-"ar": "الألبانية",
 "n": 19
 },
 {
@@ -465,17 +470,17 @@
 "n": 19
 },
 {
+"code": "low german",
+"ar": "",
+"n": 19
+},
+{
 "code": "georgian",
 "ar": "الجورجية",
 "n": 18
 },
 {
-"code": "low german",
-"ar": "",
-"n": 18
-},
-{
-"code": "español peruano",
+"code": "ar",
 "ar": "",
 "n": 18
 },
@@ -485,12 +490,17 @@
 "n": 18
 },
 {
+"code": "deutch",
+"ar": "",
+"n": 18
+},
+{
 "code": "belarusian",
 "ar": "",
 "n": 17
 },
 {
-"code": "creole",
+"code": "bangla",
 "ar": "",
 "n": 17
 },
@@ -510,12 +520,7 @@
 "n": 17
 },
 {
-"code": "bangla",
-"ar": "",
-"n": 16
-},
-{
-"code": "gernan",
+"code": "creole",
 "ar": "",
 "n": 16
 },
@@ -535,8 +540,8 @@
 "n": 15
 },
 {
-"code": "icelandic",
-"ar": "الأيسلندية",
+"code": "gernan",
+"ar": "",
 "n": 15
 },
 {
@@ -550,14 +555,29 @@
 "n": 15
 },
 {
+"code": "inglés/portugués/español",
+"ar": "",
+"n": 15
+},
+{
 "code": "willemstad",
 "ar": "",
 "n": 15
 },
 {
-"code": "deutch",
+"code": "español peruano",
 "ar": "",
 "n": 15
+},
+{
+"code": "العربية",
+"ar": "",
+"n": 14
+},
+{
+"code": "icelandic",
+"ar": "الأيسلندية",
+"n": 14
 },
 {
 "code": "türkisch",
@@ -565,17 +585,7 @@
 "n": 14
 },
 {
-"code": "inglés/portugués/español",
-"ar": "",
-"n": 14
-},
-{
 "code": "norddeutsch",
-"ar": "",
-"n": 14
-},
-{
-"code": "العربية",
 "ar": "",
 "n": 13
 },
@@ -590,13 +600,8 @@
 "n": 12
 },
 {
-"code": "ar",
-"ar": "",
-"n": 12
-},
-{
-"code": "español ecuador",
-"ar": "",
+"code": "irish",
+"ar": "الأيرلندية",
 "n": 12
 },
 {
@@ -615,7 +620,32 @@
 "n": 12
 },
 {
+"code": "javanese",
+"ar": "",
+"n": 11
+},
+{
+"code": "vietnamese",
+"ar": "الفيتنامية",
+"n": 11
+},
+{
 "code": "moldovian",
+"ar": "",
+"n": 11
+},
+{
+"code": "español ecuador",
+"ar": "",
+"n": 11
+},
+{
+"code": "kurdi",
+"ar": "",
+"n": 11
+},
+{
+"code": "franch",
 "ar": "",
 "n": 11
 },
@@ -630,8 +660,8 @@
 "n": 10
 },
 {
-"code": "vietnamese",
-"ar": "الفيتنامية",
+"code": "quechua",
+"ar": "",
 "n": 10
 },
 {
@@ -640,22 +670,22 @@
 "n": 10
 },
 {
-"code": "kurdi",
+"code": "#spanish",
 "ar": "",
 "n": 10
 },
 {
-"code": "irish",
-"ar": "الأيرلندية",
-"n": 10
-},
-{
-"code": "franch",
+"code": "sint maarten",
 "ar": "",
 "n": 10
 },
 {
-"code": "javanese",
+"code": "yoruba",
+"ar": "",
+"n": 10
+},
+{
+"code": "عربي",
 "ar": "",
 "n": 9
 },
@@ -665,17 +695,22 @@
 "n": 9
 },
 {
-"code": "quechua",
+"code": "tatar",
 "ar": "",
 "n": 9
 },
 {
-"code": "yoruba",
+"code": "englsih",
 "ar": "",
 "n": 9
 },
 {
-"code": "عربي",
+"code": "galego",
+"ar": "",
+"n": 9
+},
+{
+"code": "khmer",
 "ar": "",
 "n": 8
 },
@@ -685,7 +720,12 @@
 "n": 8
 },
 {
-"code": "#spanish",
+"code": "ingles español",
+"ar": "",
+"n": 8
+},
+{
+"code": "sanskrit",
 "ar": "",
 "n": 8
 },
@@ -695,17 +735,7 @@
 "n": 8
 },
 {
-"code": "englsih",
-"ar": "",
-"n": 8
-},
-{
-"code": "galego",
-"ar": "",
-"n": 8
-},
-{
-"code": "româna",
+"code": "estonia",
 "ar": "",
 "n": 8
 },
@@ -715,33 +745,8 @@
 "n": 8
 },
 {
-"code": "tunisian",
+"code": "fijian",
 "ar": "",
-"n": 7
-},
-{
-"code": "khmer",
-"ar": "",
-"n": 7
-},
-{
-"code": "ingles español",
-"ar": "",
-"n": 7
-},
-{
-"code": "sanskrit",
-"ar": "",
-"n": 7
-},
-{
-"code": "hakka",
-"ar": "",
-"n": 7
-},
-{
-"code": "tatar",
-"ar": "",
-"n": 7
+"n": 8
 }
 ]
